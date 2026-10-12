@@ -168,6 +168,10 @@ function atelier(s: SceneBuilder): void {
   ] as V3[])
     v.set(x, y, z, 'mask:lanterne');
   s.inFolder('Atelier', () => {
+    // Warm light in the room and the workshop (the windows alone leave them too dark).
+    light(s, 'lumiere_chambre', [38.5, roomY + 2.6, 29.5], '#ffcf96', 13);
+    light(s, 'lumiere_chambre_lit', [41.5, roomY + 2.4, 25.5], '#ffc38a', 11);
+    light(s, 'lumiere_atelier', [38.5, G + 3.4, 28.5], '#ffc890', 13);
     // Upstairs: the hero's room.
     model(s, 'lit', 'mask:lit', P.lit, 0);
     fillBox(v, [x1 - 2, roomY, z1 - 2], [x1 - 1, roomY, z1 - 1], 'mask:planches_dalle');

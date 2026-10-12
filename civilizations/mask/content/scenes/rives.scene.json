@@ -1126,6 +1126,66 @@
       }
     },
     {
+      "id": "lumiere_chambre",
+      "position": [
+        38.5,
+        16.6,
+        29.5
+      ],
+      "components": {
+        "core.light": {
+          "color": "#ffcf96",
+          "level": 13,
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "folder": "Atelier"
+    },
+    {
+      "id": "lumiere_chambre_lit",
+      "position": [
+        41.5,
+        16.4,
+        25.5
+      ],
+      "components": {
+        "core.light": {
+          "color": "#ffc38a",
+          "level": 11,
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "folder": "Atelier"
+    },
+    {
+      "id": "lumiere_atelier",
+      "position": [
+        38.5,
+        11.4,
+        28.5
+      ],
+      "components": {
+        "core.light": {
+          "color": "#ffc890",
+          "level": 13,
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "folder": "Atelier"
+    },
+    {
       "id": "lit",
       "position": [
         41.5,
