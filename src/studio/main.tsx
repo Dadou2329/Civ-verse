@@ -48,7 +48,10 @@ async function boot() {
         if (data.change !== 'changed' && !data.fromStudio) void studio.project.refreshListing().then(() => studio.changed());
         if (data.change === 'changed' && !data.fromStudio) {
           void studio.project.reloadIfClean(data.path).then((reloaded) => {
-            if (reloaded) studio.print('info', `Rechargé depuis le disque : ${data.path}`, data.path);
+            if (reloaded) {
+              studio.print('info', `Rechargé depuis le disque : ${data.path}`, data.path);
+              void studio.reloadOpenScene(data.path);
+            }
             else if (studio.project.doc(data.path)?.loaded) studio.print('warning', `Modifié sur le disque pendant que vous l’éditiez : ${data.path}`, data.path);
           });
         }

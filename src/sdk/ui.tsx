@@ -14,6 +14,13 @@ import type { ConditionData } from '../engine/core/logic/types';
 import type { JsonValue } from '../engine/core/util/json';
 import type { MessageParams } from '../engine/core/i18n/localizer';
 
+/**
+ * French label of a physical key code, following the player's keyboard layout when the browser
+ * tells it ("KeyC" → « C », "KeyQ" → « A » on AZERTY, "Space" → « Espace »). Use it to show the key
+ * a civilization binds (settings can change it) instead of writing the letter in a text.
+ */
+export { keyLabel } from '../engine/input/inputManager';
+
 /** Provided by the game UI around every civilization component. */
 export const CivUiContext = createContext<CivContext | null>(null);
 

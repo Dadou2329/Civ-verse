@@ -89,6 +89,15 @@ export async function validateCivilization(session: GameSession, civId: string, 
     checkKey(ctx, f.hint, `fragments.${i}.hint`);
   });
   if (m.entry && !pack.scenes.has(m.entry.scene)) err(ctx, 'entry.scene', `Scène d'entrée inconnue : ${m.entry.scene}`);
+
+  // --- Mechanics: setup failures and their settings (content/rules.json) ------------------------
+  for (const [id, record] of civ.mechanics) {
+    if (record.failed) issues.push({ pack: civId, file: 'mechanics', path: id, severity: 'error', message: `La mécanique ${id} a échoué à l’initialisation : ${record.failed}` });
+  }
+  ctx.file = 'content/rules.json';
+  for (const def of pack.defs.mechanics) {
+    if (def.settings) checkProps(ctx, def.settings, pack.rules.settings[def.id] ?? {}, `settings.${def.id}`);
+  }
   if (m.entry && scenes.has(m.entry.scene) && !entityIds.get(m.entry.scene)?.has(m.entry.spawn)) err(ctx, 'entry.spawn', `Point d'apparition introuvable : ${m.entry.spawn}`);
 
   // --- Scenes -------------------------------------------------------------------------------------

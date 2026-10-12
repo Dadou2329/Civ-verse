@@ -13,7 +13,8 @@
  *   });
  *
  * `defineViewEffect` handles `ctx.fx.custom(channel, payload)` requests sent by the simulation.
- * Visuals run only in the game and the Studio playtest (never headless).
+ * Visuals run wherever a session is rendered: the game, the Studio playtest and the Studio's editor
+ * viewport (never headless).
  */
 import type { VisualDefinition, ViewEffectDefinition } from '../engine/core/packs/definitions';
 import type { ViewContext, VisualEntity } from '../engine/view/entityViews';

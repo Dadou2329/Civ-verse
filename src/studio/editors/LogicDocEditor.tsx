@@ -58,7 +58,7 @@ export function LogicDocEditor({ path }: { path: string }) {
             </div>
             <div className="st-section__body">
               <Row label="Quand">
-                <EventEditor value={rule.when} env={env} onChange={(w, m) => w && setRule(i, { ...rule, when: w }, 'Événement', m)} />
+                <EventEditor required value={rule.when} env={env} onChange={(w, m) => w && setRule(i, { ...rule, when: w }, 'Événement', m)} />
               </Row>
               <Row label="Si">
                 <ConditionEditor value={rule.if ?? null} env={env} onChange={(c, m) => setRule(i, { ...rule, if: c }, 'Condition', m)} />

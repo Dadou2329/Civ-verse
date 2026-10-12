@@ -450,6 +450,8 @@ export class EditorViewport {
         this.frameSelection();
         return true;
       case 'Escape':
+        // Cancels a box being drawn; otherwise the Studio clears the selection.
+        if (!this.boxCorner) return false;
         this.boxCorner = null;
         this.onUiChange?.();
         return true;

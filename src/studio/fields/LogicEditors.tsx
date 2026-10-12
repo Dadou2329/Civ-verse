@@ -177,7 +177,18 @@ function ActionBlock({
 }
 
 /** An event to react to (rules, objectives): event id + optional « where » filters. */
-export function EventEditor({ value, onChange, env }: { value: { event: string; where?: Record<string, unknown> } | null; onChange: OnChange<{ event: string; where?: Record<string, unknown> } | null>; env: FieldEnv }) {
+export function EventEditor({
+  value,
+  onChange,
+  env,
+  required = false,
+}: {
+  value: { event: string; where?: Record<string, unknown> } | null;
+  onChange: OnChange<{ event: string; where?: Record<string, unknown> } | null>;
+  env: FieldEnv;
+  /** A logic rule always reacts to an event: « Aucun événement » is not offered. */
+  required?: boolean;
+}) {
   const registry = env.studio.session.logicRegistry;
   const events = registry.listEvents();
   const current = value ? registry.event(value.event) : undefined;
@@ -185,7 +196,7 @@ export function EventEditor({ value, onChange, env }: { value: { event: string; 
     <div className="st-block st-block--event">
       <div className="st-block__head">
         <select className="st-select" value={value?.event ?? ''} onChange={(e) => onChange(e.target.value ? { event: e.target.value } : null)} style={{ width: 'auto', maxWidth: '100%' }}>
-          <option value="">Aucun événement</option>
+          {!required && <option value="">Aucun événement</option>}
           {events
             .slice()
             .sort((a, b) => a.label.localeCompare(b.label, 'fr'))

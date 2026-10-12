@@ -5,7 +5,7 @@
  * Measures, on the real packs, the CPU work the game does: loading a civilization (content,
  * voxel decoding, entities, light), baking the light field, building the texture atlas, meshing
  * every chunk, one simulation step, and writing a save. GPU rendering is not measured here: it
- * depends on the machine and browser — use the in-game counter (Paramètres → « Afficher les i/s »).
+ * depends on the machine and browser — use the in-game counter (Paramètres → « Afficher les images par seconde »).
  */
 import os from 'node:os';
 import { GlobContentProvider } from '../../src/engine/platform/globContent.ts';

@@ -171,4 +171,25 @@ describe('Studio', () => {
     expect(volumeFromDoc((verrou.data as SceneDoc).voxels).get(5, 20, 5)).toBe(before);
     expect(studio.project.isDirty(verrou)).toBe(true);
   });
+
+  it('creates documents as undoable steps, and nothing is written for an undone creation', async () => {
+    const { studio, io } = await openDoor();
+    const path = 'civilizations/door/content/logic/essai.logic.json';
+    studio.createDoc('door', 'content/logic/essai.logic.json', { format: 'civverse.logic', version: 1, id: 'essai', rules: [] });
+    await studio.openDoc(path);
+    expect(studio.project.docsOf('door', 'logic').map((d) => d.id)).toContain('essai');
+    expect(studio.tabs.map((t) => t.path)).toContain(path);
+
+    studio.undo();
+    expect(studio.project.docsOf('door', 'logic').map((d) => d.id)).not.toContain('essai');
+    expect(studio.tabs.map((t) => t.path)).not.toContain(path);
+    expect(studio.project.dirty()).toEqual([]);
+    await studio.saveAll();
+    expect(io.written.has(path)).toBe(false);
+
+    studio.redo();
+    expect(studio.project.docsOf('door', 'logic').map((d) => d.id)).toContain('essai');
+    await studio.saveAll();
+    expect(JSON.parse(io.written.get(path)!)).toMatchObject({ id: 'essai', rules: [] });
+  });
 });

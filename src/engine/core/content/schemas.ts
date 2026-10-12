@@ -2,7 +2,8 @@
  * Content file formats (validated with Zod; error messages in French).
  *
  * Every content file carries `format` and `version` so that future engine updates can migrate
- * old files (see content/migrations.ts). The Studio reads and writes exactly these shapes.
+ * old files. All formats are at version 1 and no content migration exists yet: a format change
+ * must add one (see docs/VERSIONING.md). The Studio reads and writes exactly these shapes.
  */
 import { z } from 'zod';
 import { EASING_NAMES } from '../util/easing';
@@ -40,13 +41,18 @@ export const ThemeSchema = z.object({
 export const ManifestSchema = z.object({
   format: z.literal('civverse.pack'),
   version: z.literal(1),
-  id: z.string().regex(PACK_ID_RE),
+  id: z
+    .string()
+    .regex(PACK_ID_RE)
+    // Namespaces the engine owns: its registrations ("engine"), the multiverse variables
+    // ("global.*") and the game interface texts ("ui.*").
+    .refine((id) => !['engine', 'global', 'ui'].includes(id), { error: 'Identifiant de pack réservé par le moteur (engine, global, ui).' }),
   kind: z.enum(['civilization', 'library']).default('civilization'),
   /** Localization keys. */
   name: z.string(),
   description: z.string(),
   tagline: z.string().optional(),
-  packVersion: z.string().regex(/^\d+\.\d+\.\d+/),
+  packVersion: z.string().regex(/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/, { error: 'Version x.y.z attendue (ex. 1.2.0)' }),
   /** Semver range of the engine API this pack was written for. */
   engineApi: z.string(),
   dependencies: z.array(z.string()).default([]),

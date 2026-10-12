@@ -26,7 +26,7 @@
   "ui.common.cancel": "Annuler",
 
   "ui.dialogue.continue": "Continuer",
-  "ui.cinematic.skip": "Maintenir pour passer",
+  "ui.cinematic.skip": "Passer la scène",
 
   "ui.objectives.title": "Objectifs",
   "ui.objectives.optional": "(facultatif)",
@@ -81,6 +81,7 @@
   "ui.debug.locks": "Verrous du joueur",
   "ui.debug.listeners": "Écouteurs orphelins :",
   "ui.debug.vars": "{count, plural, one {Variable ({count})} other {Variables ({count})}}",
+  "ui.debug.missingTexts": "{count, plural, one {# texte manquant :} other {# textes manquants :}}",
   "ui.debug.keys": "F3 : masquer · F4 : collisions · F5 : sauvegarde rapide",
 
   "ui.settings.title": "Paramètres",

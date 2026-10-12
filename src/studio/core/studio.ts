@@ -130,6 +130,8 @@ export class Studio {
       this.closeScene();
       await this.session.refreshManifests();
       const manifest = this.session.manifests.get(packId);
+      // The previous pack's blocks, components and actions leave the menus.
+      this.session.unloadPackDefinitions([packId, ...(manifest?.dependencies ?? [])]);
       for (const dep of manifest?.dependencies ?? []) await this.project.loadPack(dep);
       await this.project.loadPack(packId);
       await this.session.loadPackDefinitions(packId);
@@ -195,6 +197,40 @@ export class Studio {
     this.voxelsDirty = false;
     this.voxelUnsub = world.onVoxelsChanged(() => (this.voxelsDirty = true));
     this.changed();
+  }
+
+  /**
+   * Creates a document as an undoable step: undoing marks it deleted (a file already written is
+   * removed by the next save, its previous version kept in .civ-backups/), redoing restores it.
+   */
+  createDoc(pack: string, rel: string, data: unknown): void {
+    const path = packPath(pack, rel);
+    this.history.push({
+      label: `Créer ${rel}`,
+      apply: () => {
+        if (this.project.doc(path)?.deleted) this.project.setDeleted(path, false);
+        else this.project.create(pack, rel, data);
+      },
+      revert: () => {
+        if (this.scenePath === path) this.closeScene();
+        this.project.setDeleted(path, true);
+        this.tabs = this.tabs.filter((t) => t.path !== path);
+        if (this.activeTab === path) this.activeTab = this.tabs[0]?.path ?? null;
+        this.changed();
+      },
+    });
+  }
+
+  /**
+   * The open scene's file changed on disk while it had no unsaved edits: its document was read
+   * again, and the world (blocks included) is rebuilt from it, so that stale blocks are never
+   * written back by a later save.
+   */
+  async reloadOpenScene(path: string): Promise<void> {
+    if (this.scenePath !== path) return;
+    this.voxelsDirty = false; // the world is older than the document just read
+    this.closeScene();
+    await this.openScene(path);
   }
 
   closeScene(): void {

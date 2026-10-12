@@ -71,7 +71,7 @@
         }
       ],
       "instrument": "memory:diapason",
-      "chamberKey": "KeyM"
+      "chamberKey": "KeyC"
     },
     "memory.echoes": {
       "echoes": [

@@ -1,9 +1,9 @@
 /**
  * World-building SDK: voxel volumes, the construction kit and scene document helpers.
  *
- * Used by world seed scripts (`civilizations/<id>/seed/*.ts`, run with `npm run civ -- seed <id>`)
- * and by Civilization Studio's building tools. A seed generates the first version of a scene;
- * afterwards the JSON file is the source of truth and is edited in the Studio.
+ * Used by world seed scripts (`civilizations/<id>/seed/*.ts`, run with `npm run civ -- seed <id>`).
+ * A seed generates the first version of a scene; afterwards the JSON file is the source of truth
+ * and is edited in Civilization Studio (whose block tools work cell by cell and by boxes).
  *
  *   const b = new SceneBuilder('verrou', 'door.scene.verrou', [96, 64, 112], ENV);
  *   fillBox(b.volume, [0, 0, 0], [95, 7, 111], 'core:stone');

@@ -380,10 +380,16 @@ export class GameSession {
     return [...this.manifests.values()].filter((m) => m.kind === 'civilization').sort((a, b) => a.order - b.order);
   }
 
-  /** Loads (once) and registers a library or civilization pack's definitions and content. */
   /** Studio: registers a pack's definitions (and its dependencies) without starting it. */
   async loadPackDefinitions(id: string): Promise<LoadedPack> {
     return this.ensurePack(id);
+  }
+
+  /** Studio: forgets the definitions of every loaded pack except `keep` (switching packs). */
+  unloadPackDefinitions(keep: Iterable<string>): void {
+    if (this.civ) throw new Error('Impossible de décharger des packs pendant une partie.');
+    const kept = new Set(keep);
+    for (const id of [...this.loadedPacks.keys()]) if (!kept.has(id)) this.unregisterPack(id);
   }
 
   /**
@@ -396,11 +402,19 @@ export class GameSession {
     }
     const dependents = (packId: string): string[] =>
       [...this.loadedPacks.values()].filter((p) => p.manifest.dependencies.includes(packId)).flatMap((p) => [...dependents(p.manifest.id), p.manifest.id]);
-    for (const dep of new Set(dependents(id))) this.unregisterPack(dep);
+    await this.refreshManifests();
+    const manifest = this.manifests.get(id);
+    if (!manifest) throw new Error(`Pack introuvable ou invalide : "${id}".`);
+    // The new code and content are loaded before anything is unregistered: if they fail (a
+    // syntax error in a script being written), the pack stays as it was.
+    const fresh = await loadPack(this.provider, manifest);
+    const reloadDependents = [...new Set(dependents(id))];
+    for (const dep of reloadDependents) this.unregisterPack(dep);
     this.unregisterPack(id);
     this.contentIssues.splice(0, this.contentIssues.length, ...this.contentIssues.filter((i) => i.pack !== id));
-    await this.refreshManifests();
-    return this.ensurePack(id);
+    this.adoptPack(fresh);
+    for (const dep of reloadDependents) await this.ensurePack(dep);
+    return fresh;
   }
 
   private async ensurePack(id: string, chain: string[] = []): Promise<LoadedPack> {
@@ -411,6 +425,12 @@ export class GameSession {
     if (!manifest) throw new Error(`Pack introuvable ou invalide : "${id}".`);
     for (const dep of manifest.dependencies) await this.ensurePack(dep, [...chain, id]);
     const pack = await loadPack(this.provider, manifest);
+    this.adoptPack(pack);
+    return pack;
+  }
+
+  /** Reports a loaded pack's content issues and registers its definitions. */
+  private adoptPack(pack: LoadedPack): void {
     for (const issue of pack.issues) {
       this.contentIssues.push(issue);
       const line = `${issue.pack}/${issue.file} : ${issue.message}`;
@@ -418,8 +438,7 @@ export class GameSession {
       else this.logHub.logger('contenu').warn(line);
     }
     this.registerPack(pack);
-    this.loadedPacks.set(id, pack);
-    return pack;
+    this.loadedPacks.set(pack.manifest.id, pack);
   }
 
   private registerPack(pack: LoadedPack): void {
@@ -948,7 +967,11 @@ export class GameSession {
     civ.panelResolvers.get(id)?.(null);
     return new Promise((resolve) => {
       civ.panelResolvers.set(id, resolve);
-      if (def.pausesGame !== false) civ.panelLocks.set(id, this.player.lockMovement(`panneau:${id}`));
+      if (def.pausesGame !== false) {
+        // The world waits while the player is in the panel (timers, NPCs, behaviors).
+        civ.panelLocks.set(id, this.player.lockMovement(`panneau:${id}`));
+        this.setPaused(`panneau:${id}`, true);
+      }
       this.ui.openPanel(def, civ.id, props);
       this.bus.emit('ui.panelOpened', { panelId: id });
     });
@@ -961,6 +984,7 @@ export class GameSession {
     civ.panelResolvers.delete(id);
     civ.panelLocks.get(id)?.dispose();
     civ.panelLocks.delete(id);
+    this.setPaused(`panneau:${id}`, false);
     this.ui.closePanel(id);
     if (resolve) {
       this.bus.emit('ui.panelClosed', { panelId: id });

@@ -66,19 +66,24 @@ export function CinematicEditor({ path }: { path: string }) {
   const [time, setTime] = useState(0);
   const [sel, setSel] = useState<Sel>(null);
   const [playing, setPlaying] = useState(false);
-  const [drag, setDrag] = useState<{ track: number; item: number; t: number } | null>(null);
+  // t0: time of the item when the button went down (a click without movement records nothing).
+  const [drag, setDrag] = useState<{ track: number; item: number; t: number; t0: number } | null>(null);
   const laneRef = useRef<HTMLDivElement>(null);
   const data = h?.data;
+  const editorStudio = h?.studio;
 
-  // Preview the camera at the playhead in the scene viewport.
+  // Preview the camera at the playhead in the scene viewport — only when the cinematic or the
+  // playhead changes, so that the editor camera stays free during other edits.
   useEffect(() => {
-    if (!data || !h) return;
+    if (!data || !editorStudio) return;
     const pose = evaluateCameraTrack(data, time, (id) => {
-      const e = h.studio.entity(id);
+      const e = editorStudio.entity(id);
       return e ? { x: e.position[0], y: e.position[1] + 1.5, z: e.position[2] } : null;
     });
     if (pose) viewportRef.current?.showPose(pose);
-  }, [data, time, h]);
+  }, [data, time, editorStudio]);
+  // Leaving the cinematic gives the editor camera its own field of view back.
+  useEffect(() => () => viewportRef.current?.showPose(null), []);
 
   useEffect(() => {
     if (!playing || !data) return;
@@ -223,7 +228,7 @@ export function CinematicEditor({ path }: { path: string }) {
                   onPointerMove={(e) => drag && drag.track === ti && setDrag({ ...drag, t: Math.round(timeAt(e.clientX) * 10) / 10 })}
                   onPointerUp={() => {
                     if (!drag) return;
-                    setTrack(drag.track, withItemTime(data.tracks[drag.track]!, drag.item, drag.t), 'Déplacer une clé');
+                    if (drag.t !== drag.t0) setTrack(drag.track, withItemTime(data.tracks[drag.track]!, drag.item, drag.t), 'Déplacer une clé');
                     setDrag(null);
                   }}
                 >
@@ -240,7 +245,7 @@ export function CinematicEditor({ path }: { path: string }) {
                           e.stopPropagation();
                           (e.currentTarget.parentElement as HTMLElement).setPointerCapture(e.pointerId);
                           setSel({ track: ti, item: ii });
-                          setDrag({ track: ti, item: ii, t: it.t });
+                          setDrag({ track: ti, item: ii, t: it.t, t0: it.t });
                         }}
                       >
                         {studio.t(it.label)}
@@ -255,7 +260,7 @@ export function CinematicEditor({ path }: { path: string }) {
                           e.stopPropagation();
                           (e.currentTarget.parentElement as HTMLElement).setPointerCapture(e.pointerId);
                           setSel({ track: ti, item: ii });
-                          setDrag({ track: ti, item: ii, t: it.t });
+                          setDrag({ track: ti, item: ii, t: it.t, t0: it.t });
                           setTime(it.t);
                         }}
                       />

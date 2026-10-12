@@ -78,7 +78,8 @@ function autoLayout(doc: DialogueDoc): Map<string, { x: number; y: number }> {
 export function DialogueEditor({ path }: { path: string }) {
   const h = useDoc<DialogueDoc>(path);
   const [selected, setSelected] = useState<string | null>(null);
-  const [drag, setDrag] = useState<{ id: string; x: number; y: number; ox: number; oy: number } | null>(null);
+  // x0/y0: where the node was when the button went down (a click without movement records nothing).
+  const [drag, setDrag] = useState<{ id: string; x: number; y: number; x0: number; y0: number; ox: number; oy: number } | null>(null);
   const graphRef = useRef<HTMLDivElement>(null);
   const data = h?.data;
   const layout = useMemo(() => (data ? autoLayout(data) : new Map()), [data]);
@@ -129,8 +130,9 @@ export function DialogueEditor({ path }: { path: string }) {
           }}
           onPointerUp={() => {
             if (!drag) return;
-            const { id, x, y } = drag;
+            const { id, x, y, x0, y0 } = drag;
             setDrag(null);
+            if (Math.abs(x - x0) < 3 && Math.abs(y - y0) < 3) return;
             edit('Déplacer un nœud', (d) => ({ ...d, nodes: d.nodes.map((n) => (n.id === id ? { ...n, editor: { x: Math.round(x), y: Math.round(y) } } : n)) }));
           }}
         >
@@ -179,7 +181,7 @@ export function DialogueEditor({ path }: { path: string }) {
                     setSelected(n.id);
                     if (e.button !== 0) return;
                     const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                    setDrag({ id: n.id, x: p.x, y: p.y, ox: e.clientX - r.left, oy: e.clientY - r.top });
+                    setDrag({ id: n.id, x: p.x, y: p.y, x0: p.x, y0: p.y, ox: e.clientX - r.left, oy: e.clientY - r.top });
                   }}
                   data-testid={`st-node-${n.id}`}
                 >
@@ -397,12 +399,13 @@ function NodeInspector({ h, node, onSelect, onAddLinked }: { h: DocHandle<Dialog
                     <span className="st-spacer" />
                     <ListTools index={i} count={node.branches!.length} onMove={(d) => setNode({ ...node, branches: moveItem(node.branches!, i, d) }, 'Réordonner les branches')} onRemove={() => setNode({ ...node, branches: removeAt(node.branches!, i) }, 'Supprimer une branche')} />
                   </div>
-                  <ConditionEditor value={b.condition} env={env} onChange={(cond, m) => cond && setNode({ ...node, branches: replaceAt(node.branches!, i, { ...b, condition: cond }) }, 'Condition de branche', m ? `b${i}|${m}` : undefined)} />
+                  {/* A branch always has a condition: removing it goes back to « toujours ». */}
+                  <ConditionEditor value={b.condition} env={env} onChange={(cond, m) => setNode({ ...node, branches: replaceAt(node.branches!, i, { ...b, condition: cond ?? { type: 'core.always' } }) }, 'Condition de branche', m ? `b${i}|${m}` : undefined)} />
                   <Row label="alors">{nodeSelect(b.next, (v) => v && setNode({ ...node, branches: replaceAt(node.branches!, i, { ...b, next: v }) }, 'Suite de branche'), false)}</Row>
                 </div>
               ))}
               <div>
-                <button type="button" className="st-btn st-btn--small" onClick={() => setNode({ ...node, branches: [...(node.branches ?? []), { condition: { type: 'core.always' }, next: node.id === data.start ? (ids.find((x) => x !== node.id) ?? node.id) : data.start }] }, 'Nouvelle branche')}>
+                <button type="button" className="st-btn st-btn--small" onClick={() => setNode({ ...node, end: undefined, branches: [...(node.branches ?? []), { condition: { type: 'core.always' }, next: node.id === data.start ? (ids.find((x) => x !== node.id) ?? node.id) : data.start }] }, 'Nouvelle branche')}>
                   ＋ Branche
                 </button>
               </div>

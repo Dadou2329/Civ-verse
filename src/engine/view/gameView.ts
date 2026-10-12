@@ -85,6 +85,8 @@ export class GameView {
       new Engine(canvas, false, { stencil: true, powerPreference: 'high-performance', preserveDrawingBuffer: false, adaptToDeviceRatio: true }, true);
     this.scene = new Scene(this.engine);
     this.scene.skipPointerMovePicking = true;
+    // ctx.view: the escape hatch of packs to the renderer of this game (see @sdk/view).
+    session.view = { kind: 'babylon', native: { engine: this.engine, scene: this.scene } };
     this.instrumentation = new SceneInstrumentation(this.scene);
     this.rig = new CameraRig(this.scene);
     this.scene.activeCamera = this.rig.camera;
@@ -193,11 +195,15 @@ export class GameView {
       inp.consumeLook();
       return;
     }
-    if (s.cinematics.current) {
+    const cinematic = s.cinematics.current;
+    if (cinematic) {
       if (inp.consume('skip')) s.cinematics.skip();
-      p.intent.forward = p.intent.right = 0;
-      inp.consumeLook();
-      return;
+      // A cinematic with `lockPlayer: false` plays while the player keeps control.
+      if (cinematic.lockPlayer !== false) {
+        p.intent.forward = p.intent.right = 0;
+        inp.consumeLook();
+        return;
+      }
     }
     const look = inp.consumeLook();
     const k = 0.0022 * this.mouseSensitivity;
@@ -339,6 +345,7 @@ export class GameView {
   }
 
   dispose(): void {
+    if ((this.session.view?.native as { scene?: unknown } | undefined)?.scene === this.scene) this.session.view = null;
     this.stop();
     this.opts.canvas.removeEventListener('click', this.onCanvasClick);
     window.removeEventListener('resize', this.onResize);

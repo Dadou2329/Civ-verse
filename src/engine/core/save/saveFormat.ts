@@ -8,8 +8,10 @@
  *
  * Every level is versioned: `formatVersion` (this file), `global.schemaVersion`, each civ's
  * `stateVersion` (pack-defined, migrated by the pack), and each mechanic/behavior state version.
- * Loading never silently drops data: unknown entries are kept or reported, failed migrations
- * abort the load with an explicit error.
+ * A save layout, multiverse state or civilization state that cannot be migrated (or comes from a
+ * newer version) aborts the load with an explicit French error. A mechanic or component state
+ * without a migration falls back to its initial value, with a warning in the log. Unknown keys of
+ * the save's top level, of the multiverse state and of each civilization state are kept.
  */
 import { z } from 'zod';
 import type { EntityDoc } from '../content/schemas';
@@ -105,7 +107,7 @@ const LocalCivStateSchema = z.looseObject({
   playTime: z.number(),
 });
 
-export const SaveGameSchema = z.object({
+export const SaveGameSchema = z.looseObject({
   format: z.literal(SAVE_FORMAT),
   formatVersion: z.number().int(),
   engineVersion: z.string(),
@@ -154,6 +156,9 @@ export function parseSave(raw: unknown): { save: SaveGame; warnings: string[] } 
   const global = data.global as Record<string, unknown> | undefined;
   if (global) {
     let gv = Number(global.schemaVersion);
+    if (gv > GLOBAL_SCHEMA_VERSION) {
+      throw new SaveLoadError(`État multivers créé par une version plus récente du jeu (version ${gv}). Mettez le jeu à jour.`);
+    }
     while (gv < GLOBAL_SCHEMA_VERSION) {
       const m = GLOBAL_MIGRATIONS[gv];
       if (!m) throw new SaveLoadError(`Aucune migration de l'état multivers depuis la version ${gv}.`);
@@ -187,10 +192,11 @@ export function migrateCivState(
     );
   }
   while (s.stateVersion < targetVersion) {
-    const m = migrations?.[s.stateVersion];
-    if (!m) throw new SaveLoadError(`Aucune migration d'état pour « ${s.civId} » depuis la version ${s.stateVersion}.`);
-    s = m(s);
-    s.stateVersion++;
+    const from = s.stateVersion;
+    const m = migrations?.[from];
+    if (!m) throw new SaveLoadError(`Aucune migration d’état pour « ${s.civId} » depuis la version ${from}.`);
+    // The version is set here, whatever the migration did with it.
+    s = { ...m(s), stateVersion: from + 1 };
     warnings.push(`État de « ${s.civId} » migré vers la version ${s.stateVersion}.`);
   }
   return { state: s, warnings };

@@ -38,6 +38,8 @@ function Section({ title, sub, children, actions, defaultOpen = true }: { title:
 
 function EntityInspector({ studio, entity }: { studio: Studio; entity: EntityDoc }) {
   const [idDraft, setIdDraft] = useState<string | null>(null);
+  // What is typed in « Étiquettes » (with its commas and spaces) while the field has the focus.
+  const [tagsDraft, setTagsDraft] = useState<string | null>(null);
   const [idError, setIdError] = useState<string | null>(null);
   const id = entity.id;
   const edit = (label: string, fn: (e: EntityDoc) => EntityDoc | void, merge?: string) => studio.editScene(label, (s) => updateEntity(s, id, fn), merge ? `${id}|${merge}` : undefined);
@@ -74,9 +76,10 @@ function EntityInspector({ studio, entity }: { studio: Studio; entity: EntityDoc
           <div className="st-field__label">Étiquettes</div>
           <input
             className="st-input"
-            value={(entity.tags ?? []).join(', ')}
+            value={tagsDraft ?? (entity.tags ?? []).join(', ')}
             placeholder="garde, ronde"
-            onChange={(e) =>
+            onChange={(e) => {
+              setTagsDraft(e.target.value);
               edit(
                 'Étiquettes',
                 (d) =>
@@ -85,8 +88,9 @@ function EntityInspector({ studio, entity }: { studio: Studio; entity: EntityDoc
                     .map((t) => t.trim())
                     .filter(Boolean)),
                 'tags',
-              )
-            }
+              );
+            }}
+            onBlur={() => setTagsDraft(null)}
           />
         </div>
         <div className="st-field">
@@ -176,7 +180,7 @@ function compact(schema: PropSchema, value: Record<string, unknown>): Record<str
 function AddComponent({ studio, entity }: { studio: Studio; entity: EntityDoc }) {
   const groups = new Map<string, { id: string; label: string }[]>();
   for (const [id, { def }] of studio.session.behaviorDefs) {
-    if (entity.components[id]) continue;
+    if (entity.components[id] || def.internal) continue;
     const cat = def.category ?? 'Divers';
     groups.set(cat, [...(groups.get(cat) ?? []), { id, label: def.label }]);
   }

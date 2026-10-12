@@ -63,7 +63,22 @@ export function freeId(existing: Iterable<string>, base: string): string {
   for (let i = 2; ; i++) if (!set.has(`${base}_${i}`)) return `${base}_${i}`;
 }
 
-export function ListTools({ index, count, onMove, onRemove, onDuplicate }: { index: number; count: number; onMove: (d: number) => void; onRemove: () => void; onDuplicate?: () => void }) {
+export function ListTools({
+  index,
+  count,
+  onMove,
+  onRemove,
+  onDuplicate,
+  canRemove = true,
+}: {
+  index: number;
+  count: number;
+  onMove: (d: number) => void;
+  onRemove: () => void;
+  onDuplicate?: () => void;
+  /** False when the list cannot lose this item (the button is shown disabled). */
+  canRemove?: boolean;
+}) {
   return (
     <span className="st-row" style={{ gap: 2 }}>
       <button type="button" className="st-btn st-btn--small st-btn--ghost" title="Monter" disabled={index === 0} onClick={() => onMove(-1)}>
@@ -77,7 +92,7 @@ export function ListTools({ index, count, onMove, onRemove, onDuplicate }: { ind
           ⧉
         </button>
       )}
-      <button type="button" className="st-btn st-btn--small st-btn--ghost st-btn--danger" title="Supprimer" onClick={onRemove}>
+      <button type="button" className="st-btn st-btn--small st-btn--ghost st-btn--danger" title="Supprimer" disabled={!canRemove} onClick={onRemove}>
         ✕
       </button>
     </span>

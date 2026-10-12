@@ -24,6 +24,7 @@ import path from 'node:path';
 import { repoRoot } from './aliases.ts';
 import { createTypecheckService, type TypecheckService } from './typecheckService.ts';
 import { scaffoldScript, type ScaffoldRequest } from './scaffold.ts';
+import { READABLE_EXTENSIONS, WRITABLE_EXTENSIONS, WRITABLE_PACK_DIRS } from '../../src/engine/platform/devApiRules.ts';
 
 const API_PREFIX = '/__civ/api/';
 const MAX_BODY_BYTES = 32 * 1024 * 1024;
@@ -39,10 +40,6 @@ function rootsOf(repo: string): DevRoots {
   return { repo, civ: path.join(repo, 'civilizations'), backups: path.join(repo, '.civ-backups') };
 }
 
-/** Directories inside a pack that the Studio may write to. */
-const WRITABLE_PACK_DIRS = ['content', 'mechanics', 'ui', 'locales', 'scripts'] as const;
-const WRITABLE_EXTENSIONS = ['.json', '.ts', '.tsx'] as const;
-const READABLE_EXTENSIONS = ['.json', '.ts', '.tsx', '.md', '.css'] as const;
 const PACK_ID_RE = /^[a-z][a-z0-9-]*$/;
 
 export class CivApiError extends Error {
@@ -336,7 +333,9 @@ export function civDevPlugin(opts: { root?: string } = {}): Plugin {
         // this API and by the game through lazy imports. Pack scripts (mechanics, UI, views,
         // assets) are re-imported by the Studio. Neither may force-reload the Studio: Vite's
         // default propagation is replaced by a custom event that each page handles itself.
-        const content = /^civilizations\/[^/]+\/(content|locales)\//.test(rel) && rel.endsWith('.json');
+        // Content documents, French texts and the manifest (the game imports manifests eagerly:
+        // without this, saving the manifest from the Studio would reload the whole page).
+        const content = /^civilizations\/[^/]+\/((content|locales)\/.+|manifest)\.json$/.test(rel);
         const script = /^civilizations\/([^/]+)\/(?!seed\/|tests\/).+\.tsx?$/.exec(rel);
         if (!content && !(script && !rel.endsWith('.test.ts'))) return undefined;
         // The concerned modules are invalidated with an HMR timestamp so that the next import

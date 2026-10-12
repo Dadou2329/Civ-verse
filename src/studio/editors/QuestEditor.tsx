@@ -57,7 +57,7 @@ export function QuestEditor({ path }: { path: string }) {
             <strong style={{ color: 'var(--st-text)' }}>Étape {i + 1}</strong>
             <input className="st-input st-input--mono" style={{ width: 160 }} value={stage.id} onChange={(e) => setStage(i, { ...stage, id: e.target.value }, 'Identifiant d’étape', 'id')} />
             <span className="st-spacer" />
-            <ListTools index={i} count={data.stages.length} onMove={(dir) => edit('Réordonner les étapes', (d) => ({ ...d, stages: moveItem(d.stages, i, dir) }))} onRemove={() => data.stages.length > 1 && edit('Supprimer une étape', (d) => ({ ...d, stages: removeAt(d.stages, i) }))} />
+            <ListTools index={i} count={data.stages.length} onMove={(dir) => edit('Réordonner les étapes', (d) => ({ ...d, stages: moveItem(d.stages, i, dir) }))} canRemove={data.stages.length > 1} onRemove={() => edit('Supprimer une étape', (d) => ({ ...d, stages: removeAt(d.stages, i) }))} />
           </div>
           <Row label="Description">
             <TextField value={stage.description} multiline env={{ ...env, keyHint: `quest.${data.id}.${stage.id}` }} onChange={(k, m) => setStage(i, { ...stage, description: k }, 'Description d’étape', m ? `desc|${m}` : undefined)} />

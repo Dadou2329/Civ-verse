@@ -25,7 +25,7 @@ export interface ScaffoldResult {
 
 const PACK_RE = /^[a-z][a-z0-9-]*$/;
 
-/** "porte à résonance" / "ResonanceDoor" → "resonanceDoor" */
+/** "Porte à résonance" → "porteAResonance", "ResonanceDoor" → "resonanceDoor" */
 export function toCamelIdentifier(name: string): string {
   const ascii = name
     .normalize('NFD')

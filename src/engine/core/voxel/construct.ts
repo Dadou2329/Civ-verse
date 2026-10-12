@@ -1,9 +1,9 @@
 /**
  * Construction kit: high-level voxel building operations.
  *
- * Shared by Civilization Studio's building tools and by world seed scripts, so that towns,
- * castles, slums, temples or laboratories are built from walls, floors, roofs and stairs rather
- * than individual cube coordinates. All operations are batched (one change notification).
+ * Used by world seed scripts (through '@sdk/build'), so that towns, castles, slums, temples or
+ * laboratories are built from walls, floors, roofs and stairs rather than individual cube
+ * coordinates. All operations are batched (one change notification).
  */
 import type { Box3i, VoxelVolume } from './volume';
 import { normalizeBox } from './volume';

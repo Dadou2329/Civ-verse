@@ -42,7 +42,8 @@ export function Explorer() {
   return (
     <ul className="st-tree" data-testid="st-explorer">
       {GROUPS.map((g) => {
-        const docs = studio.project.docsOf(pack, g.kind).filter((d) => g.kind !== 'script' || !/\/(seed|tests)\//.test(d.rel));
+        // Seed and test scripts are tools, not pack code: they are not listed.
+        const docs = studio.project.docsOf(pack, g.kind).filter((d) => g.kind !== 'script' || !/^(seed|tests)\//.test(d.rel));
         if (g.kind === 'script' && !devApi.available()) return null;
         return (
           <li key={g.kind}>
@@ -140,11 +141,15 @@ const DEFAULT_ENV: EnvironmentDoc = {
 function NewDocModal({ studio, kind, onClose }: { studio: Studio; kind: DocKind; onClose: () => void }) {
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
-  const [size, setSize] = useState<[number, number, number]>([64, 32, 64]);
+  // Typed as text and clamped when the scene is created (a keystroke must not be corrected).
+  const [size, setSize] = useState<[string, string, string]>(['64', '32', '64']);
   const [error, setError] = useState<string | null>(null);
   const pack = studio.packId!;
   const create = () => {
     if (!/^[A-Za-z0-9_-]+$/.test(id)) return setError('Identifiant : lettres, chiffres, _ et - uniquement.');
+    const dims = size.map((v) => Math.round(Number(v)));
+    if (dims.some((n) => !Number.isFinite(n) || n < 8 || n > 256)) return setError('Taille : de 8 à 256 blocs dans chaque direction.');
+    const [sx, sy, sz] = dims as [number, number, number];
     const [dir, ext] = DIR[kind]!;
     const rel = `${dir}${id}${ext}`;
     if (studio.project.doc(`civilizations/${pack}/${rel}`) && !studio.project.doc(`civilizations/${pack}/${rel}`)!.deleted) return setError('Ce fichier existe déjà.');
@@ -153,9 +158,9 @@ function NewDocModal({ studio, kind, onClose }: { studio: Studio; kind: DocKind;
       let data: unknown;
       switch (kind) {
         case 'scene': {
-          const v = new VoxelVolume(size[0], size[1], size[2]);
-          const ground = Math.min(4, size[1] - 2);
-          for (let y = 0; y < ground; y++) for (let z = 0; z < size[2]; z++) for (let x = 0; x < size[0]; x++) v.set(x, y, z, y === ground - 1 ? 'core:grass' : 'core:dirt');
+          const v = new VoxelVolume(sx, sy, sz);
+          const ground = Math.min(4, sy - 2);
+          for (let y = 0; y < ground; y++) for (let z = 0; z < sz; z++) for (let x = 0; x < sx; x++) v.set(x, y, z, y === ground - 1 ? 'core:grass' : 'core:dirt');
           const env = studio.sceneDoc()?.environment ?? DEFAULT_ENV;
           data = {
             format: 'civverse.scene',
@@ -164,7 +169,7 @@ function NewDocModal({ studio, kind, onClose }: { studio: Studio; kind: DocKind;
             name: studio.newTextKey(`scene.${id}`, label),
             environment: structuredClone(env),
             voxels: volumeToDoc(v),
-            entities: [{ id: 'depart', position: [size[0] / 2 + 0.5, ground, size[2] / 2 + 0.5], components: { 'core.spawn': { isDefault: true } } }],
+            entities: [{ id: 'depart', position: [Math.floor(sx / 2) + 0.5, ground, Math.floor(sz / 2) + 0.5], components: { 'core.spawn': { isDefault: true } } }],
           } satisfies SceneDoc;
           const manifestPath = `civilizations/${pack}/manifest.json`;
           if (studio.project.doc(manifestPath)) studio.editDoc<{ scenes: string[] }>(manifestPath, 'Déclarer la scène', (m) => ({ ...m, scenes: [...(m.scenes ?? []), id] }));
@@ -211,7 +216,7 @@ function NewDocModal({ studio, kind, onClose }: { studio: Studio; kind: DocKind;
           data = { format: 'civverse.logic', version: 1, id, title: label, rules: [] };
           break;
       }
-      studio.project.create(pack, rel, data);
+      studio.createDoc(pack, rel, data);
     });
     void studio.openDoc(`civilizations/${pack}/${DIR[kind]![0]}${id}${DIR[kind]![1]}`);
     onClose();
@@ -239,8 +244,8 @@ function NewDocModal({ studio, kind, onClose }: { studio: Studio; kind: DocKind;
                 max={256}
                 value={size[i]}
                 onChange={(e) => {
-                  const n = [...size] as [number, number, number];
-                  n[i] = Math.max(8, Math.min(256, Number(e.target.value) || 8));
+                  const n = [...size] as [string, string, string];
+                  n[i] = e.target.value;
                   setSize(n);
                 }}
               />

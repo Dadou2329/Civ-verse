@@ -12,6 +12,7 @@ export function DebugOverlay() {
   const civ = s.civ;
   const vars = civ ? Object.entries(s.vars.snapshot(civ.id)) : [];
   const errors = s.logHub.errors().slice(-4);
+  const missing = s.i18n.missing();
   return (
     <div className="cv-debug" data-testid="debug">
       <div>
@@ -45,6 +46,11 @@ export function DebugOverlay() {
       <div>
         <b>{t('ui.debug.locks')}</b> {s.player.lockReasons().join(', ') || '—'} · {t('ui.debug.listeners')} {s.leakedListeners}
       </div>
+      {missing.length > 0 && (
+        <div className="cv-debug__errors">
+          ⚠ {t('ui.debug.missingTexts', { count: missing.length })} {missing.slice(0, 6).join(', ')}
+        </div>
+      )}
       <details>
         <summary>{t('ui.debug.vars', { count: vars.length })}</summary>
         <pre>{vars.map(([k, v]) => `${k} = ${JSON.stringify(v)}`).join('\n')}</pre>

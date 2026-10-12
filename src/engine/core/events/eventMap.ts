@@ -1,15 +1,10 @@
 /**
- * Typed gameplay events.
+ * Typed gameplay events of the engine.
  *
- * Packs add their own events with declaration merging:
- *
- *   declare module '@engine/core/events/eventMap' {
- *     interface CivEventMap { 'door.rankChanged': { rank: number; previous: number } }
- *   }
- *
- * and describe them for the Studio with `defineEvent(...)` (payload fields, label).
- * Events not declared in TypeScript can still be emitted (payload: Record<string, unknown>),
- * which is what data-driven rules do.
+ * Packs describe their own events with `defineEvent(...)` (payload fields and label, shown in the
+ * Studio's rule and objective editors). In TypeScript their payload is `Record<string, unknown>`:
+ * packs only import '@sdk', so they do not augment this interface. Data-driven rules emit and
+ * match events by name the same way.
  */
 export interface CivEventMap {
   'civ.started': { civId: string };

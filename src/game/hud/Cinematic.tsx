@@ -23,7 +23,7 @@ export function CinematicOverlay() {
       </div>
       {doc && subtitle && (
         <div className={`cv-subtitle cv-subtitle--${size}`} data-testid="subtitle">
-          {subtitle.speaker && <span className="cv-subtitle__speaker">{subtitle.speaker} : </span>}
+          {subtitle.speaker && <span className="cv-subtitle__speaker">{`${subtitle.speaker}\u00a0: `}</span>}
           {subtitle.text}
         </div>
       )}

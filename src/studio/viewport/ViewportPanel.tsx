@@ -60,7 +60,7 @@ export function ViewportPanel({ active }: { active: boolean }) {
   const hover = vp?.hover;
   const hint =
     studio.tool === 'select'
-      ? 'Clic : sélectionner · Ctrl : ajouter/retirer · Clic droit maintenu + ZQSD/WASD : se déplacer (A/E : descendre/monter, Maj : vite) · Molette : avancer · F : cadrer'
+      ? 'Clic : sélectionner · Ctrl : ajouter/retirer · Clic droit maintenu + ZQSD (WASD en QWERTY) : se déplacer, A/E (Q/E en QWERTY) : descendre/monter, Maj : vite · Molette : avancer · F : cadrer'
       : studio.tool === 'box'
         ? corner
           ? `Premier coin : ${corner.join(', ')} — cliquez le coin opposé (Maj : vider) · Échap : annuler`
@@ -124,7 +124,7 @@ export function ViewportPanel({ active }: { active: boolean }) {
           <button
             type="button"
             className={`st-btn ${studio.snap.enabled ? 'is-active' : ''}`}
-            title="Aimanter les déplacements et rotations"
+            title="Aimanter les déplacements, rotations et échelles"
             onClick={() => {
               studio.snap.enabled = !studio.snap.enabled;
               studio.changed();
@@ -352,7 +352,7 @@ function PrefabModal({ studio, onClose }: { studio: Studio; onClose: () => void 
       entities: inside.map((e) => ({ ...clone(e), position: [e.position[0] - min[0], e.position[1] - min[1], e.position[2] - min[2]] })),
     };
     try {
-      studio.project.create(studio.packId!, `content/prefabs/${id}.prefab.json`, doc);
+      studio.createDoc(studio.packId!, `content/prefabs/${id}.prefab.json`, doc);
       studio.print('success', `Préfabriqué « ${doc.label} » créé (${size.join(' × ')} blocs, ${doc.entities.length} entités). Enregistrez pour l’écrire sur le disque.`);
       onClose();
     } catch (err) {

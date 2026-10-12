@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { definePanel, useT, useVar, type PanelProps } from '@sdk/ui';
+import { definePanel, useCiv, useT, useVar, type PanelProps } from '@sdk/ui';
 import { RANKS } from '../mechanics/access';
 import { PlaqueIcon } from './glyphs';
 import './door.css';
@@ -7,12 +7,13 @@ import './door.css';
 /** The permission map of the threshold plaque (key R). */
 function PermissionsPanel({ close }: PanelProps) {
   const t = useT();
+  const toggleKey = useCiv().settings.of<{ permissionsKey: string }>('door.access').permissionsKey;
   const rank = useVar<number>('door.rank') ?? -1;
   const temporary = useVar<boolean>('door.rankTemporary') === true;
   const palm = useVar<boolean>('door.palmRevealed') === true;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Escape' || e.code === 'KeyR') {
+      if (e.code === 'Escape' || e.code === toggleKey) {
         e.preventDefault();
         e.stopPropagation();
         close();
@@ -20,7 +21,7 @@ function PermissionsPanel({ close }: PanelProps) {
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [close]);
+  }, [close, toggleKey]);
   return (
     <div className="cv-modal door-perms" data-testid="door-permissions">
       <h2>{t('door.perms.title')}</h2>

@@ -15,6 +15,7 @@ import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:
 import type { UserConfig, ConfigEnv } from 'vite';
 import { CivApiError, checkRequestOrigin, civDevPlugin, resolvePackPath } from './civDevPlugin.ts';
 import viteConfig from '../../vite.config.ts';
+import { isWritablePackFile } from '../../src/engine/platform/devApiRules.ts';
 
 type Middleware = (req: IncomingMessage, res: ServerResponse, next: () => void) => void;
 interface Reply {
@@ -74,6 +75,9 @@ describe('resolvePackPath', () => {
     expect(statusOf(() => resolvePackPath('civilizations/door/ui/RankPlaque.tsx', 'write'))).toBe('ok');
     expect(statusOf(() => resolvePackPath('civilizations/door/locales/fr-FR.json', 'write'))).toBe('ok');
     expect(statusOf(() => resolvePackPath('civilizations/door/manifest.json', 'write'))).toBe('ok');
+    expect(statusOf(() => resolvePackPath('civilizations/door/assets/blocks.ts', 'write'))).toBe('ok');
+    expect(statusOf(() => resolvePackPath('civilizations/door/view/spinner.ts', 'write'))).toBe('ok');
+    expect(statusOf(() => resolvePackPath('civilizations/core/models/doors.ts', 'write'))).toBe('ok');
     expect(statusOf(() => resolvePackPath('civilizations/door/seed/verrou.ts', 'read'))).toBe('ok');
   });
 
@@ -107,7 +111,7 @@ describe('resolvePackPath', () => {
       'civilizations/door/pack.ts',
       'civilizations/door/seed/verrou.ts',
       'civilizations/door/tests/door.playthrough.test.ts',
-      'civilizations/door/assets/blocks.ts',
+      'civilizations/door/scripts/outil.ts',
       'civilizations/door/content/script.js',
       'civilizations/door/content/page.html',
       'civilizations/door/content',
@@ -115,6 +119,30 @@ describe('resolvePackPath', () => {
       expect(statusOf(() => resolvePackPath(p, 'write')), p).toBe(403);
     }
     expect(statusOf(() => resolvePackPath('civilizations/door/content/image.png', 'read'))).toBe(403);
+  });
+});
+
+describe('shared write rules (server and Studio)', () => {
+  it('agree with the server on every kind of path', () => {
+    for (const rel of [
+      'manifest.json',
+      'content/scenes/verrou.scene.json',
+      'locales/fr-FR.json',
+      'mechanics/locks.ts',
+      'ui/RankPlaque.tsx',
+      'view/spinner.ts',
+      'assets/blocks.ts',
+      'models/doors.ts',
+      'pack.ts',
+      'seed/verrou.ts',
+      'tests/door.playthrough.test.ts',
+      'scripts/outil.ts',
+      'content/page.html',
+      'content/.cache.json',
+    ]) {
+      const server = statusOf(() => resolvePackPath(`civilizations/door/${rel}`, 'write')) === 'ok';
+      expect(isWritablePackFile(rel), rel).toBe(server);
+    }
   });
 });
 

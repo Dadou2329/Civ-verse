@@ -17,7 +17,7 @@ export async function validateInStudio(studio: Studio): Promise<ValidationReport
   const session = await GameSession.create({ mode: 'headless', provider, ui: new HeadlessUi(), locale: 'fr-FR' });
   try {
     // Texts used literally in the pack's code (`t('pack.x')`) must exist too.
-    const scripts = studio.project.docsOf(pack, 'script').filter((d) => !/\/(seed|tests)\//.test(d.rel));
+    const scripts = studio.project.docsOf(pack, 'script').filter((d) => !/^(seed|tests)\//.test(d.rel));
     await Promise.all(scripts.filter((d) => !d.loaded).map((d) => studio.project.load(d.path).catch(() => d)));
     const codeKeys = scripts
       .filter((d) => d.loaded && typeof d.data === 'string')

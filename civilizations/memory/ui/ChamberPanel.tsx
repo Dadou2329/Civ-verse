@@ -22,9 +22,10 @@ function ChamberPanel({ close }: PanelProps) {
   const api = ctx.mechanics.get<ChamberApi>('memory.chamber');
   const echoes = ctx.mechanics.get<EchoApi>('memory.echoes');
   const [selected, setSelected] = useState<string | null>(null);
+  const toggleKey = ctx.settings.of<{ chamberKey: string }>('memory.chamber').chamberKey;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Escape' || e.code === 'KeyM') {
+      if (e.code === 'Escape' || e.code === toggleKey) {
         e.preventDefault();
         e.stopPropagation();
         close();
@@ -32,7 +33,7 @@ function ChamberPanel({ close }: PanelProps) {
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [close]);
+  }, [close, toggleKey]);
   if (!view) return null;
   const known = view.order.filter((id) => api.shard(id));
   const current = selected && known.includes(selected) ? selected : (known[0] ?? null);

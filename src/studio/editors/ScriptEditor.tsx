@@ -12,6 +12,7 @@ import * as monaco from 'monaco-editor';
 import EditorWorker from 'monaco-editor/editor/editor.worker?worker';
 import TsWorker from 'monaco-editor/language/typescript/ts.worker?worker';
 import { devApi, type DevDiagnostic } from '@engine/platform/devApi';
+import { isWritablePackFile } from '@engine/platform/devApiRules';
 import { useStudio } from '../hooks';
 import { nextRevision } from '../core/project';
 
@@ -44,6 +45,8 @@ export default function ScriptEditor({ path }: { path: string }) {
   const [checking, setChecking] = useState(false);
   const doc = studio.doc(path);
   const dirty = !!doc && studio.project.isDirty(doc);
+  // pack.ts and files outside the editable folders are shown, but saved only from a code editor.
+  const writable = studio.writable && !!doc && isWritablePackFile(doc.rel);
 
   const check = async () => {
     setChecking(true);
@@ -77,7 +80,7 @@ export default function ScriptEditor({ path }: { path: string }) {
 
   const save = async () => {
     const d = studio.doc(path);
-    if (!d) return;
+    if (!d || !studio.writable || !isWritablePackFile(d.rel)) return;
     try {
       await studio.project.save(d);
       studio.print('success', `Script enregistré : ${path} — le pack est rechargé.`, path);
@@ -99,6 +102,7 @@ export default function ScriptEditor({ path }: { path: string }) {
       const model = monaco.editor.getModel(uri) ?? monaco.editor.createModel(String(studio.doc(path)!.data ?? ''), path.endsWith('.css') ? 'css' : 'typescript', uri);
       const editor = monaco.editor.create(hostRef.current, {
         model,
+        readOnly: !(studio.writable && isWritablePackFile(d.rel)),
         theme: 'vs-dark',
         automaticLayout: true,
         fontFamily: 'JetBrains Mono, monospace',
@@ -109,7 +113,7 @@ export default function ScriptEditor({ path }: { path: string }) {
       });
       editorRef.current = editor;
       editor.onDidChangeModelContent(() => {
-        studio.project.setData(path, editor.getValue(), nextRevision());
+        if (studio.writable && isWritablePackFile(d.rel)) studio.project.setData(path, editor.getValue(), nextRevision());
       });
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => void save());
       void check();
@@ -133,9 +137,15 @@ export default function ScriptEditor({ path }: { path: string }) {
         <button type="button" className="st-btn st-btn--small" onClick={() => void check()} disabled={checking}>
           {checking ? 'Vérification…' : 'Vérifier les types'}
         </button>
-        <button type="button" className="st-btn st-btn--small st-btn--primary" onClick={() => void save()} disabled={!dirty} data-testid="st-script-save">
-          Enregistrer et recharger (Ctrl+S)
-        </button>
+        {writable ? (
+          <button type="button" className="st-btn st-btn--small st-btn--primary" onClick={() => void save()} disabled={!dirty} data-testid="st-script-save">
+            Enregistrer et recharger (Ctrl+S)
+          </button>
+        ) : (
+          <span className="st-badge" title="Ce fichier n’est pas dans un dossier modifiable par le Studio (mechanics, ui, view, assets, models) : modifiez-le dans votre éditeur de code.">
+            Lecture seule
+          </span>
+        )}
       </div>
       <div className="st-code__host" ref={hostRef} />
       <div className="st-code__diags">

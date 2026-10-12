@@ -18,6 +18,8 @@ import { describe, expect, it } from 'vitest';
 import { GlobContentProvider } from '@engine/platform/globContent';
 import { createHeadlessGame } from '@engine/core/testing/headless';
 import { extractCodeKeys, validateCivilization } from '@engine/core/packs/validate';
+import { ENGINE_VERSION } from '@engine/core/version';
+import pkg from '../../package.json';
 
 const packSources = import.meta.glob(['/civilizations/*/{mechanics,ui,view,assets}/**/*.{ts,tsx}', '!**/*.test.ts'], {
   query: '?raw',
@@ -31,10 +33,15 @@ function codeKeysOf(packId: string): { key: string; file: string }[] {
     .flatMap(([file, code]) => extractCodeKeys(code).map((key) => ({ key, file: file.slice(1) })));
 }
 
-/** Content present when this test was written: packs may grow, never silently shrink. */
+/**
+ * Content present when this test was last updated: packs may grow, never silently shrink. When
+ * content is removed on purpose, lower the number here in the same commit (and say why).
+ * (The key hints of the HUDs became live key labels: one text key less in each pack; Memory's
+ * count includes the shard texts of content/rules.json, checked since then.)
+ */
 const BASELINE: Record<string, { scenes: number; entities: number; dialogues: number; quests: number; cinematics: number; rules: number; keysChecked: number }> = {
-  door: { scenes: 2, entities: 211, dialogues: 16, quests: 5, cinematics: 8, rules: 13, keysChecked: 504 },
-  memory: { scenes: 2, entities: 173, dialogues: 12, quests: 5, cinematics: 8, rules: 16, keysChecked: 535 },
+  door: { scenes: 2, entities: 211, dialogues: 16, quests: 5, cinematics: 8, rules: 13, keysChecked: 503 },
+  memory: { scenes: 2, entities: 173, dialogues: 12, quests: 5, cinematics: 8, rules: 16, keysChecked: 567 },
 };
 
 const REQUIRED = {
@@ -51,6 +58,10 @@ const REQUIRED = {
 } as const;
 
 describe('Test J — existing content and features are preserved', () => {
+  it('keeps the engine version and the package version in step', () => {
+    expect(ENGINE_VERSION).toBe(pkg.version);
+  });
+
   it('lists the bundled packs: core library, Door and Memory', async () => {
     const { session } = await createHeadlessGame(new GlobContentProvider());
     expect([...session.manifestIssues.values()].flat()).toEqual([]);

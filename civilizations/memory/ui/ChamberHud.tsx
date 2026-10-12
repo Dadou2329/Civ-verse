@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { defineHud, useCiv, useT, useUiStore } from '@sdk/ui';
+import { defineHud, keyLabel, useCiv, useT, useUiStore } from '@sdk/ui';
 import type { ChamberApi } from '../mechanics/chamber';
 import { Gem } from './gem';
 import './memory.css';
@@ -30,7 +30,7 @@ function ChamberHud() {
           </span>
         ))}
       </div>
-      <span className="mem-hud__key">{t('memory.hud.key')}</span>
+      <span className="mem-hud__key">{keyLabel(ctx.settings.of<{ chamberKey: string }>('memory.chamber').chamberKey)}</span>
     </div>
   );
 }
@@ -85,7 +85,7 @@ function TouchCaption() {
   if (!shown) return null;
   return (
     <div key={shown.n} className="mem-touch" data-testid="mem-touch">
-      « {shown.text} »
+      {shown.text}
     </div>
   );
 }

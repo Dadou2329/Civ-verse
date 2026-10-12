@@ -84,7 +84,8 @@ export const chamberMechanic = defineMechanic({
   settings: {
     shards: prop.list(prop.object(SHARD_FIELDS), { label: 'Éclats' }),
     instrument: prop.item({ label: 'Instrument portable (permet d’ancrer partout)' }),
-    chamberKey: prop.string({ label: 'Touche « Souvenirs »', default: 'KeyM' }),
+    // C (« chambre ») is at the same place and has the same label on AZERTY and QWERTY.
+    chamberKey: prop.string({ label: 'Touche « Souvenirs »', default: 'KeyC' }),
   },
   setup(ctx, state, settings): ChamberApi {
     const defs = new Map<string, ShardDef>(settings.shards.map((s) => [s.id, s as ShardDef]));

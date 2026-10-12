@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { defineHud, useT, useUiStore, useVar } from '@sdk/ui';
+import { defineHud, keyLabel, useCiv, useT, useUiStore, useVar } from '@sdk/ui';
 import { PlaqueIcon } from './glyphs';
 import './door.css';
 
@@ -9,6 +9,7 @@ import './door.css';
  */
 function RankPlaque() {
   const t = useT();
+  const permissionsKey = useCiv().settings.of<{ permissionsKey: string }>('door.access').permissionsKey;
   const rank = useVar<number>('door.rank') ?? -1;
   const temporary = useVar<boolean>('door.rankTemporary') === true;
   const flash = useUiStore<number>('door.rankFlash') ?? 0;
@@ -28,7 +29,7 @@ function RankPlaque() {
         <strong>{t(`door.rank.${Math.min(2, rank)}`)}</strong>
         {temporary && <em className="door-plaque__temp">{t('door.hud.temporary')}</em>}
       </div>
-      <span className="door-plaque__key">{t('door.hud.permissionsHint')}</span>
+      <span className="door-plaque__key">{keyLabel(permissionsKey)}</span>
     </div>
   );
 }

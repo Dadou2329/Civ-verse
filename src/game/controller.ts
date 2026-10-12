@@ -55,7 +55,24 @@ export class GameController {
     const session = await GameSession.create({ mode: opts.mode ?? 'play', provider: opts.provider ?? new GlobContentProvider(), ui: new ReactUiBridge(), locale: 'fr-FR' });
     const c = new GameController(session, opts.storage ?? new BrowserSaveStorage());
     if (import.meta.env.DEV) (window as unknown as { __civ: unknown }).__civ = { controller: c, session };
+    // The game (not a Studio playtest) starts from the player's last automatic save, so that the
+    // civilization selection shows the real progress and starting a civilization from it never
+    // overwrites saved progress with a fresh state.
+    if (!opts.storage && (opts.mode ?? 'play') === 'play') await c.preloadAutosave();
     return c;
+  }
+
+  private async preloadAutosave(): Promise<void> {
+    try {
+      const raw = await this.storage.load('auto');
+      if (!raw) return;
+      const { save, warnings } = parseSave(raw);
+      for (const w of warnings) this.session.log.info(w);
+      await this.session.applySaveGame(save);
+    } catch (err) {
+      // An unreadable autosave must not prevent the game from starting: « Continuer » reports it.
+      this.session.log.warn('Sauvegarde automatique illisible au démarrage', err);
+    }
   }
 
   /**
@@ -165,9 +182,14 @@ export class GameController {
   }
 
   async save(slot: SaveSlot): Promise<boolean> {
-    if (!this.session.civ) return false;
+    // Without a civilization in progress, only the automatic save is written (multiverse state
+    // and the civilizations' progress, e.g. after an ending).
+    if (!this.session.civ && slot !== 'auto') return false;
     try {
-      const label = `${this.session.t(this.session.civ.manifest.name)} — ${this.session.world ? this.session.t(this.session.world.doc.name) : ''}`;
+      const civ = this.session.civ;
+      const label = civ
+        ? `${this.session.t(civ.manifest.name)} — ${this.session.world ? this.session.t(this.session.world.doc.name) : ''}`
+        : this.session.t('ui.registry.title');
       const data = this.session.buildSaveGame(slot, label);
       await this.storage.save(slot, data);
       if (slot !== 'auto') this.session.notify(this.session.t('ui.save.done'), 'success');

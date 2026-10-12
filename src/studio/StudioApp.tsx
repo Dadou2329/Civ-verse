@@ -62,6 +62,11 @@ function Shell() {
       const scene = studio.sceneDoc();
       const pose = viewportRef.current?.cameraPose();
       if (here && (!scene || !pose)) return;
+      // Content is tested as edited; code runs as last saved (it is compiled by the dev server).
+      const unsavedScripts = studio.project.dirty().filter((d) => d.kind === 'script');
+      if (unsavedScripts.length) {
+        studio.print('warning', `Scripts non enregistrés (${unsavedScripts.map((d) => d.rel).join(', ')}) : le test utilise leur dernière version enregistrée.`);
+      }
       setPlay(
         here
           ? { here: true, scene: scene!.id, position: { x: pose!.position[0], y: pose!.position[1] - 1.6, z: pose!.position[2] }, yaw: pose!.yaw, pitch: -pose!.pitch }
@@ -78,27 +83,32 @@ function Shell() {
   // Keyboard shortcuts.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (play) return;
       const ctrl = e.ctrlKey || e.metaKey;
-      if (ctrl && e.code === 'KeyS') {
+      // Letter shortcuts follow the printed key (e.key), so they are the same on AZERTY and
+      // QWERTY: Ctrl+Z is the key printed Z (by position it would be Ctrl+W, which closes the tab
+      // on AZERTY). Camera flight and the tool digits use positions (e.code).
+      const letter = e.key.length === 1 ? e.key.toLowerCase() : '';
+      if (ctrl && letter === 's') {
         e.preventDefault();
-        void studio.saveAll();
+        if (studio.writable) void studio.saveAll();
+        else studio.print('warning', 'Studio en lecture seule : lancez « npm run dev » pour enregistrer.');
         return;
       }
-      if (ctrl && e.code === 'KeyZ' && !isTyping(e)) {
+      if (play) return;
+      if (ctrl && letter === 'z' && !isTyping(e)) {
         e.preventDefault();
         if (e.shiftKey) studio.redo();
         else studio.undo();
         return;
       }
-      if (ctrl && e.code === 'KeyY' && !isTyping(e)) {
+      if (ctrl && letter === 'y' && !isTyping(e)) {
         e.preventDefault();
         studio.redo();
         return;
       }
       // While flying (right button held), letters move the camera.
       if (isTyping(e) || !viewportVisible || viewportRef.current?.flying) return;
-      if (ctrl && e.code === 'KeyD') {
+      if (ctrl && letter === 'd') {
         e.preventDefault();
         studio.duplicateSelection();
         return;
@@ -113,8 +123,8 @@ function Shell() {
         studio.changed();
         return;
       }
-      if (studio.tool === 'select' && (e.code === 'KeyW' || e.code === 'KeyE' || e.code === 'KeyR')) {
-        studio.gizmo = e.code === 'KeyW' ? 'move' : e.code === 'KeyE' ? 'rotate' : 'scale';
+      if (studio.tool === 'select' && (letter === 'w' || letter === 'e' || letter === 'r')) {
+        studio.gizmo = letter === 'w' ? 'move' : letter === 'e' ? 'rotate' : 'scale';
         studio.changed();
         return;
       }
@@ -211,7 +221,7 @@ function TopBar({ onPlay, onValidate, playing }: { onPlay: (here: boolean) => vo
           value={studio.packId ?? ''}
           data-testid="st-pack"
           onChange={(e) => {
-            if (studio.project.dirty().length > 0 && !confirm('Des modifications ne sont pas enregistrées. Changer de pack quand même ?')) return;
+            if (studio.project.dirty().length > 0 && !confirm('Des modifications ne sont pas encore enregistrées : elles restent en mémoire et seront écrites au prochain « Enregistrer ». Changer de pack ?')) return;
             void studio.openPack(e.target.value);
           }}
         >

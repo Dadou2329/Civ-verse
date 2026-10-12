@@ -5,7 +5,7 @@
  * all art original, lets packs define their own looks without image files, and allows a future
  * graphics upgrade to swap generators (or real images) without touching worlds or gameplay.
  *
- * Generators are pure functions (no DOM): they run in the browser, in workers and in Node tests.
+ * Generators are pure functions (no DOM): they run in the browser and in Node (tests, tools).
  */
 import { Rng, hash3 } from '../../util/rng';
 import { type RGB, hexToRgb, mixRgb, shade } from '../../util/color';

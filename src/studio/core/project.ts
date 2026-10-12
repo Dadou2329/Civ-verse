@@ -177,6 +177,8 @@ export class StudioProject {
   }
 
   isDirty(doc: StudioDoc): boolean {
+    // A document created then removed before any save leaves nothing to write.
+    if (doc.isNew && doc.deleted) return false;
     return doc.isNew || doc.deleted || doc.revision !== doc.savedRevision;
   }
 

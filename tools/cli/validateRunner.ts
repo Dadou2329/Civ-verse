@@ -58,7 +58,8 @@ export async function runValidation(only: string[] = []): Promise<ValidationSumm
     );
     for (const i of [...e, ...w]) console.log(format(i));
   }
-  // Engine and core library code keys (game UI).
+  // The game interface's own keys (src/game, src/engine) are checked by
+  // tests/acceptance/localization.test.ts.
   console.log(`\n${errors} erreur(s), ${warnings} avertissement(s).`);
   return { errors, warnings };
 }

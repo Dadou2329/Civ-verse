@@ -274,6 +274,12 @@ function JsonInput({ value, onChange }: { value: unknown; onChange: OnChange }) 
 export function TextField({ value: key, multiline, onChange, env }: { value: string; multiline?: boolean; onChange: OnChange<string>; env: FieldEnv }) {
   const studio = env.studio;
   const listId = useId();
+  // Single line or multi-line is decided once per text (not on every keystroke, which would
+  // replace the field while typing and lose the focus).
+  const current = key ? (studio.session.i18n.raw(key) ?? '') : '';
+  const [shape, setShape] = useState(() => ({ key, long: !!multiline || current.length > 48 }));
+  if (shape.key !== key) setShape({ key, long: !!multiline || current.length > 48 });
+  const long = shape.key === key ? shape.long : !!multiline || current.length > 48;
   if (!key) {
     return (
       <button
@@ -296,10 +302,15 @@ export function TextField({ value: key, multiline, onChange, env }: { value: str
   return (
     <div>
       {owned ? (
-        multiline || text.length > 48 ? (
+        long ? (
           <textarea className="st-textarea" value={text} onChange={(e) => studio.setText(key, e.target.value)} />
         ) : (
-          <input className="st-input" value={text} onChange={(e) => studio.setText(key, e.target.value)} />
+          <input
+            className="st-input"
+            value={text}
+            onChange={(e) => studio.setText(key, e.target.value)}
+            onBlur={() => text.length > 48 && setShape({ key, long: true })}
+          />
         )
       ) : (
         <div className="st-row">

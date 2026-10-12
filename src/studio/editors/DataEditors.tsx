@@ -446,11 +446,13 @@ export function LocaleEditor({ path }: { path: string }) {
             <tr key={k}>
               <td className="st-mono">{k}</td>
               <td>
-                {(data[k] ?? '').length > 60 ? (
-                  <textarea className="st-textarea" value={data[k] ?? ''} onChange={(e) => setText(k, e.target.value)} />
-                ) : (
-                  <input className={`st-input ${(data[k] ?? '') === '' ? 'is-invalid' : ''}`} value={data[k] ?? ''} onChange={(e) => setText(k, e.target.value)} />
-                )}
+                {/* Always the same element (its height follows the text): typing never loses the focus. */}
+                <textarea
+                  className={`st-textarea st-textarea--fit ${(data[k] ?? '') === '' ? 'is-invalid' : ''}`}
+                  rows={Math.min(6, Math.max(1, Math.ceil((data[k] ?? '').length / 70)))}
+                  value={data[k] ?? ''}
+                  onChange={(e) => setText(k, e.target.value)}
+                />
               </td>
               <td>
                 <button
@@ -505,8 +507,8 @@ export function PrefabEditor({ path }: { path: string }) {
         disabled={!studio.scenePath || !viewportRef.current}
         onClick={() => {
           placePrefab(studio, data);
-          const scene = studio.tabs.find((t) => t.kind === 'scene');
-          if (scene) void studio.openDoc(scene.path);
+          // Back to the scene where the prefab was just placed.
+          if (studio.scenePath) void studio.openDoc(studio.scenePath);
         }}
       >
         Placer dans la scène ouverte

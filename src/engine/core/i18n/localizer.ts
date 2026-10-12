@@ -10,8 +10,8 @@
  *   "{count, plural, one {# éclat} other {# éclats}}" → French plural rule (0 and 1 are singular)
  *   "{g, select, f {prête} m {prêt} other {prêt·e}}"  → select
  *
- * A missing key renders as ⟦key⟧ (never as invented English text) and is recorded so that tests,
- * the debug overlay and the Studio can report it.
+ * A missing key renders as ⟦key⟧ (never as invented English text) and is recorded (`missing()`):
+ * the debug overlay (F3) lists them; validation and the tests check keys before they are shown.
  */
 export type StringTable = Record<string, string>;
 export type MessageParams = Record<string, string | number | boolean | null | undefined>;

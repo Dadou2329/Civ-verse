@@ -175,8 +175,8 @@ test('H — Door and Memory each show their own interface', async () => {
   await expect(memRoot).toHaveAttribute('data-civ', 'memory');
   const memAccent = await memRoot.evaluate((el) => getComputedStyle(el).getPropertyValue('--civ-accent').trim());
   expect(memAccent).not.toBe(doorAccent);
-  // Its own key opens its own panel (M → chamber), in French.
-  await tap(page, 'KeyM');
+  // Its own key opens its own panel (C → memory chamber), in French.
+  await tap(page, 'KeyC');
   await expect(page.getByTestId('mem-chamber')).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId('door-permissions')).toHaveCount(0);
   expect(errors).toEqual([]);

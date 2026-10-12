@@ -381,8 +381,9 @@ export interface SettingsApi {
 }
 
 /**
- * Deliberate escape hatch to the rendering engine. Null when running headless. The concrete type
- * (Babylon scene, engine, helpers) is documented in '@sdk/view'.
+ * Deliberate escape hatch to the rendering engine: `native` is `{ engine, scene }` (Babylon.js)
+ * while a GameView renders the session (game, Studio playtest). Null headless and in the Studio's
+ * editor viewport. Prefer visuals and view effects ('@sdk/view').
  */
 export interface ViewBridge {
   readonly kind: 'babylon';
