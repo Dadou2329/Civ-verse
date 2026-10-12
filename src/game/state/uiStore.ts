@@ -69,8 +69,9 @@ export class ReactUiBridge implements UiBridge {
   notify(n: UiNotification): void {
     const id = counter++;
     const entry = { ...n, id };
+    // Removed by the HUD once it has been on screen for its duration (see Notifications.tsx), so
+    // a notification raised while a cinematic hides the HUD is shown afterwards, not lost.
     useUi.setState((s) => ({ notifications: [...s.notifications.slice(-5), entry] }));
-    setTimeout(() => useUi.setState((s) => ({ notifications: s.notifications.filter((x) => x.id !== id) })), n.duration * 1000);
   }
 
   showLocation(title: string, subtitle?: string): void {

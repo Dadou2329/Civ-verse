@@ -48,6 +48,9 @@ test('A — start Door, move, jump, interact and talk, in French and without err
   await waitForSession(page, (s: { cinematics: { current: unknown } }) => s.cinematics.current === null, 60_000, 'cinématique passée');
   await page.keyboard.up('Space');
   await expect(page.getByTestId('objectives')).toContainText('Sortir de la cellule', { timeout: 30_000 });
+  // The objectives' targets are marked on screen with their distance (« Afficher les repères d’objectif »).
+  await expect(page.getByTestId('objective-marker').first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId('objective-marker').first()).toContainText(/\d+\s*m/);
 
   // Move: Z/W walks toward the handleless door of the cell.
   const start = await playerPosition(page);

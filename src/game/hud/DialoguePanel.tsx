@@ -58,7 +58,11 @@ export function DialoguePanel() {
     else if (view.canAdvance) controller.session.dialogue.advance();
   };
   return (
-    <div className={`cv-dialogue ${view.isPlayer ? 'cv-dialogue--player' : ''}`} onClick={onClick} data-testid="dialogue">
+    <div
+      className={`cv-dialogue cv-dialogue--text-${controller.settings.subtitles} ${view.isPlayer ? 'cv-dialogue--player' : ''}`}
+      onClick={onClick}
+      data-testid="dialogue"
+    >
       {view.speakerName && <div className="cv-dialogue__speaker">{view.speakerName}</div>}
       <p className="cv-dialogue__text" aria-live="polite">
         {text.slice(0, shown)}

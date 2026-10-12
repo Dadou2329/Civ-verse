@@ -27,6 +27,13 @@ describe('Test D — story progression', () => {
     expect(session.quests.status('DOOR_Q01_EMPREINTE')).not.toBe('active');
     expect(session.quests.isObjectiveDone('DOOR_Q00_REVEIL', 'sortir')).toBe(false);
     expect(session.vars.get('door.rank')).toBe(-1);
+    // The objective names its target, which the HUD marks just above the door.
+    const sortir = session.quests.view().find((q) => q.id === 'DOOR_Q00_REVEIL')?.objectives.find((o) => o.id === 'sortir');
+    expect(sortir).toMatchObject({ target: 'cell_door', targetScene: null, done: false });
+    const door = session.world!.entities.get('cell_door')!;
+    const mark = session.world!.markerPoint(door);
+    expect(mark.y).toBeGreaterThan(door.position.y + 1.5);
+    expect(Math.hypot(mark.x - door.position.x, mark.z - door.position.z)).toBeLessThan(1);
 
     // Objective 1 — leave the cell: the handleless door answers the palm.
     await openDoor(session, 'cell_door');

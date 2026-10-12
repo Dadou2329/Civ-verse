@@ -4,6 +4,7 @@ import { useUi } from '../state/uiStore';
 import { DialoguePanel } from './DialoguePanel';
 import { Crosshair, InteractionPrompt } from './Prompt';
 import { ObjectiveTracker } from './Objectives';
+import { ObjectiveMarkers } from './Markers';
 import { LocationTitle, Notifications } from './Notifications';
 import { Barks, CinematicOverlay, ScreenFx, useCinematicHidesHud } from './Cinematic';
 import { AbilityBar } from './Abilities';
@@ -113,6 +114,7 @@ export function Hud() {
           </div>
           <CivHudSlot slot="center" />
           <CivHudSlot slot="overlay" />
+          {show('objectives') && overlay === null && <ObjectiveMarkers />}
           <Barks />
         </>
       )}

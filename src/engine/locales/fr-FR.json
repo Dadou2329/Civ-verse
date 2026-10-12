@@ -30,6 +30,7 @@
 
   "ui.objectives.title": "Objectifs",
   "ui.objectives.optional": "(facultatif)",
+  "ui.marker.distance": "{n} m",
 
   "ui.journal.title": "Journal",
   "ui.journal.main": "Quêtes principales",

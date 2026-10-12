@@ -1,10 +1,11 @@
 import { useQuestViews, useT } from '../hooks';
+import { displayedQuest } from './Markers';
 
 /** Tracked quest and its current objectives. */
 export function ObjectiveTracker() {
   const quests = useQuestViews();
   const t = useT();
-  const q = quests.find((x) => x.tracked && x.status === 'active') ?? quests.find((x) => x.status === 'active');
+  const q = displayedQuest(quests);
   if (!q) return null;
   return (
     <section className="cv-objectives" aria-label={t('ui.objectives.title')} data-testid="objectives">

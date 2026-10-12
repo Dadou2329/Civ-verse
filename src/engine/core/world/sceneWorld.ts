@@ -197,6 +197,23 @@ export class SceneWorld {
     if (this.entityLights.has(e.id)) this.lightSourcesDirty = true;
   }
 
+  /** Point just above an entity — top of its colliders, else 1 m above its origin — for on-screen markers. */
+  markerPoint(e: RuntimeEntity): Vec3 {
+    let top = -Infinity;
+    let cx = 0;
+    let cz = 0;
+    let n = 0;
+    for (const cp of e.colliderParts.values()) {
+      const b = rotatedBounds(e.position.x, e.position.y, e.position.z, cp.local, e.yaw);
+      top = Math.max(top, b.maxY);
+      cx += (b.minX + b.maxX) / 2;
+      cz += (b.minZ + b.maxZ) / 2;
+      n++;
+    }
+    if (n === 0) return { x: e.position.x, y: e.position.y + 1, z: e.position.z };
+    return { x: cx / n, y: top + 0.3, z: cz / n };
+  }
+
   /** Ground height near a position (for spawning/teleport), or null. */
   groundAt(x: number, z: number, nearY: number): number | null {
     const info = this.paletteInfo();

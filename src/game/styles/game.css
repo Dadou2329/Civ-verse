@@ -737,6 +737,19 @@ button {
   font-size: 1.22rem;
   line-height: 1.5;
 }
+/* « Taille des sous-titres » also applies to dialogue lines and replies. */
+.cv-dialogue--text-small .cv-dialogue__text {
+  font-size: 1.05rem;
+}
+.cv-dialogue--text-large .cv-dialogue__text {
+  font-size: 1.5rem;
+}
+.cv-dialogue--text-small .cv-choice {
+  font-size: 0.95rem;
+}
+.cv-dialogue--text-large .cv-choice {
+  font-size: 1.25rem;
+}
 .cv-dialogue__ghost {
   visibility: hidden;
 }
@@ -883,6 +896,40 @@ button {
   to {
     opacity: 0;
   }
+}
+/* Objective markers (setting « Afficher les repères d’objectif »). */
+.cv-markers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cv-marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transform: translate(-50%, -100%);
+  color: var(--civ-accent, #e8c27a);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.cv-marker.is-edge {
+  transform: translate(-50%, -50%);
+  opacity: 0.85;
+}
+.cv-marker.is-optional {
+  opacity: 0.6;
+}
+.cv-marker__gem {
+  width: 11px;
+  height: 11px;
+  transform: rotate(45deg);
+  border: 2px solid currentColor;
+  background: rgba(10, 10, 14, 0.45);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
 }
 .cv-bark {
   position: absolute;

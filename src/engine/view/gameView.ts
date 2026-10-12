@@ -332,6 +332,12 @@ export class GameView {
     this.colliderDebug.isPickable = false;
   }
 
+  /** Size of the canvas in CSS pixels: the coordinate space of `project`. */
+  get screenSize(): { width: number; height: number } {
+    const c = this.engine.getRenderingCanvas();
+    return { width: c?.clientWidth ?? 0, height: c?.clientHeight ?? 0 };
+  }
+
   /** Screen position (CSS pixels) of a world point, or null when behind the camera. */
   project(p: { x: number; y: number; z: number }): { x: number; y: number } | null {
     const cam = this.rig.camera;

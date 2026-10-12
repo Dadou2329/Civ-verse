@@ -31,7 +31,10 @@ export interface QuestObjectiveView {
   done: boolean;
   optional: boolean;
   progress: string | null;
+  /** Entity marked on screen while the quest is tracked. */
   target: string | null;
+  /** Scene of the target (null: the current scene). */
+  targetScene: string | null;
 }
 
 export interface QuestView {
@@ -362,6 +365,7 @@ export class QuestSystem {
             optional: !!o.optional,
             progress,
             target: o.target ?? null,
+            targetScene: o.targetScene ?? null,
           });
         }
       }
