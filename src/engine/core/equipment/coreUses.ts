@@ -211,9 +211,9 @@ function finishTool(use: ItemUseContext<{ tool: string; reach: number; doneSound
   st.sound = null;
   use.ctx.equipment.setProgress(null);
   use.hand.play('use', 0.35);
-  if (use.props.doneSound) use.ctx.audio.play(use.props.doneSound);
-  const e = use.ctx.world.entity(st.target);
-  e?.behavior<ToolTargetApi>('core.toolTarget')?.complete(use.itemId, use.props.tool);
+  const target = use.ctx.world.entity(st.target)?.behavior<ToolTargetApi>('core.toolTarget');
+  if (use.props.doneSound && (target?.toolSound ?? true)) use.ctx.audio.play(use.props.doneSound);
+  target?.complete(use.itemId, use.props.tool);
 }
 
 export const shootUse = defineItemUse({

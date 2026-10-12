@@ -1,0 +1,98 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_voisins",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          "next": "apres1"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "fete"
+              },
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "qualification"
+              }
+            ]
+          },
+          "next": "qualif1"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "preuves1"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "defaut",
+      "speaker": "ada",
+      "text": "mask.dlg.c1_voisins.defaut",
+      "end": true
+    },
+    {
+      "id": "preuves1",
+      "speaker": "ada",
+      "text": "mask.dlg.c1_voisins.preuves1",
+      "next": "preuves2"
+    },
+    {
+      "id": "preuves2",
+      "speaker": "pol",
+      "text": "mask.dlg.c1_voisins.preuves2",
+      "end": true
+    },
+    {
+      "id": "qualif1",
+      "speaker": "ada",
+      "text": "mask.dlg.c1_voisins.qualif1",
+      "next": "qualif2"
+    },
+    {
+      "id": "qualif2",
+      "speaker": "pol",
+      "text": "mask.dlg.c1_voisins.qualif2",
+      "end": true
+    },
+    {
+      "id": "apres1",
+      "speaker": "ada",
+      "text": "mask.dlg.c1_voisins.apres1",
+      "expression": "happy",
+      "next": "apres2"
+    },
+    {
+      "id": "apres2",
+      "speaker": "pol",
+      "text": "mask.dlg.c1_voisins.apres2",
+      "next": "apres3"
+    },
+    {
+      "id": "apres3",
+      "speaker": "ada",
+      "text": "mask.dlg.c1_voisins.apres3",
+      "end": true
+    }
+  ]
+}

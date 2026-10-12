@@ -288,7 +288,7 @@ const ENV_SCHEMA: PropSchema = {
   ),
 };
 
-const PRESETS = ['dust', 'embers', 'motes', 'smoke', 'sparks', 'memory', 'stars'] as const;
+const PRESETS = ['dust', 'embers', 'motes', 'smoke', 'sparks', 'memory', 'stars', 'rain'] as const;
 const PRESET_LABEL: Record<(typeof PRESETS)[number], string> = {
   dust: 'Poussière',
   embers: 'Braises',
@@ -297,6 +297,7 @@ const PRESET_LABEL: Record<(typeof PRESETS)[number], string> = {
   sparks: 'Étincelles',
   memory: 'Éclats de mémoire',
   stars: 'Étoiles',
+  rain: 'Pluie',
 };
 
 function SceneInspector({ studio, scene }: { studio: Studio; scene: SceneDoc }) {

@@ -1,0 +1,190 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_octave",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.cagettesPosees",
+                "op": ">=",
+                "value": 3
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.entraide",
+                  "op": "==",
+                  "value": true
+                }
+              },
+              {
+                "type": "core.var",
+                "var": "mask.entraideChoix",
+                "op": "==",
+                "value": "collaboration"
+              }
+            ]
+          },
+          "next": "signe"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.cagettesPosees",
+                "op": ">=",
+                "value": 3
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.entraide",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "renvoi_mireille"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.entraideChoix",
+                  "op": "exists",
+                  "value": ""
+                }
+              }
+            ]
+          },
+          "next": "renvoi"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.entraideChoix",
+                "op": "exists",
+                "value": ""
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.entraide",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "porter"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.entraideChoix",
+            "op": "==",
+            "value": "collaboration"
+          },
+          "next": "apres_colla"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.entraideChoix",
+            "op": "==",
+            "value": "repartition"
+          },
+          "next": "apres_repa"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "signe",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.signe",
+      "actions": [
+        {
+          "type": "mask.validerPreuve",
+          "preuve": "entraide"
+        }
+      ],
+      "next": "signe2"
+    },
+    {
+      "id": "signe2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_octave.signe2",
+      "next": "signe3"
+    },
+    {
+      "id": "signe3",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.signe3",
+      "end": true
+    },
+    {
+      "id": "renvoi_mireille",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.renvoi_mireille",
+      "end": true
+    },
+    {
+      "id": "renvoi",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.renvoi",
+      "end": true
+    },
+    {
+      "id": "porter",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.porter",
+      "end": true
+    },
+    {
+      "id": "apres_colla",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.apres_colla",
+      "end": true
+    },
+    {
+      "id": "apres_repa",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.apres_repa",
+      "end": true
+    },
+    {
+      "id": "defaut",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_octave.defaut",
+      "end": true
+    }
+  ]
+}

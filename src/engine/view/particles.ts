@@ -28,7 +28,7 @@ function softDot(scene: Scene): Texture {
   return tex;
 }
 
-export type ParticlePreset = 'dust' | 'embers' | 'motes' | 'smoke' | 'sparks' | 'memory' | 'stars';
+export type ParticlePreset = 'dust' | 'embers' | 'motes' | 'smoke' | 'sparks' | 'memory' | 'stars' | 'rain';
 
 export interface ParticleOptions {
   preset: ParticlePreset;
@@ -46,7 +46,8 @@ const c4 = (hex: string, a: number, k = 1) => {
 };
 
 export function createParticles(scene: Scene, name: string, emitter: Vector3, opts: ParticleOptions): ParticleSystem {
-  const capacity = Math.max(8, Math.round(400 * opts.quality));
+  // Rain needs many short-lived streaks to read as rain.
+  const capacity = Math.max(8, Math.round((opts.preset === 'rain' ? 1600 : 400) * opts.quality));
   const ps = new ParticleSystem(name, capacity, scene);
   ps.particleTexture = softDot(scene);
   ps.emitter = emitter;
@@ -160,6 +161,30 @@ export function createParticles(scene: Scene, name: string, emitter: Vector3, op
       ps.maxEmitPower = 3;
       ps.gravity = new Vector3(0, -6, 0);
       break;
+    case 'rain': {
+      // Light streaks falling from the top of the box (stretched along their motion).
+      ps.billboardMode = ParticleSystem.BILLBOARDMODE_STRETCHED;
+      ps.minEmitBox = new Vector3(-sx / 2, sy, -sz / 2);
+      ps.maxEmitBox = new Vector3(sx / 2, sy, sz / 2);
+      ps.color1 = c4(base, 0.6, 1.1);
+      ps.color2 = c4(base, 0.45);
+      ps.colorDead = c4(base, 0.2);
+      ps.minSize = 0.3;
+      ps.maxSize = 0.4;
+      ps.minScaleX = 0.13;
+      ps.maxScaleX = 0.17;
+      ps.minScaleY = 3.2;
+      ps.maxScaleY = 4.2;
+      const fall = 11;
+      ps.minLifeTime = Math.max(0.2, sy / fall);
+      ps.maxLifeTime = Math.max(0.2, sy / fall);
+      ps.emitRate = 900 * rate;
+      ps.direction1 = new Vector3(0.04, -1, 0.02);
+      ps.direction2 = new Vector3(0.1, -1, 0.06);
+      ps.minEmitPower = fall * 0.95;
+      ps.maxEmitPower = fall * 1.05;
+      break;
+    }
   }
   ps.start();
   return ps;

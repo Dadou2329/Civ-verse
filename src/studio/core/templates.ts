@@ -28,6 +28,7 @@ export const ENTITY_TEMPLATES: EntityTemplate[] = [
     texts: { 'core.sign.text': 'NOUVEAU PANNEAU' },
   },
   { id: 'particles', label: 'Particules', category: 'Monde', base: 'particules', components: { 'core.particles': { preset: 'dust', color: '#fff2d8', rate: 1, size: [4, 3, 4] } } },
+  { id: 'ladder', label: 'Échelle (volume grimpable)', category: 'Monde', base: 'echelle', components: { 'core.ladder': { size: [1, 4, 0.8], speed: 2.8 } } },
   { id: 'sound', label: 'Source sonore', category: 'Monde', base: 'son', components: { 'core.sound': { sound: 'core:amb_wind', volume: 0.6 } } },
   {
     id: 'pickup',

@@ -147,6 +147,7 @@ export const particlesBehavior = defineBehavior({
         { value: 'sparks', label: 'Étincelles' },
         { value: 'memory', label: 'Éclats de mémoire' },
         { value: 'stars', label: 'Étoiles' },
+        { value: 'rain', label: 'Pluie' },
       ],
       { label: 'Préréglage', default: 'dust' },
     ),

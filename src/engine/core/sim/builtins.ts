@@ -11,6 +11,7 @@ import { npcBehavior } from '../behaviors/npc';
 import { interactableBehavior, pickupBehavior, readableBehavior } from '../behaviors/interactive';
 import { triggerBehavior, zoneBehavior } from '../behaviors/volumes';
 import { conditionalBehavior } from '../behaviors/conditional';
+import { ladderBehavior } from '../behaviors/ladder';
 import { COMBAT_BEHAVIORS } from '../behaviors/combat';
 import { CORE_ITEM_USES } from '../equipment/coreUses';
 import type { BehaviorDefinition, ItemUseDefinition } from '../packs/definitions';
@@ -34,6 +35,7 @@ export const ENGINE_BEHAVIORS = [
   triggerBehavior,
   zoneBehavior,
   conditionalBehavior,
+  ladderBehavior,
   ...COMBAT_BEHAVIORS,
 ] as unknown as BehaviorDefinition<PropSchema, unknown>[];
 

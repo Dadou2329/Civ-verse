@@ -5,6 +5,7 @@
 import { SceneBuilder, fillBox, clearBox, gableRoof, scatter, line, type EnvironmentDoc, type VoxelVolume } from '@sdk/build';
 import { deco, light, model, npc, sign } from '@sdk/build';
 import { SIZE, G, ATELIER, CANAL, QUAI_SUD, QUAI_NORD, PONTS, MARCHE, BUREAU, ESTRADE, MOULIN, RAIL, railY, ECHAFAUDAGES, STATION, ETAGES, P } from './layout.ts';
+import { buildChapitre1 } from './chapitre1.ts';
 
 /** Shorthands for the conditions of the Prologue quest. */
 const stage = (st: string) => ({ type: 'core.questStage', quest: 'prologue', stage: st });
@@ -397,8 +398,9 @@ function marche(s: SceneBuilder): void {
     model(s, 'etal_tissus', 'mask:etal_tissus', [58.5, G, 70.5], 90);
     model(s, 'etal_masques', 'mask:etal_masques', [86.5, G, 70.5], 270);
     model(s, 'etal_fruits_2', 'mask:etal_fruits', [86.5, G, 58.5], 270);
-    npc(s, 'marchande_fruits', [56.5, G, 58.5], 90, { character: 'mask:marchande_fruits', name: 'mask.npc.marchande_fruits', barks: ['mask.bark.fruits.1', 'mask.bark.fruits.2'], barkInterval: 18 });
-    npc(s, 'marchand_tissus', [56.5, G, 70.5], 90, { character: 'mask:marchand_tissus', name: 'mask.npc.marchand_tissus', barks: ['mask.bark.tissus.1'], barkInterval: 22 });
+    // Mireille (fruit) and Octave (fabric), rivals for the best corner of the square (Chapter I).
+    npc(s, 'marchande_fruits', [56.5, G, 58.5], 90, { character: 'mask:marchande_fruits', name: 'mask.npc.mireille', dialogue: 'c1_mireille', barks: ['mask.bark.fruits.1', 'mask.bark.fruits.2'], barkInterval: 18 });
+    npc(s, 'marchand_tissus', [56.5, G, 70.5], 90, { character: 'mask:marchand_tissus', name: 'mask.npc.octave', dialogue: 'c1_octave', barks: ['mask.bark.tissus.1'], barkInterval: 22 });
     npc(s, 'marchande_masques', [88.5, G, 70.5], 270, { character: 'mask:marchande_masques', name: 'mask.npc.marchande_masques', barks: ['mask.bark.masques.1', 'mask.bark.masques.2'], barkInterval: 20 });
     npc(s, 'habitant_marche_1', [70.5, G, 56.5], 0, { character: 'mask:habitant_b', name: 'mask.npc.habitant', mode: 'wander', wanderRadius: 7, speed: 1.2 });
     npc(s, 'habitant_marche_2', [78.5, G, 74.5], 180, { character: 'mask:habitant_d', name: 'mask.npc.habitante', mode: 'wander', wanderRadius: 6, speed: 1.1 });
@@ -705,6 +707,7 @@ export function buildRives(): ReturnType<SceneBuilder['build']> {
   moulin(s);
   monteCharge(s);
   habitants(s);
+  buildChapitre1(s, RIVES_ENV);
   s.entity('spawn_chambre', P.spawnChambre, { 'core.spawn': { isDefault: true } }, { yaw: 0 });
   s.entity('spawn_quai', [38.5, G, 40.5], { 'core.spawn': {} }, { yaw: 90 });
   s.entity('zone_rives', [72, G, 50], { 'core.zone': { name: 'mask.zone.rives', subtitle: 'mask.zone.rives.sub', size: [144, 24, 100], offset: [0, -2, 0], showTitle: false, music: '', ambience: '' } });

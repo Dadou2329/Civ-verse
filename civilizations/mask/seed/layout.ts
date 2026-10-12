@@ -89,3 +89,79 @@ export const JUNO_VOLTIGE: [number, number, number][] = [
   [118.5, railY(78) + 1, 78.5],
   [115.5, STATION.top + 1, 89.2],
 ];
+
+// ---------------------------------------------------------------------------------------------
+// Chapter I « Courir plus haut »
+// ---------------------------------------------------------------------------------------------
+
+/** The washerwomen's terrace on the north quay, and their sloped footbridge over the canal. */
+export const LAVOIR = { x0: 16, x1: 26, z0: 48, z1: 52, top: 10 };
+/** Footbridge deck x range; it slopes from the terrace (z 47, height 10) down to z 43 (height 8). */
+export const PASSERELLE = { x0: 22, x1: 24 };
+
+/**
+ * The qualifying course, between the stage and the cliff: two low walls, ledge A (ladder 1),
+ * a gap, ledge B (the training wheel, ladder 2), then C and D carved into the cliff, with a
+ * wider gap between them, and the flag on D.
+ */
+export const COURSE = {
+  corridor: { x0: 59, x1: 75 },
+  murets: [92, 95],
+  A: { x0: 59, x1: 67, z0: 97, z1: 99, top: 13 },
+  B: { x0: 70, x1: 78, z0: 97, z1: 99, top: 13 },
+  C: { x0: 69, x1: 77, z0: 100, z1: 103, top: 18 },
+  D: { x0: 59, x1: 65, z0: 100, z1: 103, top: 18 },
+};
+
+/** Vaurel's study, hidden in the rock under the Jardins d'Or (only seen in a cinematic). */
+export const CABINET = { x0: 100, x1: 108, z0: 137, z1: 143, floor: 46 };
+
+/** Masts around the fountain that carry the garlands of the party. */
+export const MATS_FETE: [number, number][] = [
+  [68, 59],
+  [78, 59],
+  [68, 69],
+  [78, 69],
+];
+
+export const P1 = {
+  /** Where the hero starts the morning after the Prologue (on the quay, toward the market). */
+  lendemain: [38.5, G, 40.5] as [number, number, number],
+  junoBureau: [95.2, G, 66.5] as [number, number, number],
+  junoGuichet: [101.2, G, 63.6] as [number, number, number],
+  lysPorte: [95.6, G, 65.2] as [number, number, number],
+  lysBureau: [99.6, G, 67.4] as [number, number, number],
+  commis: [104.5, G, 65.5] as [number, number, number],
+  automate: [62.5, G, 64.5] as [number, number, number],
+  caisseMasques: [36.8, G, 24.3] as [number, number, number],
+  bancEssai: [39.3, G + 0.94, 23.7] as [number, number, number],
+  /** The split mask, held in the test bench's clamps (in front of its bulb). */
+  masqueFendu: [39.3, G + 1.2, 23.86] as [number, number, number],
+  lysAtelier: [38.1, G, 25.2] as [number, number, number],
+  herosAtelier: [39.4, G, 25.4] as [number, number, number],
+  rosalie: [22.6, LAVOIR.top, 50.9] as [number, number, number],
+  /** The fountain corner the two merchants want. */
+  emplacement: [79.2, G, 64.5] as [number, number, number],
+  etalFontaineFruits: [80.5, G, 61.5] as [number, number, number],
+  etalFontaineTissus: [80.5, G, 67.5] as [number, number, number],
+  mireilleFontaine: [82.4, G, 61.5] as [number, number, number],
+  octaveFontaine: [82.4, G, 67.5] as [number, number, number],
+  cagettes: [
+    [60.6, G, 57.1],
+    [60.9, G, 60.2],
+    [60.5, G, 72.3],
+  ] as [number, number, number][],
+  arche: [66.5, G, 90.2] as [number, number, number],
+  departParcours: [66.5, G + 1, 87] as [number, number, number],
+  kael: [69.6, G + 1, 85.6] as [number, number, number],
+  kaelFin: [67.8, G + 1, 85.2] as [number, number, number],
+  apresParcours: [66.2, G + 1, 84.6] as [number, number, number],
+  echelle1: [63.5, G, 96.6] as [number, number, number],
+  echelle2: [72.5, COURSE.B.top, 99.6] as [number, number, number],
+  roue: [76.5, COURSE.B.top, 99.85] as [number, number, number],
+  drapeau: [61.5, COURSE.D.top, 101.5] as [number, number, number],
+  junoEstrade: [62.4, G + 1, 84.2] as [number, number, number],
+  lysEstrade: [63.6, G + 1, 83.4] as [number, number, number],
+  vaurel: [104.5, CABINET.floor + 1, 141.6] as [number, number, number],
+  bureauVaurel: [104.5, CABINET.floor + 1, 140.1] as [number, number, number],
+};

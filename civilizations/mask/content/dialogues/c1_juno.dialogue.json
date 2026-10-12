@@ -1,0 +1,183 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_juno",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "fete"
+              },
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "qualification"
+              }
+            ]
+          },
+          "next": "qualif"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "preuves"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "bureau"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.relaisJuno",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "next": "guichet"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "bureau"
+          },
+          "next": "j1"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "j1",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.j1",
+      "expression": "happy",
+      "next": "j2"
+    },
+    {
+      "id": "j2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_juno.j2",
+      "next": "j3"
+    },
+    {
+      "id": "j3",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.j3",
+      "choices": [
+        {
+          "id": "sourire",
+          "text": "mask.dlg.c1_juno.j3.sourire",
+          "next": "j4a"
+        },
+        {
+          "id": "go",
+          "text": "mask.dlg.c1_juno.j3.go",
+          "next": "j4b"
+        }
+      ]
+    },
+    {
+      "id": "j4a",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.j4a",
+      "expression": "happy",
+      "next": "j5"
+    },
+    {
+      "id": "j4b",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.j4b",
+      "next": "j5"
+    },
+    {
+      "id": "j5",
+      "text": "",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.relaisJuno",
+          "value": true
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "juno",
+          "target": "juno_guichet",
+          "run": false,
+          "wait": false
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "guichet",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.guichet",
+      "end": true
+    },
+    {
+      "id": "preuves",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.preuves",
+      "next": "preuves2"
+    },
+    {
+      "id": "preuves2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_juno.preuves2",
+      "next": "preuves3"
+    },
+    {
+      "id": "preuves3",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.preuves3",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "qualif",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.qualif",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.apres",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "defaut",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_juno.defaut",
+      "end": true
+    }
+  ]
+}

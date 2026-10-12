@@ -1,0 +1,149 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_rosalie",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.ancrages",
+                "op": ">=",
+                "value": 3
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.courage",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "signe"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.preuve.courage",
+            "op": "==",
+            "value": true
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.pluie",
+            "op": "==",
+            "value": true
+          },
+          "next": "pendant"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.courageDemande",
+            "op": "==",
+            "value": true
+          },
+          "next": "rappel"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "demande1"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "demande1",
+      "speaker": "rosalie",
+      "text": "mask.dlg.c1_rosalie.demande1",
+      "expression": "worried",
+      "next": "demande2"
+    },
+    {
+      "id": "demande2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_rosalie.demande2",
+      "next": "demande3"
+    },
+    {
+      "id": "demande3",
+      "speaker": "rosalie",
+      "text": "mask.dlg.c1_rosalie.demande3",
+      "next": "demande4"
+    },
+    {
+      "id": "demande4",
+      "speaker": "player",
+      "text": "mask.dlg.c1_rosalie.demande4",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.courageDemande",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "rappel",
+      "speaker": "rosalie",
+      "text": "mask.dlg.c1_rosalie.rappel",
+      "end": true
+    },
+    {
+      "id": "pendant",
+      "speaker": "rosalie",
+      "text": "mask.dlg.c1_rosalie.pendant",
+      "expression": "worried",
+      "end": true
+    },
+    {
+      "id": "signe",
+      "speaker": "rosalie",
+      "text": "mask.dlg.c1_rosalie.signe",
+      "expression": "happy",
+      "actions": [
+        {
+          "type": "mask.validerPreuve",
+          "preuve": "courage"
+        }
+      ],
+      "next": "signe2"
+    },
+    {
+      "id": "signe2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_rosalie.signe2",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "rosalie",
+      "text": "mask.dlg.c1_rosalie.apres",
+      "end": true
+    },
+    {
+      "id": "defaut",
+      "speaker": "rosalie",
+      "text": "mask.dlg.c1_rosalie.defaut",
+      "end": true
+    }
+  ]
+}

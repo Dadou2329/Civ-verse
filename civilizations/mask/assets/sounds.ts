@@ -142,6 +142,90 @@ export const maskSounds = [
       ],
     },
   }),
+  // ---- Chapter I -----------------------------------------------------------------------------
+  defineSound({
+    id: 'mask:cran',
+    label: 'Cran de réglage',
+    category: 'sfx',
+    recipe: {
+      variation: 0.05,
+      layers: [
+        noise('white', { filter: { type: 'bandpass', freq: 3200, q: 8 }, duration: 0.025, gain: 0.22 }),
+        osc('triangle', 1175, { delay: 0.03, duration: 0.12, gain: 0.08 }),
+        osc('triangle', 1568, { delay: 0.09, duration: 0.18, gain: 0.06 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'mask:glissade',
+    label: 'Cagette qui glisse sur les planches mouillées',
+    category: 'sfx',
+    recipe: {
+      variation: 0.1,
+      layers: [
+        noise('pink', { filter: { type: 'bandpass', freq: 600, freqEnd: 1400, q: 2 }, attack: 0.05, duration: 1.1, release: 0.3, gain: 0.2 }),
+        noise('white', { filter: { type: 'bandpass', freq: 4200, q: 6 }, delay: 0.1, duration: 0.6, gain: 0.05 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'mask:pluie',
+    label: 'Pluie sur les toits et les planches',
+    category: 'sfx',
+    recipe: {
+      loopSeconds: 4,
+      layers: [
+        noise('pink', { filter: { type: 'highpass', freq: 900 }, attack: 0.5, duration: 4, release: 0.5, gain: 0.16 }),
+        noise('white', { filter: { type: 'bandpass', freq: 5200, q: 1.5 }, attack: 0.5, duration: 4, release: 0.5, gain: 0.05 }),
+        noise('white', { filter: { type: 'bandpass', freq: 2400, q: 9 }, delay: 0.2, duration: 0.02, gain: 0.06, repeat: { count: 12, interval: 0.31 } }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'mask:tonnerre',
+    label: 'Coup de tonnerre',
+    category: 'sfx',
+    recipe: {
+      layers: [
+        noise('brown', { filter: { type: 'lowpass', freq: 900, freqEnd: 160 }, attack: 0.01, duration: 0.5, release: 2.6, gain: 0.7 }),
+        noise('brown', { filter: { type: 'lowpass', freq: 220 }, delay: 0.4, attack: 0.3, duration: 1.8, release: 1.5, gain: 0.45 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'mask:tampon',
+    label: 'Coup de tampon',
+    category: 'sfx',
+    recipe: {
+      layers: [
+        noise('brown', { filter: { type: 'lowpass', freq: 400 }, duration: 0.08, gain: 0.6 }),
+        osc('sine', 160, { freqEnd: 70, duration: 0.15, gain: 0.3 }),
+        osc('triangle', 784, { delay: 0.18, duration: 0.25, gain: 0.05 }),
+        osc('triangle', 1046.5, { delay: 0.3, duration: 0.4, gain: 0.05 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'mask:sifflet',
+    label: 'Coup de sifflet du départ',
+    category: 'sfx',
+    recipe: {
+      layers: [osc('sine', 2350, { attack: 0.01, duration: 0.55, release: 0.1, gain: 0.12, vibrato: { rate: 34, depth: 90 } }), noise('white', { filter: { type: 'bandpass', freq: 2400, q: 4 }, duration: 0.5, gain: 0.04 })],
+    },
+  }),
+  defineSound({
+    id: 'mask:filament',
+    label: 'Trame qui répond (filament bleu)',
+    category: 'sfx',
+    recipe: {
+      layers: [
+        osc('sine', 330, { freqEnd: 990, attack: 0.3, duration: 1.4, release: 0.6, gain: 0.08, vibrato: { rate: 6, depth: 14 } }),
+        osc('triangle', 1320, { freqEnd: 1980, delay: 0.2, attack: 0.2, duration: 1.2, release: 0.5, gain: 0.03, vibrato: { rate: 11, depth: 25 } }),
+        noise('white', { filter: { type: 'bandpass', freq: 6000, q: 5 }, delay: 0.3, attack: 0.4, duration: 1.1, release: 0.4, gain: 0.03 }),
+        noise('white', { filter: { type: 'bandpass', freq: 3000, q: 10 }, delay: 1.6, duration: 0.04, gain: 0.15 }),
+      ],
+    },
+  }),
   // ---- Ambience ------------------------------------------------------------------------------
   defineSound({
     id: 'mask:amb_rives',
@@ -223,6 +307,59 @@ export const victoryTheme = defineMusic({
       { instrument: PAD, notes: 'G3+B3+D4:2 C3+E3+G3:2 D3+F#3+A3:2 G3+B3+D4:2' },
       { instrument: BASS, notes: 'G2:2 C2:2 D2:2 G1:2' },
       { instrument: KICK, notes: 'G1:1 G1:1 G1:1 G1:1 G1:2 G1:2' },
+    ],
+  },
+});
+
+export const feteTheme = defineMusic({
+  id: 'mask:music.fete',
+  label: 'La fête du quartier',
+  recipe: {
+    bpm: 132,
+    reverb: 0.3,
+    loop: true,
+    tracks: [
+      {
+        instrument: { ...PLUCK, gain: 0.11 },
+        notes:
+          'D5:0.5 D5:0.5 E5:0.5 F#5:0.5 A5:1 F#5:0.5 E5:0.5 D5:0.5 E5:0.5 F#5:0.5 E5:0.5 D5:1 B4:1 ' +
+          'G4:0.5 B4:0.5 D5:0.5 G5:0.5 F#5:1 E5:0.5 D5:0.5 C#5:0.5 D5:0.5 E5:0.5 C#5:0.5 A4:2',
+      },
+      { instrument: PAD, notes: 'D3+F#3+A3:4 B2+D3+F#3:4 G2+B2+D3:4 A2+C#3+E3:4' },
+      { instrument: BASS, notes: repeat('D2:1 A2:1', 2) + ' ' + repeat('B1:1 F#2:1', 2) + ' ' + repeat('G1:1 D2:1', 2) + ' ' + repeat('A1:1 E2:1', 2) },
+      { instrument: KICK, notes: repeat('D1:1', 16) },
+      { instrument: TICK, notes: repeat('-:0.5 A6:0.25 A6:0.25', 16) },
+    ],
+  },
+});
+
+export const qualificationTheme = defineMusic({
+  id: 'mask:music.qualification',
+  label: 'La qualification',
+  recipe: {
+    bpm: 138,
+    reverb: 0.2,
+    loop: true,
+    tracks: [
+      { instrument: { ...BRASS_LEAD, gain: 0.06 }, notes: 'A4:1 C5:0.5 E5:0.5 A5:1 G5:0.5 E5:0.5 F5:1 D5:0.5 F5:0.5 E5:2 A4:1 C5:0.5 E5:0.5 A5:1 B5:0.5 C6:0.5 B5:1 G5:1 A5:2' },
+      { instrument: PAD, notes: 'A2+C3+E3:4 F2+A2+C3:4 A2+C3+E3:4 G2+B2+D3:4' },
+      { instrument: { ...BASS, gain: 0.14 }, notes: repeat('A1:0.5 A2:0.5', 8) + ' ' + repeat('G1:0.5 G2:0.5', 8) },
+      { instrument: KICK, notes: repeat('A1:0.5 -:0.5', 16) },
+      { instrument: TICK, notes: repeat('E6:0.5', 32) },
+    ],
+  },
+});
+
+export const vaurelTheme = defineMusic({
+  id: 'mask:music.vaurel',
+  label: 'Le cabinet du Grand Fixateur',
+  recipe: {
+    bpm: 60,
+    reverb: 0.5,
+    loop: false,
+    tracks: [
+      { instrument: { ...PAD, gain: 0.05, filter: { type: 'lowpass', freq: 700 } }, notes: 'D2+A2+D3:4 C#2+G#2+C#3:4' },
+      { instrument: { wave: 'sine', attack: 0.01, decay: 1.2, sustain: 0, release: 0.8, gain: 0.07 }, notes: '-:1 A5:1 -:2 G#5:2 -:2' },
     ],
   },
 });

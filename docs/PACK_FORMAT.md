@@ -465,7 +465,8 @@ stars (0) 0..1, sunDisc (true), discColor? }`, `sun { direction, color, intensit
 `blockLight` (1), `particles` (`null` or `{ preset, density }`), `music` (music id or `null`),
 `ambience` (sound id or `null`), `post { exposure (1), contrast (1.05), saturation (1),
 bloom (0.35), vignette (0.35) }`. Particle presets handled by `src/engine/view/particles.ts`:
-`dust`, `embers`, `motes`, `smoke`, `sparks`, `memory`, `stars`. The `porte_absente` environment
+`dust`, `embers`, `motes`, `smoke`, `sparks`, `memory`, `stars`, `rain` (streaks falling from the
+top of the box). The `porte_absente` environment
 (Door) is a starry void:
 
 ```json
@@ -532,7 +533,7 @@ modified.
 Component types are behaviors. The engine registers `core.spawn`, `core.marker`, `core.model`,
 `core.collider`, `core.light`, `core.sound`, `core.particles`, `core.sign`, `core.door`,
 `core.portal`, `core.npc`, `core.interactable`, `core.pickup`, `core.readable`, `core.trigger`,
-`core.zone`, `core.conditional` (`ENGINE_BEHAVIORS` in `src/engine/core/sim/builtins.ts`; props in
+`core.zone`, `core.conditional`, `core.ladder` (`ENGINE_BEHAVIORS` in `src/engine/core/sim/builtins.ts`; props in
 `src/engine/core/behaviors/*.ts`). Packs add their own. Props absent from the JSON take their
 declared defaults. Two Door entities (whitespace condensed):
 

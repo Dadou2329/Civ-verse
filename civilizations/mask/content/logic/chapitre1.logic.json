@@ -1,0 +1,753 @@
+{
+  "format": "civverse.logic",
+  "version": 1,
+  "id": "chapitre1",
+  "title": "Chapitre I — Courir plus haut",
+  "rules": [
+    {
+      "id": "lendemain",
+      "name": "Fin du Prologue : le lendemain matin (C10)",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "quest.completed",
+        "where": {
+          "questId": "prologue"
+        }
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 5
+        },
+        {
+          "type": "core.fade",
+          "opacity": 1,
+          "seconds": 1.4
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C10_lendemain",
+          "wait": true
+        },
+        {
+          "type": "core.showLocation",
+          "title": "mask.ch1.titre",
+          "subtitle": "mask.ch1.sousTitre"
+        }
+      ],
+      "if": {
+        "type": "core.not",
+        "condition": {
+          "type": "core.var",
+          "var": "mask.ch1.lendemain",
+          "op": "==",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "lendemain_reprise",
+      "name": "Reprise : le Prologue est fini mais le chapitre I n’a pas commencé",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "civ.started"
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C10_lendemain",
+          "wait": true
+        },
+        {
+          "type": "core.showLocation",
+          "title": "mask.ch1.titre",
+          "subtitle": "mask.ch1.sousTitre"
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.questStatus",
+            "quest": "prologue",
+            "status": "completed"
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.lendemain",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "dossier",
+      "name": "Tutoriel : le dossier se lit dans l’inventaire",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "mask:dossier"
+        }
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 1
+        },
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.dossier",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "lys_atelier",
+      "name": "Bureau : Lys retourne à son établi",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "dialogue.ended",
+        "where": {
+          "dialogueId": "c1_commis"
+        }
+      },
+      "then": [
+        {
+          "type": "core.moveEntity",
+          "entity": "lys",
+          "target": "lys_porte",
+          "run": false,
+          "wait": true
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "lys",
+          "target": "lys_atelier"
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "mask.dossierRecu",
+            "op": "==",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.masqueReagi",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "masque_reagi",
+      "name": "I03 : le masque de Fil fendu a réagi (événement du scénario)",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "var.changed",
+        "where": {
+          "name": "mask.ch1.masqueReagi"
+        }
+      },
+      "then": [
+        {
+          "type": "core.emit",
+          "event": "mask.ch1.second_mask_reacted",
+          "payload": {}
+        }
+      ],
+      "if": {
+        "type": "core.var",
+        "var": "mask.ch1.masqueReagi",
+        "op": "==",
+        "value": true
+      }
+    },
+    {
+      "id": "echelle",
+      "name": "Tutoriel : première échelle",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "ladder.grabbed"
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.echelle",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "cagette_bouscule",
+      "name": "Courage : une cagette bouscule le héros",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "mask.glissadeHit"
+      },
+      "then": [
+        {
+          "type": "core.say",
+          "entity": "rosalie",
+          "text": "mask.bark.rosalie.cagette",
+          "seconds": 2
+        }
+      ]
+    },
+    {
+      "id": "ancrages",
+      "name": "Courage : trois ancrages fixés, la pluie cesse, Rosalie signe",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "var.changed",
+        "where": {
+          "name": "mask.ancrages"
+        }
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "mask.pluie",
+          "value": false
+        },
+        {
+          "type": "core.wait",
+          "seconds": 1.5
+        },
+        {
+          "type": "core.startDialogue",
+          "dialogue": "c1_rosalie",
+          "entity": "rosalie",
+          "wait": false
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "mask.ancrages",
+            "op": ">=",
+            "value": 3
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.preuve.courage",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "etals",
+      "name": "Entraide : trois cagettes posées, les étals déménagent",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "var.changed",
+        "where": {
+          "name": "mask.cagettesPosees"
+        }
+      },
+      "then": [
+        {
+          "type": "core.setVisible",
+          "entity": "etal_fruits",
+          "visible": false
+        },
+        {
+          "type": "core.setVisible",
+          "entity": "etal_tissus",
+          "visible": false
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "marchande_fruits",
+          "target": "mireille_fontaine",
+          "run": false,
+          "wait": false
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "marchand_tissus",
+          "target": "octave_fontaine",
+          "run": false,
+          "wait": true
+        },
+        {
+          "type": "core.wait",
+          "seconds": 0.6
+        },
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.var",
+            "var": "mask.entraideChoix",
+            "op": "==",
+            "value": "collaboration"
+          },
+          "then": [
+            {
+              "type": "core.startDialogue",
+              "dialogue": "c1_octave",
+              "entity": "marchand_tissus",
+              "wait": false
+            }
+          ],
+          "else": [
+            {
+              "type": "core.startDialogue",
+              "dialogue": "c1_mireille",
+              "entity": "marchande_fruits",
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "mask.cagettesPosees",
+            "op": ">=",
+            "value": 3
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.preuve.entraide",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fete",
+      "name": "Trois preuves : la fête du quartier (C12)",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "mask.ch1.proofs_complete"
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "mask.ch1.feteLancee",
+          "value": true
+        },
+        {
+          "type": "core.wait",
+          "seconds": 3
+        },
+        {
+          "type": "core.fade",
+          "opacity": 1,
+          "seconds": 1.4
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C12_fete",
+          "wait": true
+        },
+        {
+          "type": "core.environment",
+          "patch": {
+            "sky": {
+              "top": "#3f7fc4",
+              "horizon": "#f2d9b0",
+              "bottom": "#8a7a68",
+              "stars": 0,
+              "sunDisc": true
+            },
+            "sun": {
+              "direction": [
+                -0.35,
+                -0.75,
+                0.55
+              ],
+              "color": "#fff0d6",
+              "intensity": 1.15
+            },
+            "ambient": {
+              "color": "#b8a890",
+              "intensity": 0.6
+            },
+            "fog": {
+              "color": "#e8dcc6",
+              "density": 0.0045
+            }
+          },
+          "seconds": 0
+        }
+      ],
+      "if": {
+        "type": "core.not",
+        "condition": {
+          "type": "core.dialogueActive"
+        }
+      }
+    },
+    {
+      "id": "fete_apres_dialogue",
+      "name": "La fête commence quand la dernière signature est finie",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "dialogue.ended"
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "mask.ch1.feteLancee",
+          "value": true
+        },
+        {
+          "type": "core.wait",
+          "seconds": 1.2
+        },
+        {
+          "type": "core.fade",
+          "opacity": 1,
+          "seconds": 1.4
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C12_fete",
+          "wait": true
+        },
+        {
+          "type": "core.environment",
+          "patch": {
+            "sky": {
+              "top": "#3f7fc4",
+              "horizon": "#f2d9b0",
+              "bottom": "#8a7a68",
+              "stars": 0,
+              "sunDisc": true
+            },
+            "sun": {
+              "direction": [
+                -0.35,
+                -0.75,
+                0.55
+              ],
+              "color": "#fff0d6",
+              "intensity": 1.15
+            },
+            "ambient": {
+              "color": "#b8a890",
+              "intensity": 0.6
+            },
+            "fog": {
+              "color": "#e8dcc6",
+              "density": 0.0045
+            }
+          },
+          "seconds": 0
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "fete"
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.feteLancee",
+              "op": "==",
+              "value": true
+            }
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.feteVue",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fete_reprise",
+      "name": "Reprise : la fête n’a pas encore eu lieu",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "civ.started"
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C12_fete",
+          "wait": true
+        },
+        {
+          "type": "core.environment",
+          "patch": {
+            "sky": {
+              "top": "#3f7fc4",
+              "horizon": "#f2d9b0",
+              "bottom": "#8a7a68",
+              "stars": 0,
+              "sunDisc": true
+            },
+            "sun": {
+              "direction": [
+                -0.35,
+                -0.75,
+                0.55
+              ],
+              "color": "#fff0d6",
+              "intensity": 1.15
+            },
+            "ambient": {
+              "color": "#b8a890",
+              "intensity": 0.6
+            },
+            "fog": {
+              "color": "#e8dcc6",
+              "density": 0.0045
+            }
+          },
+          "seconds": 0
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "fete"
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.feteVue",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "qualifie",
+      "name": "Qualification réussie : le cabinet du Grand Fixateur (C13)",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "mask.ch1.qualifying_passed"
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "mask.inscrit",
+          "value": true
+        },
+        {
+          "type": "core.setVar",
+          "var": "mask.ch1.vaurelLance",
+          "value": true
+        },
+        {
+          "type": "core.wait",
+          "seconds": 2.5
+        },
+        {
+          "type": "core.fade",
+          "opacity": 1,
+          "seconds": 1.4
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C13_vaurel",
+          "wait": true
+        },
+        {
+          "type": "core.showLocation",
+          "title": "mask.ch1.fin.titre",
+          "subtitle": "mask.ch1.fin.sous"
+        },
+        {
+          "type": "core.wait",
+          "seconds": 5
+        },
+        {
+          "type": "core.notify",
+          "text": "mask.ch1.suite",
+          "kind": "info"
+        }
+      ],
+      "if": {
+        "type": "core.not",
+        "condition": {
+          "type": "core.dialogueActive"
+        }
+      }
+    },
+    {
+      "id": "qualifie_apres_dialogue",
+      "name": "Le cabinet du Grand Fixateur, une fois la signature de Kaël lue",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "dialogue.ended"
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "mask.inscrit",
+          "value": true
+        },
+        {
+          "type": "core.setVar",
+          "var": "mask.ch1.vaurelLance",
+          "value": true
+        },
+        {
+          "type": "core.wait",
+          "seconds": 1.5
+        },
+        {
+          "type": "core.fade",
+          "opacity": 1,
+          "seconds": 1.4
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C13_vaurel",
+          "wait": true
+        },
+        {
+          "type": "core.showLocation",
+          "title": "mask.ch1.fin.titre",
+          "subtitle": "mask.ch1.fin.sous"
+        },
+        {
+          "type": "core.wait",
+          "seconds": 5
+        },
+        {
+          "type": "core.notify",
+          "text": "mask.ch1.suite",
+          "kind": "info"
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.vaurelLance",
+              "op": "==",
+              "value": true
+            }
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.vaurelVu",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "vaurel_reprise",
+      "name": "Reprise : la fin du chapitre n’a pas été vue",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "civ.started"
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C13_vaurel",
+          "wait": true
+        },
+        {
+          "type": "core.showLocation",
+          "title": "mask.ch1.fin.titre",
+          "subtitle": "mask.ch1.fin.sous"
+        },
+        {
+          "type": "core.wait",
+          "seconds": 5
+        },
+        {
+          "type": "core.notify",
+          "text": "mask.ch1.suite",
+          "kind": "info"
+        }
+      ],
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "mask.ch1.vaurelVu",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

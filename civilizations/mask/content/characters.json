@@ -918,6 +918,118 @@
       ],
       "idle": "calm",
       "voicePitch": 0.75
+    },
+    {
+      "id": "mask:rosalie",
+      "name": "mask.npc.rosalie",
+      "build": {
+        "body": "broad",
+        "height": 0.96
+      },
+      "skin": "#d8a882",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "bun",
+        "color": "#6a4a3a"
+      },
+      "face": {
+        "blush": true,
+        "brows": "#4a3020"
+      },
+      "outfit": {
+        "style": "dress",
+        "top": "#5fa8c9",
+        "bottom": "#e8e0d0",
+        "shoes": "#2a1e16",
+        "accent": "#f6ead8",
+        "trim": "#2f6a86"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "apron",
+          "color": "#efe2c2"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.05
+    },
+    {
+      "id": "mask:candidat_a",
+      "name": "mask.npc.candidat",
+      "build": {
+        "body": "slim",
+        "height": 1.0
+      },
+      "skin": "#f0c8a8",
+      "eyes": "#2a4a6a",
+      "hair": {
+        "style": "swept",
+        "color": "#2a1a12"
+      },
+      "face": {},
+      "outfit": {
+        "style": "vest",
+        "top": "#5fc6c9",
+        "bottom": "#2a2e3a",
+        "shoes": "#1a1410",
+        "accent": "#f2a541"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#1e5a6a",
+          "accent": "#7fe0ff",
+          "pattern": "threads"
+        },
+        {
+          "type": "satchel",
+          "color": "#4a3a2e"
+        }
+      ],
+      "idle": "nervous",
+      "voicePitch": 1.05
+    },
+    {
+      "id": "mask:candidate_b",
+      "name": "mask.npc.candidate",
+      "build": {
+        "body": "adult",
+        "height": 0.97
+      },
+      "skin": "#a8704a",
+      "eyes": "#2a1a12",
+      "hair": {
+        "style": "curly",
+        "color": "#1a1210"
+      },
+      "face": {},
+      "outfit": {
+        "style": "tunic",
+        "top": "#e8743a",
+        "bottom": "#3a2e2a",
+        "shoes": "#1a1410",
+        "accent": "#5fc6c9"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#1e5a6a",
+          "accent": "#7fe0ff",
+          "pattern": "threads"
+        },
+        {
+          "type": "gloves",
+          "color": "#4a3020"
+        }
+      ],
+      "idle": "proud",
+      "voicePitch": 1.1
     }
   ]
 }

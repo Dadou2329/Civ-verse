@@ -138,6 +138,55 @@
           ]
         }
       ]
+    },
+    {
+      "id": "mask:dossier",
+      "name": "mask.item.dossier",
+      "description": "mask.item.dossier.desc",
+      "icon": {
+        "shape": "document",
+        "color": "#e8dcc0",
+        "accent": "#b5402e"
+      },
+      "category": "document",
+      "questItem": true,
+      "actions": [
+        {
+          "id": "lire",
+          "label": "mask.item.dossier.lire",
+          "actions": [
+            {
+              "type": "mask.lireDossier"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mask:ressort_trame",
+      "name": "mask.item.ressort_trame",
+      "description": "mask.item.ressort_trame.desc",
+      "icon": {
+        "shape": "spring",
+        "color": "#5fc6c9",
+        "accent": "#c79a42"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "mask:cagette",
+      "name": "mask.item.cagette",
+      "description": "mask.item.cagette.desc",
+      "icon": {
+        "shape": "box",
+        "color": "#b08450",
+        "accent": "#f2a541"
+      },
+      "category": "quest",
+      "questItem": true,
+      "stackable": true,
+      "maxStack": 3
     }
   ]
 }

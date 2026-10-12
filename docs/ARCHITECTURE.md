@@ -282,7 +282,7 @@ longer updated nor asked for offers, decorations or vetoes.
 Engine components (`ENGINE_BEHAVIORS` in `src/engine/core/sim/builtins.ts`): `core.spawn`,
 `core.marker`, `core.model`, `core.collider`, `core.light`, `core.sound`, `core.particles`,
 `core.sign`, `core.door`, `core.portal`, `core.npc`, `core.interactable`, `core.pickup`,
-`core.readable`, `core.trigger`, `core.zone`, `core.conditional`. They are registered with owner
+`core.readable`, `core.trigger`, `core.zone`, `core.conditional`, `core.ladder`. They are registered with owner
 `engine`. Do not confuse them with asset ids such as `core:stone`, which come from the
 `civilizations/core` library pack.
 

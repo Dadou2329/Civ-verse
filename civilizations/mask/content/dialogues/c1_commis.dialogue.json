@@ -1,0 +1,225 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_commis",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "fete"
+              },
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "qualification"
+              }
+            ]
+          },
+          "next": "qualif"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "attente"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "bureau"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.relaisJuno",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "sans_relais"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "bureau"
+          },
+          "next": "c1"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "sans_relais",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.sans_relais",
+      "end": true
+    },
+    {
+      "id": "c1",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.c1",
+      "next": "c2"
+    },
+    {
+      "id": "c2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_commis.c2",
+      "next": "c3"
+    },
+    {
+      "id": "c3",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.c3",
+      "next": "c4"
+    },
+    {
+      "id": "c4",
+      "speaker": "player",
+      "text": "mask.dlg.c1_commis.c4",
+      "next": "c5"
+    },
+    {
+      "id": "c5",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.c5",
+      "next": "c6"
+    },
+    {
+      "id": "c6",
+      "speaker": "player",
+      "text": "mask.dlg.c1_commis.c6",
+      "next": "c7"
+    },
+    {
+      "id": "c7",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.c7",
+      "actions": [
+        {
+          "type": "core.giveItem",
+          "item": "mask:dossier",
+          "count": 1,
+          "silent": false
+        }
+      ],
+      "next": "c8"
+    },
+    {
+      "id": "c8",
+      "speaker": "juno",
+      "text": "mask.dlg.c1_commis.c8",
+      "expression": "determined",
+      "next": "c9"
+    },
+    {
+      "id": "c9",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_commis.c9",
+      "expression": "happy",
+      "actions": [
+        {
+          "type": "core.teleportEntity",
+          "entity": "lys",
+          "target": "lys_porte"
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "lys",
+          "target": "lys_bureau",
+          "run": false,
+          "wait": false
+        }
+      ],
+      "next": "c10"
+    },
+    {
+      "id": "c10",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_commis.c10",
+      "next": "c11"
+    },
+    {
+      "id": "c11",
+      "speaker": "player",
+      "text": "mask.dlg.c1_commis.c11",
+      "next": "c12"
+    },
+    {
+      "id": "c12",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_commis.c12",
+      "expression": "happy",
+      "next": "c13"
+    },
+    {
+      "id": "c13",
+      "text": "",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.dossierRecu",
+          "value": true
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "juno",
+          "target": "juno_bureau",
+          "run": true,
+          "wait": false
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "attente",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.attente",
+      "end": true
+    },
+    {
+      "id": "qualif",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.qualif",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.apres",
+      "end": true
+    },
+    {
+      "id": "defaut",
+      "speaker": "commis",
+      "text": "mask.dlg.c1_commis.defaut",
+      "end": true
+    }
+  ]
+}

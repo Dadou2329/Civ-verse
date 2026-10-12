@@ -1,0 +1,168 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_nora",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "ferraille",
+                "status": "active"
+              },
+              {
+                "type": "core.hasItem",
+                "item": "mask:ferraille",
+                "count": 4
+              }
+            ]
+          },
+          "next": "ferraille_merci"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "ferraille",
+            "status": "active"
+          },
+          "next": "ferraille_rappel"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "fete"
+              },
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "qualification"
+              }
+            ]
+          },
+          "next": "qualif"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.preuves",
+                "op": ">=",
+                "value": 1
+              }
+            ]
+          },
+          "next": "preuves_bien"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "preuves"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "ferraille_rappel",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.ferraille_rappel",
+      "end": true
+    },
+    {
+      "id": "ferraille_merci",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.ferraille_merci",
+      "actions": [
+        {
+          "type": "core.takeItem",
+          "item": "mask:ferraille",
+          "count": 4,
+          "silent": false
+        },
+        {
+          "type": "core.giveItem",
+          "item": "mask:galette",
+          "count": 2,
+          "silent": false
+        },
+        {
+          "type": "core.setVar",
+          "var": "mask.ferrailleRendue",
+          "value": true
+        }
+      ],
+      "next": "ferraille_merci2"
+    },
+    {
+      "id": "ferraille_merci2",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.ferraille_merci2",
+      "end": true
+    },
+    {
+      "id": "defaut",
+      "speaker": "nora",
+      "text": "mask.dlg.c1_nora.defaut",
+      "end": true
+    },
+    {
+      "id": "preuves",
+      "speaker": "nora",
+      "text": "mask.dlg.c1_nora.preuves",
+      "next": "preuves2"
+    },
+    {
+      "id": "preuves2",
+      "speaker": "nora",
+      "text": "mask.dlg.c1_nora.preuves2",
+      "end": true
+    },
+    {
+      "id": "preuves_bien",
+      "speaker": "nora",
+      "text": "mask.dlg.c1_nora.preuves_bien",
+      "end": true
+    },
+    {
+      "id": "qualif",
+      "speaker": "nora",
+      "text": "mask.dlg.c1_nora.qualif",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "nora",
+      "text": "mask.dlg.c1_nora.apres",
+      "expression": "happy",
+      "end": true
+    }
+  ]
+}

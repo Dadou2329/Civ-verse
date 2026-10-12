@@ -656,3 +656,306 @@ export const roueMoulin = defineModel({
     }
   },
 });
+
+// ---------------------------------------------------------------------------------------------
+// Chapter I — the proofs and the qualification
+// ---------------------------------------------------------------------------------------------
+
+/** The sorting automaton of the market: a green cabinet with a funnel, three chutes and a dial. */
+function automate(b: ModelBuilder, withSpring: boolean) {
+  b.box([-8, 0, -6], [8, 2, 6], IRON_DARK);
+  b.box([-7, 2, -5], [7, 22, 5], { color: '#2f6a66', vary: 0.05 });
+  b.box([-7, 22, -5], [7, 23, 5], BRASS);
+  // The funnel parcels are dropped into.
+  for (let y = 0; y < 6; y++) b.shell([-3 - y, 23 + y, -2 - Math.floor(y / 2)], [3 + y, 24 + y, 2 + Math.floor(y / 2)], y === 5 ? BRASS : '#5c6064');
+  b.box([-2, 23, -1], [2, 24, 1], '#1a1a1a');
+  // Three chutes, each with its parcel.
+  for (const [x, y] of [
+    [-5, 4],
+    [0, 2],
+    [5, 4],
+  ] as const) {
+    b.box([x - 2, y, 5], [x + 2, y + 2, 9], { color: '#8a5e36', vary: 0.06 });
+    b.box([x - 1, y + 2, 6], [x + 1, y + 4, 8], { color: '#c9a46a', vary: 0.08 });
+  }
+  // The dial (its needle is a separate part, turned by the adjustment).
+  b.cylinderZ(0, 16, 4.6, 5, 6, BRASS);
+  b.cylinderZ(0, 16, 3.6, 6, 7, '#f2e6c8');
+  b.box([2, 18, 7], [4, 20, 8], '#7bc47f');
+  // The spring housing on the side: empty until the spring is put back.
+  b.box([7, 10, -2], [9, 16, 2], BRASS).clear([7, 11, -1], [9, 15, 1]);
+  if (withSpring) for (let y = 11; y < 15; y++) b.set(8, y, 0, y % 2 ? '#5fc6c9' : BRASS);
+  b.set(-6, 20, 5, { color: withSpring ? '#7bc47f' : '#ff7a2e', emissive: true });
+  b.part('aiguille', [0, 16, 7]);
+  b.line([0, 16, 7], [0, 19, 7], '#b5402e');
+  b.set(0, 16, 8, BRASS);
+  b.part('main');
+}
+
+export const automateTri = defineModel({
+  id: 'mask:automate_tri',
+  label: 'Automate de tri du marché (ressort manquant)',
+  category: 'Viremasque — Chapitre I',
+  build: (b) => automate(b, false),
+});
+
+export const automateTriRepare = defineModel({
+  id: 'mask:automate_tri_repare',
+  label: 'Automate de tri du marché (ressort remis)',
+  category: 'Viremasque — Chapitre I',
+  build: (b) => automate(b, true),
+});
+
+export const caisseMasques = defineModel({
+  id: 'mask:caisse_masques',
+  label: 'Caisse de vieux masques',
+  category: 'Viremasque — Chapitre I',
+  build(b) {
+    b.box([-7, 0, -5], [7, 8, 5], { color: '#7a5030', vary: 0.07 });
+    b.box([-6, 1, -4], [6, 8, 4], '#3a2a20');
+    // Old masks piled in it: a Cendre grey, a faded Fil teal, a dented Fer.
+    b.box([-5, 6, -3], [-1, 9, 0], '#8f8a84').box([0, 7, -2], [4, 9, 2], { color: '#4a8a92', vary: 0.08 }).box([-3, 7, 1], [1, 9, 3], '#7a2a24');
+    b.set(-3, 8, 0, '#2a2a2a').set(2, 8, 2, '#2a2a2a');
+    b.box([-8, 0, -6], [8, 1, -5], WOOD_DARK).box([-8, 0, 5], [8, 1, 6], WOOD_DARK);
+    // « RECYCLAGE » chalked on the front.
+    for (let x = -5; x <= 5; x += 2) b.set(x, 4, 5, '#e8e2d8');
+  },
+});
+
+export const bancEssai = defineModel({
+  id: 'mask:banc_essai',
+  label: 'Banc d’essai des trames',
+  category: 'Viremasque — Chapitre I',
+  collider: 'none',
+  light: { level: 7, color: '#7fe0ff', offset: [0, 0.8, 0] },
+  build(b) {
+    // A small bench: copper coils on both sides, two brass clamps in front that hold the mask
+    // being tested, and a glass bulb on a stalk at the back that lights up.
+    b.box([-7, 0, -4], [7, 2, 4], IRON_DARK);
+    b.cylinder(-5, -1, 1.6, 2, 7, '#b87333');
+    b.cylinder(5, -1, 1.6, 2, 7, '#b87333');
+    for (const x of [-4, 3]) b.box([x, 2, 1], [x + 1, 6, 2], BRASS);
+    b.line([-5, 7, -1], [-3, 4, 1], '#b87333').line([5, 7, -1], [3, 4, 1], '#b87333');
+    b.box([-1, 2, -3], [1, 9, -2], IRON);
+    b.sphere(0, 11, -3, 1.6, { color: '#bfefff', emissive: true, alpha: 0.6 });
+  },
+});
+
+export const masqueFilFendu = defineModel({
+  id: 'mask:masque_fil_fendu',
+  label: 'Masque de Fil fendu',
+  category: 'Viremasque — Masques',
+  voxelSize: 1 / 48,
+  anchor: 'center',
+  collider: 'none',
+  build(b) {
+    // Teal filament weave, metal dots and fine mechanical ribbons — and half of it is missing.
+    halfMask(b, { color: '#1e5a6a', vary: 0.08 }, (x, row) => {
+      if ((x + row) % 3 === 0) return '#7fe0ff';
+      if (row === 0) return '#c79a42';
+      return null;
+    });
+    b.clear([2, 0, -8], [8, 6, 4]);
+    // The broken edge, its weave sticking out.
+    for (let y = 0; y < 6; y++) b.set(1, y, 0, y % 2 ? '#c79a42' : '#7fe0ff');
+    b.line([-6, 7, -1], [-9, 2, -2], '#7fe0ff').line([-5, 7, -1], [-8, 0, -2], '#c79a42');
+  },
+});
+
+/** A rope-and-wood ladder of `h` eighths of a meter, its rungs facing -Z (the climber's side). */
+function ladder(b: ModelBuilder, h: number) {
+  for (const x of [-4, 3]) b.box([x, 0, 0], [x + 1, h, 1], { color: '#8a5e36', vary: 0.06 });
+  for (let y = 2; y < h; y += 3) b.box([-4, y, -1], [4, y + 1, 0], { color: '#a67a4a', vary: 0.08 });
+  for (let y = 4; y < h; y += 6) b.set(-4, y, -1, '#d8c8a0').set(3, y, -1, '#d8c8a0');
+}
+
+export const echelle = defineModel({
+  id: 'mask:echelle',
+  label: 'Échelle de corde et de bois',
+  category: 'Viremasque — Chapitre I',
+  voxelSize: 1 / 8,
+  collider: 'none',
+  build: (b) => ladder(b, 46),
+});
+
+export const roueEntrainement = defineModel({
+  id: 'mask:roue_entrainement',
+  label: 'Roue d’entraînement',
+  category: 'Viremasque — Chapitre I',
+  voxelSize: 1 / 8,
+  collider: 'none',
+  build(b) {
+    // The bracket on the wall (behind), then a 2 m wheel in the XY plane with a red mark on its rim.
+    b.box([-1, 0, -4], [1, 9, -2], IRON_DARK);
+    b.part('roue', [0, 8, 0]);
+    b.cylinderZ(0, 8, 8, -1, 1, { color: '#5c6064', vary: 0.05 }, true);
+    b.cylinderZ(0, 8, 2, -2, 2, BRASS);
+    for (let a = 0; a < 8; a++) {
+      const ang = (a / 8) * Math.PI * 2;
+      b.line([Math.round(Math.cos(ang) * 2), Math.round(8 + Math.sin(ang) * 2), 0], [Math.round(Math.cos(ang) * 7), Math.round(8 + Math.sin(ang) * 7), 0], WOOD);
+    }
+    b.box([-1, 15, -2], [1, 17, 2], { color: '#ff3a2a', emissive: true });
+    b.part('main');
+  },
+});
+
+export const archeDepart = defineModel({
+  id: 'mask:arche_depart',
+  label: 'Arche de départ',
+  category: 'Viremasque — Chapitre I',
+  voxelSize: 1 / 8,
+  collider: 'none',
+  build(b) {
+    for (const x of [-14, 13]) b.box([x, 0, -1], [x + 1, 26, 1], '#b5402e');
+    b.box([-14, 26, -1], [14, 28, 1], '#f2a541');
+    for (let x = -12; x < 12; x += 4) b.box([x, 22, 0], [x + 2, 26, 1], x % 8 === 0 ? '#5fc6c9' : '#f6ead8');
+  },
+});
+
+export const drapeau = defineModel({
+  id: 'mask:drapeau',
+  label: 'Drapeau d’arrivée',
+  category: 'Viremasque — Chapitre I',
+  voxelSize: 1 / 8,
+  collider: 'none',
+  build(b) {
+    b.box([0, 0, 0], [1, 22, 1], IRON);
+    for (let y = 14; y < 21; y++) for (let x = 1; x < 9; x++) b.set(x, y, 0, (x + y) % 2 ? '#f2a541' : '#2a1a1e');
+  },
+});
+
+export const cagette = defineModel({
+  id: 'mask:cagette',
+  label: 'Cagette de pêches',
+  category: 'Viremasque — Chapitre I',
+  collider: 'none',
+  build(b) {
+    b.box([-4, 0, -3], [4, 4, 3], { color: '#b08450', vary: 0.08 });
+    b.box([-3, 1, -2], [3, 4, 2], '#3a2a20');
+    for (const [x, z] of [
+      [-2, -1],
+      [0, 0],
+      [2, -1],
+      [-1, 1],
+      [1, 1],
+    ] as const)
+      b.set(x, 4, z, { color: '#f2a541', vary: 0.1 });
+  },
+});
+
+export const cagetteLinge = defineModel({
+  id: 'mask:cagette_linge',
+  label: 'Cagette de linge mouillé',
+  category: 'Viremasque — Chapitre I',
+  collider: 'none',
+  build(b) {
+    b.box([-5, 0, -4], [5, 5, 4], { color: '#b08450', vary: 0.08 });
+    b.box([-4, 1, -3], [4, 5, 3], '#3a2a20');
+    b.box([-4, 4, -3], [0, 6, 0], '#e8e2d8').box([0, 4, -1], [4, 6, 3], { color: '#5fc6c9', vary: 0.06 }).box([-3, 5, 0], [1, 7, 3], '#d88a8a');
+  },
+});
+
+export const pileCagettes = defineModel({
+  id: 'mask:pile_cagettes',
+  label: 'Pile de cagettes de linge',
+  category: 'Viremasque — Chapitre I',
+  build(b) {
+    for (const [x, y, z] of [
+      [-6, 0, -4],
+      [4, 0, -3],
+      [-1, 5, -4],
+      [-5, 0, 6],
+    ] as const) {
+      b.box([x - 5, y, z - 4], [x + 5, y + 5, z + 4], { color: '#b08450', vary: 0.08 });
+      b.box([x - 4, y + 4, z - 3], [x + 4, y + 6, z + 3], { color: (x + z) % 2 ? '#e8e2d8' : '#5fc6c9', vary: 0.06 });
+    }
+  },
+});
+
+/**
+ * A footbridge anchor: a bollard bolted to the deck, the rope of the railing around it. Loose, it
+ * leans out of its plate with a red rag tied to it (the washerwomen's warning); fixed, it stands
+ * straight, its bolts shining.
+ */
+function anchorModel(b: ModelBuilder, fixed: boolean) {
+  b.box([-4, 0, -4], [4, 1, 4], IRON_DARK);
+  if (fixed) {
+    b.cylinder(0, 0, 2, 1, 7, IRON);
+    b.cylinder(0, 0, 2.6, 7, 8, BRASS);
+    for (const [x, z] of [
+      [-3, -3],
+      [3, -3],
+      [-3, 3],
+      [3, 3],
+    ] as const)
+      b.set(x, 1, z, BRASS);
+    b.cylinder(0, 0, 3, 4, 5, '#c9a46a', true);
+  } else {
+    for (let y = 1; y < 7; y++) b.box([y - 3, y, -2], [y - 1, y + 1, 2], IRON);
+    b.box([2, 6, -3], [5, 7, 3], '#d8402e').box([3, 3, -1], [5, 6, 1], '#d8402e');
+    b.line([-4, 1, 4], [4, 2, 4], '#c9a46a').line([-4, 1, -4], [4, 2, -4], '#c9a46a');
+  }
+}
+
+export const ancrage = defineModel({
+  id: 'mask:ancrage',
+  label: 'Ancrage de passerelle (fixé)',
+  category: 'Viremasque — Chapitre I',
+  collider: 'none',
+  build: (b) => anchorModel(b, true),
+});
+
+export const ancrageLache = defineModel({
+  id: 'mask:ancrage_lache',
+  label: 'Ancrage de passerelle (lâche)',
+  category: 'Viremasque — Chapitre I',
+  collider: 'none',
+  build: (b) => anchorModel(b, false),
+});
+
+export const bureauVaurel = defineModel({
+  id: 'mask:bureau_vaurel',
+  label: 'Bureau du Grand Fixateur',
+  category: 'Viremasque — Chapitre I',
+  light: { level: 9, color: '#ffe2b0', offset: [0.4, 1.1, 0] },
+  build(b) {
+    b.box([-12, 10, -6], [12, 12, 6], { color: '#2a1a1e', vary: 0.04 });
+    for (const x of [-11, 10]) b.box([x, 0, -5], [x + 1, 10, 5], '#1a1214');
+    // The list of candidates and a closed file, an oil lamp.
+    b.box([-8, 12, -3], [-2, 13, 3], '#efe6d2').box([-7, 13, -2], [-3, 14, 2], '#e2d6bc');
+    b.box([0, 12, -2], [3, 13, 2], '#7a2a24');
+    b.box([4, 12, -1], [6, 18, 1], BRASS).sphere(5, 19, 0, 2, { color: '#ffe2b0', emissive: true });
+  },
+});
+
+export const guirlande = defineModel({
+  id: 'mask:guirlande',
+  label: 'Guirlande de fête',
+  category: 'Viremasque — Chapitre I',
+  voxelSize: 1 / 8,
+  collider: 'none',
+  pickable: false,
+  light: { level: 8, color: '#ffb070', offset: [0, -0.4, 0] },
+  build(b) {
+    // A 10 m garland of paper lanterns, sagging in the middle (from one party mast to the next).
+    for (let x = -40; x <= 40; x++) {
+      const y = Math.round(((x / 40) ** 2 - 1) * 7);
+      b.set(x, y, 0, '#3a2a20');
+      if (x % 6 === 0) b.box([x - 1, y - 3, -1], [x + 2, y, 2], { color: ['#f2a541', '#5fc6c9', '#b5402e'][Math.abs(x / 6) % 3]!, emissive: true });
+    }
+  },
+});
+
+export const matFete = defineModel({
+  id: 'mask:mat_fete',
+  label: 'Mât de fête',
+  category: 'Viremasque — Chapitre I',
+  voxelSize: 1 / 8,
+  build(b) {
+    // A thin painted pole (5.5 m) with a pennant: the garlands of the party hang from it.
+    b.box([-1, 0, -1], [1, 2, 1], IRON_DARK);
+    for (let y = 2; y < 44; y++) b.box([-1, y, -1], [1, y + 1, 1], Math.floor(y / 6) % 2 ? '#b5402e' : '#f6ead8');
+    b.box([-1, 44, -1], [1, 46, 1], BRASS);
+    for (let y = 38; y < 43; y++) for (let x = 1; x < 1 + (43 - y); x++) b.set(x, y, 0, '#5fc6c9');
+  },
+});

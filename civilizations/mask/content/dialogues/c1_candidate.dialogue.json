@@ -1,0 +1,48 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_candidate",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          "next": "apres"
+        }
+      ],
+      "next": "c1"
+    },
+    {
+      "id": "c1",
+      "speaker": "candidate",
+      "text": "mask.dlg.c1_candidate.c1",
+      "next": "c2"
+    },
+    {
+      "id": "c2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_candidate.c2",
+      "next": "c3"
+    },
+    {
+      "id": "c3",
+      "speaker": "candidate",
+      "text": "mask.dlg.c1_candidate.c3",
+      "expression": "determined",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "candidate",
+      "text": "mask.dlg.c1_candidate.apres",
+      "end": true
+    }
+  ]
+}

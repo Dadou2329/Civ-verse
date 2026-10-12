@@ -1,0 +1,29 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "masque_fendu",
+  "title": "mask.quest.masque_fendu.title",
+  "summary": "mask.quest.masque_fendu.summary",
+  "kind": "main",
+  "order": 2,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "secret",
+      "description": "mask.quest.masque_fendu.secret",
+      "objectives": [
+        {
+          "id": "lys",
+          "text": "mask.quest.masque_fendu.secret.lys",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.masqueFenduRepare",
+            "op": "==",
+            "value": true
+          }
+        }
+      ],
+      "completion": "all"
+    }
+  ]
+}

@@ -404,6 +404,7 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
       return eq.hand.drawRemaining;
     },
     delayUse: (s) => eq.delayUse(s),
+    cancelUses: () => eq.cancelUses(),
     guardSwitch: (fn) => scope.add(eq.guardSwitch(fn)),
     setUnarmed: (spec) => eq.setUnarmed(spec),
     press: (b) => eq.press(b),

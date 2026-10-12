@@ -1,0 +1,189 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C10_lendemain",
+  "title": "C10 — Le lendemain matin",
+  "duration": 9,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            60,
+            13,
+            44
+          ],
+          "target": [
+            96,
+            12,
+            64
+          ],
+          "fov": 55
+        },
+        {
+          "t": 9,
+          "position": [
+            62,
+            12.5,
+            46
+          ],
+          "target": [
+            96,
+            11.4,
+            65.5
+          ],
+          "fov": 50,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 1,
+          "seconds": 0.05
+        },
+        {
+          "t": 3.2,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 1.6
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.4,
+          "duration": 2.8,
+          "text": "mask.cin.c10.1"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 3.2,
+          "sound": "mask:cloches_ville"
+        },
+        {
+          "t": 3.2,
+          "music": "mask:music.rives"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 0.2,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.teleportPlayer",
+              "spawn": "spawn_lendemain"
+            },
+            {
+              "type": "core.setProp",
+              "entity": "juno",
+              "component": "mask.voltige",
+              "prop": "points",
+              "value": []
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "juno",
+              "target": "juno_bureau"
+            },
+            {
+              "type": "core.setProp",
+              "entity": "juno",
+              "component": "core.npc",
+              "prop": "dialogue",
+              "value": "c1_juno"
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "lys",
+              "position": [
+                36,
+                8,
+                39.8
+              ],
+              "yaw": 120
+            },
+            {
+              "type": "core.setProp",
+              "entity": "lys",
+              "component": "core.npc",
+              "prop": "dialogue",
+              "value": "c1_lys"
+            },
+            {
+              "type": "core.setProp",
+              "entity": "nora",
+              "component": "core.npc",
+              "prop": "dialogue",
+              "value": "c1_nora"
+            },
+            {
+              "type": "core.setProp",
+              "entity": "bastien",
+              "component": "core.npc",
+              "prop": "dialogue",
+              "value": "c1_bastien"
+            },
+            {
+              "type": "core.setProp",
+              "entity": "ada",
+              "component": "core.npc",
+              "prop": "dialogue",
+              "value": "c1_voisins"
+            },
+            {
+              "type": "core.setProp",
+              "entity": "pol",
+              "component": "core.npc",
+              "prop": "dialogue",
+              "value": "c1_voisins"
+            },
+            {
+              "type": "core.startQuest",
+              "quest": "chapitre1"
+            },
+            {
+              "type": "core.setVar",
+              "var": "mask.ch1.lendemain",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "juno",
+      "keys": [
+        {
+          "t": 4,
+          "animation": "wave"
+        }
+      ]
+    }
+  ],
+  "onComplete": []
+}

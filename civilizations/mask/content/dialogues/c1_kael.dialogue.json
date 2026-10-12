@@ -1,0 +1,234 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_kael",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.kaelSigne",
+            "op": "==",
+            "value": true
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.parcoursReussi",
+            "op": "==",
+            "value": true
+          },
+          "next": "fin1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.dialogueSeen",
+                "dialogue": "c1_kael",
+                "node": "k7"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.parcoursEchecs",
+                "op": "==",
+                "value": 1
+              }
+            ]
+          },
+          "next": "conseil1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.dialogueSeen",
+                "dialogue": "c1_kael",
+                "node": "k7"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.parcoursEchecs",
+                "op": "==",
+                "value": 2
+              }
+            ]
+          },
+          "next": "conseil2"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.dialogueSeen",
+                "dialogue": "c1_kael",
+                "node": "k7"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.parcoursEchecs",
+                "op": "==",
+                "value": 3
+              }
+            ]
+          },
+          "next": "conseil3"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.dialogueSeen",
+                "dialogue": "c1_kael",
+                "node": "k7"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.parcoursEchecs",
+                "op": ">=",
+                "value": 4
+              }
+            ]
+          },
+          "next": "conseil4"
+        },
+        {
+          "condition": {
+            "type": "core.dialogueSeen",
+            "dialogue": "c1_kael",
+            "node": "k7"
+          },
+          "next": "rappel"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "qualification"
+          },
+          "next": "k1"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "k1",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.k1",
+      "next": "k2"
+    },
+    {
+      "id": "k2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_kael.k2",
+      "next": "k3"
+    },
+    {
+      "id": "k3",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.k3",
+      "next": "k4"
+    },
+    {
+      "id": "k4",
+      "speaker": "player",
+      "text": "mask.dlg.c1_kael.k4",
+      "next": "k5"
+    },
+    {
+      "id": "k5",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.k5",
+      "next": "k6"
+    },
+    {
+      "id": "k6",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.k6",
+      "next": "k7"
+    },
+    {
+      "id": "k7",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.k7",
+      "end": true
+    },
+    {
+      "id": "rappel",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.rappel",
+      "end": true
+    },
+    {
+      "id": "conseil1",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.conseil1",
+      "end": true
+    },
+    {
+      "id": "conseil2",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.conseil2",
+      "end": true
+    },
+    {
+      "id": "conseil3",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.conseil3",
+      "end": true
+    },
+    {
+      "id": "conseil4",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.conseil4",
+      "end": true
+    },
+    {
+      "id": "fin1",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.fin1",
+      "next": "fin2"
+    },
+    {
+      "id": "fin2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_kael.fin2",
+      "next": "fin3"
+    },
+    {
+      "id": "fin3",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.fin3",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.kaelSigne",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.apres",
+      "end": true
+    },
+    {
+      "id": "defaut",
+      "speaker": "kael",
+      "text": "mask.dlg.c1_kael.defaut",
+      "end": true
+    }
+  ]
+}

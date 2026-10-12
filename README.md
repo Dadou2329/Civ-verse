@@ -18,7 +18,7 @@ Two finished prototype civilizations and a long adventure in progress ship with 
 |---|---|---|
 | `civilizations/door` | **La Porte qui n’existe pas** — Verrou, a city where every door checks your social rank. | Rank locks and permissions, palm imprints, guards and localized suspicion, a door that remembers. |
 | `civilizations/memory` | **Le Nom qu’on t’a volé** — Réminence, where memories are traded as shards. | A memory chamber (shards that change perception and dialogue), echoes of the past, consent to restoration. |
-| `civilizations/mask` | **Les Cent Visages** — Viremasque, a vertical city where everyone wears the mask of their rank. In progress: the Prologue is playable. | Civic ranks distinct from worn masks, tools held in hand and really used, the Cendre mask's Braise strike, a runaway freight lift. |
+| `civilizations/mask` | **Les Cent Visages** — Viremasque, a vertical city where everyone wears the mask of their rank. In progress: the Prologue and Chapter I « Courir plus haut » are playable. | Civic ranks distinct from worn masks, tools held in hand and really used, the Cendre mask's Braise strike, a runaway freight lift; three proofs in any order, a timed adjustment with the key, crates sliding in the rain, a qualifying course with ladders and a training wheel. |
 
 `civilizations/core` is a library pack (blocks, models, sounds, character looks) shared by all.
 All textures, models, sounds and characters are original and generated procedurally in code.

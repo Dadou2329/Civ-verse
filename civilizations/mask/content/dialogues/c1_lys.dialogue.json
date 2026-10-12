@@ -1,0 +1,269 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_lys",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "fete"
+              },
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "qualification"
+              }
+            ]
+          },
+          "next": "qualif"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.automateExamine",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.ch1.masqueReagi",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "caisse"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.ressortPose",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.automateRegle",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "reglage"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.hasItem",
+                "item": "mask:ressort_trame",
+                "count": 1
+              }
+            ]
+          },
+          "next": "ressort"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.precision",
+                  "op": "==",
+                  "value": true
+                }
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.automateExamine",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "automate"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.courage",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "courage"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.entraide",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "entraide"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "trois"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "defaut",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.defaut",
+      "end": true
+    },
+    {
+      "id": "automate",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.automate",
+      "end": true
+    },
+    {
+      "id": "caisse",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.caisse",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "ressort",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.ressort",
+      "expression": "determined",
+      "next": "ressort2"
+    },
+    {
+      "id": "ressort2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_lys.ressort2",
+      "end": true
+    },
+    {
+      "id": "reglage",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.reglage",
+      "end": true
+    },
+    {
+      "id": "courage",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.courage",
+      "end": true
+    },
+    {
+      "id": "entraide",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.entraide",
+      "end": true
+    },
+    {
+      "id": "trois",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.trois",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "qualif",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.qualif",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "lys",
+      "text": "mask.dlg.c1_lys.apres",
+      "expression": "happy",
+      "end": true
+    }
+  ]
+}

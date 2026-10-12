@@ -5,11 +5,12 @@
  */
 import { buildRives } from './rives.ts';
 import { buildCinematics } from './cinematics.ts';
+import { buildCinematicsCh1 } from './cinematicsCh1.ts';
 
 export function seed(): Record<string, unknown> {
   const files: Record<string, unknown> = {
     'content/scenes/rives.scene.json': buildRives(),
   };
-  for (const c of buildCinematics()) files[`content/cinematics/${c.id}.cinematic.json`] = c;
+  for (const c of [...buildCinematics(), ...buildCinematicsCh1()]) files[`content/cinematics/${c.id}.cinematic.json`] = c;
   return files;
 }

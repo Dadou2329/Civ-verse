@@ -108,6 +108,14 @@ export const coreConditions = [
     test: (ctx, p) => ctx.dialogue.seen(p.dialogue, p.node || undefined),
   }),
   defineCondition({
+    id: 'core.dialogueActive',
+    label: 'Un dialogue est en cours',
+    category: 'Narration',
+    description: 'Vrai pendant qu’un dialogue est affiché (pour attendre que le joueur ait fini de parler).',
+    props: {},
+    test: (ctx) => ctx.dialogue.active,
+  }),
+  defineCondition({
     id: 'core.choiceMade',
     label: 'Choix de dialogue fait',
     category: 'Narration',

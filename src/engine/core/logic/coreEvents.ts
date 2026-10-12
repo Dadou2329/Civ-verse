@@ -23,6 +23,7 @@ export const coreEvents = [
     label: 'Interaction refusée',
     fields: { entityId: prop.entity({ label: 'Entité' }), interaction: prop.string({ label: 'Interaction' }), by: prop.string({ label: 'Composant' }) },
   }),
+  defineEvent({ id: 'ladder.grabbed', label: 'Échelle saisie', fields: { entityId: prop.entity({ label: 'Échelle', withComponent: 'core.ladder' }) } }),
   defineEvent({ id: 'door.opened', label: 'Porte ouverte', fields: { entityId: prop.entity({ label: 'Porte', withComponent: 'core.door' }) } }),
   defineEvent({ id: 'door.closed', label: 'Porte fermée', fields: { entityId: prop.entity({ label: 'Porte', withComponent: 'core.door' }) } }),
   defineEvent({ id: 'item.acquired', label: 'Objet obtenu', fields: { itemId: prop.item({ label: 'Objet' }) } }),

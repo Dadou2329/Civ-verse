@@ -1201,6 +1201,7 @@ Generated from `src/engine/core/logic/coreConditions.ts`.
 | `core.questStage` | Étape de quête | Narration | `quest` (ref:quest)<br>`stage` (string) — true only while the quest is active |
 | `core.objectiveDone` | Objectif accompli | Narration | `quest` (ref:quest)<br>`objective` (string) — any stage |
 | `core.dialogueSeen` | Réplique déjà vue | Narration | `dialogue` (ref:dialogue)<br>`node` (string) — empty = any node |
+| `core.dialogueActive` | Un dialogue est en cours | Narration | none — use it to wait until the player has finished talking (with the event `dialogue.ended`) |
 | `core.choiceMade` | Choix de dialogue fait | Narration | `dialogue` (ref:dialogue)<br>`choice` (string) |
 | `core.inScene` | Dans la scène | Monde | `scene` (ref:scene) |
 | `core.entityVisible` | Entité visible | Monde | `entity` (ref:entity) |
@@ -1224,6 +1225,7 @@ Documented engine events, generated from `src/engine/core/logic/coreEvents.ts` (
 | `zone.exited` | Sortie d’une zone | `zoneId` | `core.zone` |
 | `trigger.entered` | Déclencheur atteint | `triggerId` | `core.trigger`, when its condition passes |
 | `trigger.exited` | Déclencheur quitté | `triggerId` | `core.trigger` |
+| `ladder.grabbed` | Échelle saisie | `entityId` | `core.ladder`, when the player starts climbing |
 | `entity.interacted` | Interaction avec une entité | `entityId`, `interaction` | `InteractionSystem` after a successful interaction; `interaction` is the offer id (`talk`, `use`, `take`, `read`, `open`, `close`, `enter`, pack ids such as `examine`) |
 | `interaction.blocked` | Interaction refusée | `entityId`, `interaction`, `by` | `InteractionSystem` when an offer is disabled or vetoed (also `reason`) |
 | `door.opened` | Porte ouverte | `entityId` | `core.door` |

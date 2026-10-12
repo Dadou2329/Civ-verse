@@ -1,0 +1,217 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "chapitre1",
+  "title": "mask.quest.chapitre1.title",
+  "summary": "mask.quest.chapitre1.summary",
+  "kind": "main",
+  "order": 1,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "bureau",
+      "description": "mask.quest.chapitre1.bureau",
+      "objectives": [
+        {
+          "id": "juno",
+          "text": "mask.quest.chapitre1.bureau.juno",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.relaisJuno",
+            "op": "==",
+            "value": true
+          },
+          "target": "juno"
+        },
+        {
+          "id": "guichet",
+          "text": "mask.quest.chapitre1.bureau.guichet",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.dossierRecu",
+            "op": "==",
+            "value": true
+          },
+          "target": "commis"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "preuves",
+      "description": "mask.quest.chapitre1.preuves",
+      "objectives": [
+        {
+          "id": "dossier",
+          "text": "mask.quest.chapitre1.preuves.dossier",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.preuves",
+            "op": ">=",
+            "value": 3
+          },
+          "progress": {
+            "var": "mask.preuves",
+            "count": 3
+          }
+        },
+        {
+          "id": "precision",
+          "text": "mask.quest.chapitre1.preuves.precision",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.preuve.precision",
+            "op": "==",
+            "value": true
+          },
+          "target": "automate_tri"
+        },
+        {
+          "id": "ressort",
+          "text": "mask.quest.chapitre1.preuves.ressort",
+          "completeWhen": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.ch1.masqueReagi",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.var",
+                "var": "mask.preuve.precision",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "target": "caisse_vieux_masques"
+        },
+        {
+          "id": "courage",
+          "text": "mask.quest.chapitre1.preuves.courage",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.preuve.courage",
+            "op": "==",
+            "value": true
+          },
+          "progress": {
+            "var": "mask.ancrages",
+            "count": 3
+          },
+          "target": "rosalie"
+        },
+        {
+          "id": "entraide",
+          "text": "mask.quest.chapitre1.preuves.entraide",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.preuve.entraide",
+            "op": "==",
+            "value": true
+          },
+          "target": "marchande_fruits"
+        },
+        {
+          "id": "cagettes",
+          "text": "mask.quest.chapitre1.preuves.cagettes",
+          "completeWhen": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.cagettesPosees",
+                "op": ">=",
+                "value": 3
+              },
+              {
+                "type": "core.var",
+                "var": "mask.preuve.entraide",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "progress": {
+            "var": "mask.cagettesPosees",
+            "count": 3
+          },
+          "target": "emplacement_fontaine"
+        }
+      ],
+      "completion": "all",
+      "onComplete": [
+        {
+          "type": "core.emit",
+          "event": "mask.ch1.proofs_complete",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "id": "fete",
+      "description": "mask.quest.chapitre1.fete",
+      "objectives": [
+        {
+          "id": "fete",
+          "text": "mask.quest.chapitre1.fete.fete",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.ch1.feteVue",
+            "op": "==",
+            "value": true
+          }
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "qualification",
+      "description": "mask.quest.chapitre1.qualification",
+      "objectives": [
+        {
+          "id": "kael",
+          "text": "mask.quest.chapitre1.qualification.kael",
+          "completeWhen": {
+            "type": "core.dialogueSeen",
+            "dialogue": "c1_kael",
+            "node": "k7"
+          },
+          "target": "kael"
+        },
+        {
+          "id": "parcours",
+          "text": "mask.quest.chapitre1.qualification.parcours",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.parcoursReussi",
+            "op": "==",
+            "value": true
+          },
+          "target": "drapeau_arrivee"
+        },
+        {
+          "id": "signature",
+          "text": "mask.quest.chapitre1.qualification.signature",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.kaelSigne",
+            "op": "==",
+            "value": true
+          },
+          "target": "kael"
+        }
+      ],
+      "completion": "all",
+      "onComplete": [
+        {
+          "type": "core.emit",
+          "event": "mask.ch1.qualifying_passed",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

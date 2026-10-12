@@ -1,0 +1,231 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C13_vaurel",
+  "title": "C13 — Le cabinet du Grand Fixateur",
+  "duration": 17,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            104.5,
+            48.9,
+            138.3
+          ],
+          "target": [
+            104.4,
+            48,
+            140.6
+          ],
+          "fov": 42
+        },
+        {
+          "t": 3.4,
+          "position": [
+            104.4,
+            48.7,
+            138.5
+          ],
+          "target": [
+            104.3,
+            48.21,
+            139.78
+          ],
+          "fov": 34,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 7.2,
+          "position": [
+            104.2,
+            48.35,
+            139.05
+          ],
+          "target": [
+            104.14999999999999,
+            48.21,
+            139.78
+          ],
+          "fov": 28,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 7.4,
+          "position": [
+            103.6,
+            48.5,
+            139
+          ],
+          "target": [
+            104.5,
+            48.62,
+            141.6
+          ],
+          "fov": 34,
+          "cut": true
+        },
+        {
+          "t": 11.6,
+          "position": [
+            103.7,
+            48.45,
+            139.1
+          ],
+          "target": [
+            104.5,
+            48.62,
+            141.6
+          ],
+          "fov": 32,
+          "ease": "linear"
+        },
+        {
+          "t": 11.8,
+          "position": [
+            104.5,
+            49.4,
+            138.2
+          ],
+          "target": [
+            104.5,
+            47.6,
+            140.8
+          ],
+          "fov": 50,
+          "cut": true
+        },
+        {
+          "t": 14,
+          "position": [
+            104.5,
+            49.6,
+            137.9
+          ],
+          "target": [
+            104.5,
+            47.6,
+            140.8
+          ],
+          "fov": 54,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 8,
+          "duration": 3,
+          "speaker": "vaurel",
+          "text": "mask.cin.c13.1"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 1.2
+        },
+        {
+          "t": 13.6,
+          "fx": "fade",
+          "from": 0,
+          "to": 1,
+          "seconds": 1.2
+        },
+        {
+          "t": 15.6,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 1.2
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0,
+          "music": "mask:music.vaurel"
+        },
+        {
+          "t": 11.9,
+          "sound": "core:page",
+          "at": "bureau_vaurel"
+        },
+        {
+          "t": 15.4,
+          "music": "mask:music.rives"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 11.9,
+          "actions": [
+            {
+              "type": "core.setVisible",
+              "entity": "liste_candidats",
+              "visible": false
+            }
+          ]
+        },
+        {
+          "t": 15,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.teleportPlayer",
+              "spawn": "apres_parcours"
+            },
+            {
+              "type": "core.setVar",
+              "var": "mask.ch1.vaurelVu",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "vaurel",
+      "keys": [
+        {
+          "t": 0,
+          "lookAt": [
+            104.3,
+            48.21,
+            139.78
+          ]
+        },
+        {
+          "t": 8,
+          "expression": "determined"
+        },
+        {
+          "t": 11.7,
+          "animation": "interact"
+        }
+      ]
+    }
+  ],
+  "onComplete": []
+}

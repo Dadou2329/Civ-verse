@@ -1,0 +1,130 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_bastien",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "chapitre1",
+            "status": "completed"
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "fete"
+              },
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "qualification"
+              }
+            ]
+          },
+          "next": "qualif"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.preuves",
+                "op": ">=",
+                "value": 2
+              }
+            ]
+          },
+          "next": "deux"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.preuves",
+                "op": "==",
+                "value": 1
+              }
+            ]
+          },
+          "next": "une"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "preuves1"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "defaut",
+      "speaker": "bastien",
+      "text": "mask.dlg.c1_bastien.defaut",
+      "end": true
+    },
+    {
+      "id": "preuves1",
+      "speaker": "bastien",
+      "text": "mask.dlg.c1_bastien.preuves1",
+      "next": "preuves2"
+    },
+    {
+      "id": "preuves2",
+      "speaker": "bastien",
+      "text": "mask.dlg.c1_bastien.preuves2",
+      "end": true
+    },
+    {
+      "id": "une",
+      "speaker": "bastien",
+      "text": "mask.dlg.c1_bastien.une",
+      "end": true
+    },
+    {
+      "id": "deux",
+      "speaker": "bastien",
+      "text": "mask.dlg.c1_bastien.deux",
+      "end": true
+    },
+    {
+      "id": "qualif",
+      "speaker": "bastien",
+      "text": "mask.dlg.c1_bastien.qualif",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "bastien",
+      "text": "mask.dlg.c1_bastien.apres",
+      "expression": "happy",
+      "end": true
+    }
+  ]
+}

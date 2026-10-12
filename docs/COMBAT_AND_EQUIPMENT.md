@@ -73,7 +73,8 @@ The Studio edits all of it in **Objets → En main** (a block per mouse button, 
 
 `ctx.equipment` (`EquipmentApi`, `src/engine/core/sim/api.ts`): `held`, `hotbar()`, `selected`,
 `select(i)`, `hold(itemId | null)`, `assign(i, itemId | null)`, `ready(button?)`,
-`drawRemaining`, `delayUse(s)`, `press(button)` / `release(button)` (tutorials, tests),
+`drawRemaining`, `delayUse(s)`, `cancelUses()` (a shove interrupts a long use), `press(button)` /
+`release(button)` (tutorials, tests),
 `setProgress({ label, value } | null)`, `setUnarmed({ primary?, secondary? })` (uses of the empty
 hand), `hand` (`play(animation, s)`, `hold(animation)`), and:
 
@@ -291,8 +292,9 @@ A volume: crossing it makes it the place where the player gets back up. Announce
 ### 3.6 `core.toolTarget` — what a tool works on
 
 `tool` (the tag a `core.useOnTarget` must carry), `label` (verb shown while aiming: « Réparer la
-pompe »), `holdSeconds`, `once`, `condition`, `onUse` (actions), aim volume (`size`, `offset`).
-Event `tool.used`.
+pompe »), `holdSeconds`, `once`, `toolSound` (default `true`; `false` skips the tool's « done »
+sound when the target plays its own, e.g. a timed adjustment that can miss), `condition`, `onUse`
+(actions), aim volume (`size`, `offset`). Event `tool.used`.
 
 ### 3.7 Logic in content
 

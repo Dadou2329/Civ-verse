@@ -490,6 +490,7 @@ export class EntityViewManager {
       else if (type === 'core.encounter') boxLines(p.size as never, p.offset as never, '#ff5a3c', false);
       else if (type === 'core.checkpoint') boxLines(p.size as never, p.offset as never, '#4affc8', false);
       else if (type === 'core.toolTarget') boxLines(p.size as never, p.offset as never, '#3cd6ff', true);
+      else if (type === 'core.ladder') boxLines(p.size as never, p.offset as never, '#d8a24a', false);
       else if (type === 'core.spawn' || type === 'core.marker' || type === 'core.light' || type === 'core.sound') {
         const hex = type === 'core.spawn' ? '#4aff8a' : type === 'core.marker' ? '#ffe14a' : type === 'core.light' ? String(p.color ?? '#ffcc66') : '#8ab4ff';
         const cone = MeshBuilder.CreateCylinder(`${e.id}_aide`, { diameterTop: 0, diameterBottom: 0.35, height: 0.6, tessellation: 4 }, this.scene);

@@ -1,0 +1,138 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_automate",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.automateRegle",
+            "op": "==",
+            "value": true
+          },
+          "next": "repare"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.ressortPose",
+            "op": "==",
+            "value": true
+          },
+          "next": "regler"
+        },
+        {
+          "condition": {
+            "type": "core.hasItem",
+            "item": "mask:ressort_trame",
+            "count": 1
+          },
+          "next": "ressort"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.automateExamine",
+            "op": "==",
+            "value": true
+          },
+          "next": "rappel"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "chapitre1",
+            "stage": "preuves"
+          },
+          "next": "examen1"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "defaut",
+      "speaker": "player",
+      "text": "mask.dlg.c1_automate.defaut",
+      "end": true
+    },
+    {
+      "id": "examen1",
+      "speaker": "player",
+      "text": "mask.dlg.c1_automate.examen1",
+      "next": "examen2"
+    },
+    {
+      "id": "examen2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_automate.examen2",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.automateExamine",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "rappel",
+      "speaker": "player",
+      "text": "mask.dlg.c1_automate.rappel",
+      "end": true
+    },
+    {
+      "id": "ressort",
+      "speaker": "player",
+      "text": "mask.dlg.c1_automate.ressort",
+      "actions": [
+        {
+          "type": "core.takeItem",
+          "item": "mask:ressort_trame",
+          "count": 1,
+          "silent": true
+        },
+        {
+          "type": "core.setVar",
+          "var": "mask.ressortPose",
+          "value": true
+        },
+        {
+          "type": "core.setProp",
+          "entity": "automate_tri",
+          "component": "core.model",
+          "prop": "model",
+          "value": "mask:automate_tri_repare"
+        },
+        {
+          "type": "core.playSound",
+          "sound": "core:mechanism",
+          "at": "automate_tri",
+          "volume": 1
+        },
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.reglage",
+          "kind": "info"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "regler",
+      "speaker": "player",
+      "text": "mask.dlg.c1_automate.regler",
+      "end": true
+    },
+    {
+      "id": "repare",
+      "speaker": "player",
+      "text": "mask.dlg.c1_automate.repare",
+      "end": true
+    }
+  ]
+}

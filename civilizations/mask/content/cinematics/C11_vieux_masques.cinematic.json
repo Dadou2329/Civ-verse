@@ -1,0 +1,458 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C11_vieux_masques",
+  "title": "C11 — La boîte des vieux masques",
+  "duration": 35,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            40.2,
+            9.9,
+            27.4
+          ],
+          "target": [
+            38.1,
+            9.2,
+            25.2
+          ],
+          "fov": 50
+        },
+        {
+          "t": 6.8,
+          "position": [
+            40,
+            9.8,
+            27
+          ],
+          "target": [
+            38.1,
+            9.3,
+            25.2
+          ],
+          "fov": 46,
+          "ease": "linear"
+        },
+        {
+          "t": 7,
+          "position": [
+            39.4,
+            9.620000000000001,
+            25.4
+          ],
+          "target": [
+            39.3,
+            9.2,
+            23.86
+          ],
+          "fov": 46,
+          "cut": true
+        },
+        {
+          "t": 11,
+          "position": [
+            39.36,
+            9.42,
+            24.58
+          ],
+          "target": [
+            39.3,
+            9.2,
+            23.86
+          ],
+          "fov": 36,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 12.9,
+          "position": [
+            39.349999999999994,
+            9.399999999999999,
+            24.48
+          ],
+          "target": [
+            39.3,
+            9.2,
+            23.86
+          ],
+          "fov": 32,
+          "ease": "linear"
+        },
+        {
+          "t": 13,
+          "position": [
+            47,
+            43.2,
+            106.5
+          ],
+          "target": [
+            62,
+            39,
+            105
+          ],
+          "fov": 62,
+          "cut": true,
+          "roll": 6
+        },
+        {
+          "t": 14.3,
+          "position": [
+            48.5,
+            43,
+            106.2
+          ],
+          "target": [
+            63,
+            39.1,
+            105.2
+          ],
+          "fov": 70,
+          "ease": "linear",
+          "roll": -4
+        },
+        {
+          "t": 14.4,
+          "position": [
+            39.4,
+            9.420000000000002,
+            25.599999999999998
+          ],
+          "target": [
+            38.1,
+            9.5,
+            25.2
+          ],
+          "fov": 58,
+          "cut": true,
+          "roll": 8
+        },
+        {
+          "t": 17,
+          "position": [
+            39.4,
+            9.57,
+            25.599999999999998
+          ],
+          "target": [
+            38.1,
+            9.55,
+            25.2
+          ],
+          "fov": 52,
+          "ease": "outCubic",
+          "roll": 0
+        },
+        {
+          "t": 24.2,
+          "position": [
+            39.5,
+            9.620000000000001,
+            25.5
+          ],
+          "target": [
+            38.1,
+            9.55,
+            25.2
+          ],
+          "fov": 48,
+          "ease": "linear"
+        },
+        {
+          "t": 24.4,
+          "position": [
+            37.2,
+            9.7,
+            26.6
+          ],
+          "target": [
+            39.4,
+            9.4,
+            24.6
+          ],
+          "fov": 50,
+          "cut": true
+        },
+        {
+          "t": 35,
+          "position": [
+            37.4,
+            9.75,
+            26.9
+          ],
+          "target": [
+            39.3,
+            9.3,
+            24.4
+          ],
+          "fov": 48,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.8,
+          "duration": 5,
+          "speaker": "lys",
+          "text": "mask.cin.c11.1"
+        },
+        {
+          "t": 5.9,
+          "duration": 1.4,
+          "speaker": "player",
+          "text": "mask.cin.c11.2"
+        },
+        {
+          "t": 7.4,
+          "duration": 4.2,
+          "speaker": "lys",
+          "text": "mask.cin.c11.3"
+        },
+        {
+          "t": 15.2,
+          "duration": 2,
+          "speaker": "lys",
+          "text": "mask.cin.c11.4"
+        },
+        {
+          "t": 17.4,
+          "duration": 3.4,
+          "speaker": "player",
+          "text": "mask.cin.c11.5"
+        },
+        {
+          "t": 21,
+          "duration": 3.6,
+          "speaker": "lys",
+          "text": "mask.cin.c11.6"
+        },
+        {
+          "t": 24.8,
+          "duration": 1.6,
+          "speaker": "player",
+          "text": "mask.cin.c11.7"
+        },
+        {
+          "t": 26.6,
+          "duration": 3,
+          "speaker": "lys",
+          "text": "mask.cin.c11.8"
+        },
+        {
+          "t": 29.8,
+          "duration": 5,
+          "speaker": "lys",
+          "text": "mask.cin.c11.9"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 11.8,
+          "fx": "tint",
+          "color": "#7fe0ff",
+          "strength": 0.35,
+          "seconds": 0.6
+        },
+        {
+          "t": 12,
+          "fx": "vignette",
+          "intensity": 0.9
+        },
+        {
+          "t": 12.2,
+          "fx": "fov",
+          "delta": 10,
+          "seconds": 1.2
+        },
+        {
+          "t": 13,
+          "fx": "flash",
+          "color": "#bfefff",
+          "seconds": 0.25
+        },
+        {
+          "t": 14.4,
+          "fx": "flash",
+          "color": "#bfefff",
+          "seconds": 0.3
+        },
+        {
+          "t": 14.4,
+          "fx": "shake",
+          "intensity": 0.25,
+          "seconds": 0.6
+        },
+        {
+          "t": 15.6,
+          "fx": "tint",
+          "color": null,
+          "strength": 0,
+          "seconds": 1.6
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 7.6,
+          "sound": "core:mechanism",
+          "at": "banc_essai"
+        },
+        {
+          "t": 11.8,
+          "sound": "mask:filament"
+        },
+        {
+          "t": 14.4,
+          "sound": "core:clang",
+          "at": "banc_essai"
+        },
+        {
+          "t": 14.6,
+          "sound": "mask:vapeur",
+          "at": "banc_essai"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 0,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.teleportEntity",
+              "entity": "lys",
+              "target": "lys_atelier"
+            },
+            {
+              "type": "core.teleportPlayer",
+              "spawn": "heros_atelier"
+            },
+            {
+              "type": "core.setVisible",
+              "entity": "masque_fendu",
+              "visible": true
+            },
+            {
+              "type": "core.setVisible",
+              "entity": "lampe_banc",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "t": 11.9,
+          "actions": [
+            {
+              "type": "core.fx",
+              "channel": "mask.filament",
+              "payload": {
+                "from": [
+                  39.3,
+                  9.2,
+                  23.86
+                ],
+                "seconds": 2.4
+              }
+            }
+          ]
+        },
+        {
+          "t": 34.6,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.setVisible",
+              "entity": "masque_fendu",
+              "visible": false
+            },
+            {
+              "type": "core.setVisible",
+              "entity": "lampe_banc",
+              "visible": false
+            },
+            {
+              "type": "core.setVar",
+              "var": "mask.ch1.masqueReagi",
+              "value": true
+            },
+            {
+              "type": "core.giveItem",
+              "item": "mask:ressort_trame",
+              "count": 1,
+              "silent": false
+            },
+            {
+              "type": "core.startQuest",
+              "quest": "masque_fendu"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "lys",
+      "keys": [
+        {
+          "t": 0,
+          "lookAt": "player",
+          "animation": "talk",
+          "expression": "happy"
+        },
+        {
+          "t": 7.4,
+          "lookAt": [
+            39.3,
+            9.2,
+            23.86
+          ],
+          "animation": "interact",
+          "expression": "determined"
+        },
+        {
+          "t": 14.4,
+          "animation": "surprised",
+          "expression": "surprised"
+        },
+        {
+          "t": 15.2,
+          "lookAt": "player",
+          "expression": "worried"
+        },
+        {
+          "t": 21,
+          "animation": "talk"
+        },
+        {
+          "t": 26.6,
+          "animation": "shake",
+          "expression": "determined"
+        },
+        {
+          "t": 29.8,
+          "animation": "talk",
+          "expression": "neutral"
+        }
+      ]
+    }
+  ],
+  "onComplete": []
+}

@@ -1,0 +1,791 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C12_fete",
+  "title": "C12 — La fête du quartier",
+  "duration": 36,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            71,
+            12.5,
+            76
+          ],
+          "target": [
+            73,
+            9.6,
+            64
+          ],
+          "fov": 56
+        },
+        {
+          "t": 3,
+          "position": [
+            70.5,
+            12.2,
+            73.5
+          ],
+          "target": [
+            73,
+            9.6,
+            64
+          ],
+          "fov": 54,
+          "ease": "linear"
+        },
+        {
+          "t": 3.1,
+          "position": [
+            71.6,
+            9.8,
+            61.6
+          ],
+          "target": [
+            70.4,
+            9.45,
+            58.6
+          ],
+          "fov": 42,
+          "cut": true
+        },
+        {
+          "t": 6.8,
+          "position": [
+            71.8,
+            9.8,
+            61.800000000000004
+          ],
+          "target": [
+            70.4,
+            9.45,
+            58.6
+          ],
+          "fov": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 6.9,
+          "position": [
+            69.9,
+            9.8,
+            63
+          ],
+          "target": [
+            67.3,
+            9.45,
+            61.6
+          ],
+          "fov": 42,
+          "cut": true
+        },
+        {
+          "t": 11,
+          "position": [
+            70.10000000000001,
+            9.8,
+            63.2
+          ],
+          "target": [
+            67.3,
+            9.45,
+            61.6
+          ],
+          "fov": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 11.1,
+          "position": [
+            73.6,
+            9.8,
+            61.2
+          ],
+          "target": [
+            71.8,
+            9.45,
+            58.3
+          ],
+          "fov": 42,
+          "cut": true
+        },
+        {
+          "t": 15,
+          "position": [
+            73.8,
+            9.8,
+            61.400000000000006
+          ],
+          "target": [
+            71.8,
+            9.45,
+            58.3
+          ],
+          "fov": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 15.1,
+          "position": [
+            70.2,
+            9.8,
+            66.6
+          ],
+          "target": [
+            67.4,
+            9.45,
+            66.4
+          ],
+          "fov": 42,
+          "cut": true
+        },
+        {
+          "t": 19.6,
+          "position": [
+            70.4,
+            9.8,
+            66.8
+          ],
+          "target": [
+            67.4,
+            9.45,
+            66.4
+          ],
+          "fov": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 19.7,
+          "position": [
+            73.1,
+            9.8,
+            72.4
+          ],
+          "target": [
+            73.8,
+            9.45,
+            69.9
+          ],
+          "fov": 42,
+          "cut": true
+        },
+        {
+          "t": 22.6,
+          "position": [
+            73.3,
+            9.8,
+            72.60000000000001
+          ],
+          "target": [
+            73.8,
+            9.45,
+            69.9
+          ],
+          "fov": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 22.7,
+          "position": [
+            74.7,
+            9.8,
+            71.8
+          ],
+          "target": [
+            75.8,
+            9.45,
+            69.4
+          ],
+          "fov": 42,
+          "cut": true
+        },
+        {
+          "t": 25.4,
+          "position": [
+            74.9,
+            9.8,
+            72
+          ],
+          "target": [
+            75.8,
+            9.45,
+            69.4
+          ],
+          "fov": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 25.5,
+          "position": [
+            74.8,
+            9.8,
+            61.4
+          ],
+          "target": [
+            75.4,
+            9.45,
+            58.5
+          ],
+          "fov": 42,
+          "cut": true
+        },
+        {
+          "t": 29.4,
+          "position": [
+            75,
+            9.8,
+            61.6
+          ],
+          "target": [
+            75.4,
+            9.45,
+            58.5
+          ],
+          "fov": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 29.5,
+          "position": [
+            72.4,
+            9.620000000000001,
+            70.4
+          ],
+          "target": [
+            73,
+            9.4,
+            64
+          ],
+          "fov": 60,
+          "cut": true
+        },
+        {
+          "t": 32,
+          "position": [
+            72.4,
+            9.620000000000001,
+            70.4
+          ],
+          "target": [
+            73,
+            9.6,
+            64
+          ],
+          "fov": 58,
+          "ease": "linear"
+        },
+        {
+          "t": 33.2,
+          "position": [
+            64.6,
+            10.2,
+            77.6
+          ],
+          "target": [
+            67,
+            10.4,
+            90
+          ],
+          "fov": 55,
+          "cut": true
+        },
+        {
+          "t": 36,
+          "position": [
+            65,
+            10,
+            78.4
+          ],
+          "target": [
+            67,
+            10.6,
+            92
+          ],
+          "fov": 55,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 3.3,
+          "duration": 3.4,
+          "speaker": "ada",
+          "text": "mask.cin.c12.1"
+        },
+        {
+          "t": 7.1,
+          "duration": 3.8,
+          "speaker": "bastien",
+          "text": "mask.cin.c12.2"
+        },
+        {
+          "t": 11.3,
+          "duration": 3.6,
+          "speaker": "pol",
+          "text": "mask.cin.c12.3"
+        },
+        {
+          "t": 15.3,
+          "duration": 4.2,
+          "speaker": "nora",
+          "text": "mask.cin.c12.4"
+        },
+        {
+          "t": 19.9,
+          "duration": 2.6,
+          "speaker": "lys",
+          "text": "mask.cin.c12.8"
+        },
+        {
+          "t": 22.9,
+          "duration": 2.4,
+          "speaker": "juno",
+          "text": "mask.cin.c12.5"
+        },
+        {
+          "t": 25.7,
+          "duration": 3.6,
+          "speaker": "commis",
+          "text": "mask.cin.c12.6"
+        },
+        {
+          "t": 29.7,
+          "duration": 2.4,
+          "speaker": "player",
+          "text": "mask.cin.c12.7"
+        },
+        {
+          "t": 32.4,
+          "duration": 2.6,
+          "text": "mask.cin.lendemain"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 1.4
+        },
+        {
+          "t": 31.2,
+          "fx": "fade",
+          "from": 0,
+          "to": 1,
+          "seconds": 1
+        },
+        {
+          "t": 34.4,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 1.4
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0,
+          "music": "mask:music.fete"
+        },
+        {
+          "t": 0.4,
+          "sound": "mask:acclamations"
+        },
+        {
+          "t": 26.2,
+          "sound": "mask:tampon"
+        },
+        {
+          "t": 32.2,
+          "music": "mask:music.rives"
+        },
+        {
+          "t": 33.4,
+          "sound": "mask:cloches_ville"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 0,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "mask.ch1.fete",
+              "value": true
+            },
+            {
+              "type": "core.environment",
+              "patch": {
+                "sky": {
+                  "top": "#3a3a78",
+                  "horizon": "#f2a070",
+                  "bottom": "#5a4050"
+                },
+                "sun": {
+                  "direction": [
+                    -0.8,
+                    -0.25,
+                    0.3
+                  ],
+                  "color": "#ffb070",
+                  "intensity": 0.7
+                },
+                "ambient": {
+                  "color": "#a08890",
+                  "intensity": 0.5
+                },
+                "fog": {
+                  "color": "#d8a888",
+                  "density": 0.006
+                }
+              },
+              "seconds": 0
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "ada",
+              "position": [
+                70.4,
+                8,
+                58.6
+              ],
+              "yaw": 20
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "pol",
+              "position": [
+                71.8,
+                8,
+                58.3
+              ],
+              "yaw": 0
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "bastien",
+              "position": [
+                67.3,
+                8,
+                61.6
+              ],
+              "yaw": 70
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "nora",
+              "position": [
+                67.4,
+                8,
+                66.4
+              ],
+              "yaw": 110
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "juno",
+              "position": [
+                75.8,
+                8,
+                69.4
+              ],
+              "yaw": 210
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "lys",
+              "position": [
+                73.8,
+                8,
+                69.9
+              ],
+              "yaw": 180
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "marchande_fruits",
+              "position": [
+                77.6,
+                8,
+                60.6
+              ],
+              "yaw": 300
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "marchand_tissus",
+              "position": [
+                77.8,
+                8,
+                67.4
+              ],
+              "yaw": 240
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "rosalie",
+              "position": [
+                70.6,
+                8,
+                69.6
+              ],
+              "yaw": 150
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "commis",
+              "position": [
+                75.4,
+                8,
+                58.5
+              ],
+              "yaw": 330
+            },
+            {
+              "type": "core.teleportPlayer",
+              "spawn": "fete_heros"
+            }
+          ]
+        },
+        {
+          "t": 32.2,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.teleportEntity",
+              "entity": "ada",
+              "position": [
+                43.6,
+                8,
+                38.2
+              ],
+              "yaw": 225
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "pol",
+              "position": [
+                44.8,
+                8,
+                39.2
+              ],
+              "yaw": 45
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "bastien",
+              "position": [
+                50.5,
+                8,
+                40.6
+              ],
+              "yaw": 200
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "nora",
+              "position": [
+                40.5,
+                8,
+                25.6
+              ],
+              "yaw": 180
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "rosalie",
+              "position": [
+                22.6,
+                10,
+                50.9
+              ],
+              "yaw": 180
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "commis",
+              "position": [
+                104.5,
+                8,
+                65.5
+              ],
+              "yaw": 270
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "marchande_fruits",
+              "target": "mireille_fontaine"
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "marchand_tissus",
+              "target": "octave_fontaine"
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "juno",
+              "target": "juno_estrade"
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "lys",
+              "target": "lys_estrade"
+            },
+            {
+              "type": "core.teleportPlayer",
+              "spawn": "matin_estrade"
+            },
+            {
+              "type": "core.setVar",
+              "var": "mask.ch1.feteVue",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "ada",
+      "keys": [
+        {
+          "t": 3.3,
+          "lookAt": "player",
+          "animation": "cheer",
+          "expression": "happy"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "bastien",
+      "keys": [
+        {
+          "t": 7.1,
+          "lookAt": "player",
+          "animation": "talk",
+          "expression": "happy"
+        },
+        {
+          "t": 9.7,
+          "animation": "bow"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "pol",
+      "keys": [
+        {
+          "t": 11.3,
+          "lookAt": "player",
+          "animation": "nod"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "nora",
+      "keys": [
+        {
+          "t": 15.3,
+          "lookAt": "player",
+          "animation": "talk",
+          "expression": "happy"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "lys",
+      "keys": [
+        {
+          "t": 19.9,
+          "lookAt": "player",
+          "animation": "cheer",
+          "expression": "happy"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "juno",
+      "keys": [
+        {
+          "t": 22.9,
+          "lookAt": "player",
+          "animation": "point",
+          "expression": "happy"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "commis",
+      "keys": [
+        {
+          "t": 25.7,
+          "lookAt": "player",
+          "animation": "interact"
+        },
+        {
+          "t": 26.2,
+          "animation": "nod"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "marchande_fruits",
+      "keys": [
+        {
+          "t": 0.6,
+          "animation": "cheer"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "marchand_tissus",
+      "keys": [
+        {
+          "t": 1,
+          "animation": "wave"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "rosalie",
+      "keys": [
+        {
+          "t": 0.8,
+          "animation": "cheer"
+        }
+      ]
+    }
+  ],
+  "onComplete": []
+}

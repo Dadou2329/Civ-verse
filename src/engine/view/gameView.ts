@@ -282,7 +282,9 @@ export class GameView {
         rate: particles.density,
         quality: q.particles,
       });
-      this.ambient.minEmitBox = new Vector3(-14, -4, -14);
+      // Around the camera; rain falls from above it.
+      const rain = particles.preset === 'rain';
+      this.ambient.minEmitBox = new Vector3(-14, rain ? 6 : -4, -14);
       this.ambient.maxEmitBox = new Vector3(14, 6, 14);
     }
     // Preload the sounds this civilization uses.

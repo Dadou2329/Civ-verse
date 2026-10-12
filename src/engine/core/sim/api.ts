@@ -401,6 +401,8 @@ export interface EquipmentApi {
   readonly drawRemaining: number;
   /** Delays the use of the item in hand (attunement, recoil). */
   delayUse(seconds: number): void;
+  /** Interrupts the uses in progress (a shove, a fall): long uses stop without completing. */
+  cancelUses(): void;
   /**
    * Rule applied when the player changes the item in hand: return `{ allow: false, reason }` to
    * refuse, `{ drawTime }` to make the new item usable later (a mask that needs attuning).

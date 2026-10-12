@@ -1,0 +1,339 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "c1_mireille",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.automateRegle",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.precision",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "signe_precision"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.cagettesPosees",
+                "op": ">=",
+                "value": 3
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.entraide",
+                  "op": "==",
+                  "value": true
+                }
+              },
+              {
+                "type": "core.var",
+                "var": "mask.entraideChoix",
+                "op": "==",
+                "value": "repartition"
+              }
+            ]
+          },
+          "next": "signe_entraide"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.cagettesPosees",
+                "op": ">=",
+                "value": 3
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.entraide",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "renvoi_octave"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "chapitre1",
+                "stage": "preuves"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.entraideChoix",
+                  "op": "exists",
+                  "value": ""
+                }
+              }
+            ]
+          },
+          "next": "dispute1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.entraideChoix",
+                "op": "exists",
+                "value": ""
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.preuve.entraide",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "porter"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.entraideChoix",
+            "op": "==",
+            "value": "collaboration"
+          },
+          "next": "apres_colla"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.entraideChoix",
+            "op": "==",
+            "value": "repartition"
+          },
+          "next": "apres_repa"
+        }
+      ],
+      "next": "defaut"
+    },
+    {
+      "id": "signe_precision",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.signe_precision",
+      "expression": "happy",
+      "actions": [
+        {
+          "type": "mask.validerPreuve",
+          "preuve": "precision"
+        }
+      ],
+      "next": "signe_precision2"
+    },
+    {
+      "id": "signe_precision2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_mireille.signe_precision2",
+      "end": true
+    },
+    {
+      "id": "dispute1",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.dispute1",
+      "expression": "angry",
+      "actions": [
+        {
+          "type": "core.moveEntity",
+          "entity": "marchand_tissus",
+          "target": "octave_dispute",
+          "run": false,
+          "wait": false
+        }
+      ],
+      "next": "dispute2"
+    },
+    {
+      "id": "dispute2",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_mireille.dispute2",
+      "next": "dispute3"
+    },
+    {
+      "id": "dispute3",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.dispute3",
+      "expression": "angry",
+      "next": "dispute4"
+    },
+    {
+      "id": "dispute4",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_mireille.dispute4",
+      "next": "dispute5"
+    },
+    {
+      "id": "dispute5",
+      "speaker": "player",
+      "text": "mask.dlg.c1_mireille.dispute5",
+      "choices": [
+        {
+          "id": "collaboration",
+          "text": "mask.dlg.c1_mireille.dispute5.collaboration",
+          "next": "colla1"
+        },
+        {
+          "id": "repartition",
+          "text": "mask.dlg.c1_mireille.dispute5.repartition",
+          "next": "repa1"
+        }
+      ]
+    },
+    {
+      "id": "colla1",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_mireille.colla1",
+      "next": "colla2"
+    },
+    {
+      "id": "colla2",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.colla2",
+      "next": "colla3"
+    },
+    {
+      "id": "colla3",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_mireille.colla3",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.entraideChoix",
+          "value": "collaboration"
+        }
+      ],
+      "next": "porter"
+    },
+    {
+      "id": "repa1",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.repa1",
+      "next": "repa2"
+    },
+    {
+      "id": "repa2",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_mireille.repa2",
+      "next": "repa3"
+    },
+    {
+      "id": "repa3",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.repa3",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.entraideChoix",
+          "value": "repartition"
+        }
+      ],
+      "next": "porter"
+    },
+    {
+      "id": "porter",
+      "speaker": "marchand_tissus",
+      "text": "mask.dlg.c1_mireille.porter",
+      "actions": [
+        {
+          "type": "core.moveEntity",
+          "entity": "marchand_tissus",
+          "target": "octave_etal",
+          "run": false,
+          "wait": false
+        }
+      ],
+      "next": "porter2"
+    },
+    {
+      "id": "porter2",
+      "speaker": "player",
+      "text": "mask.dlg.c1_mireille.porter2",
+      "actions": [
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.cagettes",
+          "kind": "info"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "signe_entraide",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.signe_entraide",
+      "expression": "happy",
+      "actions": [
+        {
+          "type": "mask.validerPreuve",
+          "preuve": "entraide"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "renvoi_octave",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.renvoi_octave",
+      "end": true
+    },
+    {
+      "id": "apres_colla",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.apres_colla",
+      "end": true
+    },
+    {
+      "id": "apres_repa",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.apres_repa",
+      "end": true
+    },
+    {
+      "id": "defaut",
+      "speaker": "marchande_fruits",
+      "text": "mask.dlg.c1_mireille.defaut",
+      "end": true
+    }
+  ]
+}

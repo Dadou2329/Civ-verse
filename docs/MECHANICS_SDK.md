@@ -246,7 +246,9 @@ Engine behaviors (`src/engine/core/behaviors/*.ts`, registered by
 `src/engine/core/sim/builtins.ts`) use the same API: `core.spawn`, `core.marker`, `core.model`,
 `core.collider`, `core.light`, `core.sound`, `core.particles`, `core.sign`, `core.door`,
 `core.portal`, `core.npc`, `core.interactable`, `core.pickup`, `core.readable`, `core.trigger`,
-`core.zone`, `core.conditional`.
+`core.zone`, `core.conditional`, `core.ladder` (a climbable volume against a wall: the entity's yaw is
+the direction the climber faces, the top of the volume is the exit height; it suspends gravity
+through a movement modifier while climbing).
 
 Pack behaviors: `door.lock`, `door.memory`, `door.restricted`, `door.watcher`, `door.ambientLoop`,
 `door.spinner`; `memory.device`, `memory.echoPoint`, `memory.closed`, `memory.pedestal`,

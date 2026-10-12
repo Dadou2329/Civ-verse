@@ -19,6 +19,8 @@ export interface CivEventMap {
   'trigger.exited': { triggerId: string };
   'entity.interacted': { entityId: string; interaction: string };
   'interaction.blocked': { entityId: string; interaction: string; reason: string; by: string };
+  /** The player starts climbing a `core.ladder`. */
+  'ladder.grabbed': { entityId: string };
   'door.opened': { entityId: string };
   'door.closed': { entityId: string };
   'item.acquired': { itemId: string; count: number; total: number };

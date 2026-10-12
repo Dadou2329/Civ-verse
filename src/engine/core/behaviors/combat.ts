@@ -1106,6 +1106,8 @@ export interface ToolTargetApi {
   /** Localized verb shown while aiming at it with a matching tool. */
   readonly label: string;
   readonly holdSeconds: number;
+  /** False when the target plays its own sound (the tool's « done » sound is skipped). */
+  readonly toolSound: boolean;
   accepts(tool: string): boolean;
   /** Called by the tool use when the work is finished. */
   complete(itemId: string | null, tool: string): void;
@@ -1121,6 +1123,7 @@ export const toolTargetBehavior = defineBehavior({
     label: prop.text({ label: 'Verbe affiché (« Réparer la pompe »)', default: 'core.use.use' }),
     holdSeconds: prop.number({ label: 'Durée d’utilisation (s)', default: 1.2, min: 0, max: 20 }),
     once: prop.boolean({ label: 'Une seule fois', default: true }),
+    toolSound: prop.boolean({ label: 'Son de l’outil une fois terminé (sinon, la cible joue le sien)', default: true }),
     condition: prop.condition({ label: 'Possible si' }),
     onUse: prop.actions({ label: 'Actions une fois terminé' }),
     size: prop.vec3({ label: 'Zone de visée (m)', default: [1, 1, 1] }),
@@ -1144,6 +1147,9 @@ export const toolTargetBehavior = defineBehavior({
       },
       get holdSeconds() {
         return ctx.props.holdSeconds;
+      },
+      get toolSound() {
+        return ctx.props.toolSound;
       },
       accepts(tool) {
         if (tool !== ctx.props.tool) return false;
