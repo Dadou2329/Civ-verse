@@ -13,6 +13,8 @@ import type { StringTable } from '@engine/core/i18n/localizer';
 import { frenchApostrophes } from '@engine/core/i18n/typography';
 import type { z } from 'zod';
 import { PropFields } from '../fields/PropField';
+import { ItemUseEditor } from '../fields/LogicEditors';
+import type { HeldItemSpec, ItemUseData } from '@engine/core/packs/definitions';
 import { freeId, removeAt, replaceAt, Row, useDoc } from './common';
 import { placePrefab } from '../viewport/ViewportPanel';
 import { viewportRef } from '../hooks';
@@ -56,6 +58,17 @@ const ITEM_SCHEMA: PropSchema = {
   stackable: prop.boolean({ label: 'Empilable' }),
   maxStack: prop.integer({ label: 'Pile maximale', default: 99, min: 1 }),
   tags: prop.list(prop.string({ label: 'Étiquette' }), { label: 'Étiquettes' }),
+  slot: prop.string({ label: 'Emplacement où il se porte (vide : ne se porte pas)', placeholder: 'masque, gants…' }),
+  grants: prop.list(prop.ability({ label: 'Capacité' }), { label: 'Capacités accordées tant qu’il est porté', itemLabel: 'Capacité' }),
+};
+
+/** Placement and look of an item in hand (the two mouse buttons are edited below). */
+const HELD_SCHEMA: PropSchema = {
+  model: prop.model({ label: 'Modèle en main (vide : forme simple aux couleurs de l’icône)' }),
+  offset: prop.vec3({ label: 'Position à l’écran (droite, haut, avant)', default: [0.3, -0.3, 0.55], step: 0.01 }),
+  rotation: prop.vec3({ label: 'Rotation (degrés)', default: [0, 0, 0], step: 1 }),
+  scale: prop.number({ label: 'Échelle', default: 1, min: 0.05, max: 5, step: 0.05 }),
+  drawTime: prop.number({ label: 'Temps pour le sortir (s)', default: 0.3, min: 0, max: 5, step: 0.05 }),
 };
 
 export function ItemsEditor({ path }: { path: string }) {
@@ -111,6 +124,28 @@ export function ItemsEditor({ path }: { path: string }) {
               env={{ ...env, keyHint: `item.${item.id.split(':')[1] ?? item.id}` }}
               onChange={(next, m) => edit('Modifier un objet', (d) => ({ ...d, items: replaceAt(d.items, sel, { ...item, ...(next as unknown as ItemDoc) }) }), m ? `item${sel}|${m}` : undefined)}
             />
+            <h3 className="st-subtitle">En main</h3>
+            <label className="st-check">
+              <input
+                type="checkbox"
+                data-testid="item-held"
+                checked={!!item.held}
+                onChange={(e) =>
+                  edit('Objet tenu en main', (d) => {
+                    const { held: _held, ...rest } = item;
+                    return { ...d, items: replaceAt(d.items, sel, e.target.checked ? { ...rest, held: {} } : (rest as ItemDoc)) };
+                  })
+                }
+              />{' '}
+              Se tient en main (barre d’objets, clics de la souris)
+            </label>
+            {item.held && (
+              <HeldEditor
+                held={item.held as HeldItemSpec}
+                env={{ ...env, keyHint: `item.${item.id.split(':')[1] ?? item.id}.held` }}
+                onChange={(held, m) => edit('Objet en main', (d) => ({ ...d, items: replaceAt(d.items, sel, { ...item, held: held as ItemDoc['held'] }) }), m ? `held${sel}|${m}` : undefined)}
+              />
+            )}
             <button type="button" className="st-btn st-btn--small st-btn--danger" onClick={() => (edit('Supprimer un objet', (d) => ({ ...d, items: removeAt(d.items, sel) })), setSel(0))}>
               Supprimer l’objet
             </button>
@@ -119,6 +154,25 @@ export function ItemsEditor({ path }: { path: string }) {
           <div className="st-empty">Aucun objet.</div>
         )}
       </div>
+    </div>
+  );
+}
+
+function HeldEditor({ held, env, onChange }: { held: HeldItemSpec; env: Parameters<typeof PropFields>[0]['env']; onChange: (held: HeldItemSpec, merge?: string) => void }) {
+  const { primary, secondary, ...look } = held;
+  const setUse = (button: 'primary' | 'secondary', use: ItemUseData | null, merge?: string) => {
+    const next: HeldItemSpec = { ...held };
+    if (use) next[button] = use;
+    else delete next[button];
+    onChange(next, merge ? `${button}|${merge}` : undefined);
+  };
+  return (
+    <div className="st-held">
+      <PropFields schema={HELD_SCHEMA} value={look as Record<string, unknown>} env={env} onChange={(next, m) => onChange({ ...held, ...(next as HeldItemSpec) }, m)} />
+      <div className="st-field__label">Clic gauche</div>
+      <ItemUseEditor value={primary} env={{ ...env, keyHint: `${env.keyHint}.primary` }} placeholder="＋ Que fait le clic gauche ?" onChange={(u, m) => setUse('primary', u, m)} />
+      <div className="st-field__label">Clic droit</div>
+      <ItemUseEditor value={secondary} env={{ ...env, keyHint: `${env.keyHint}.secondary` }} placeholder="＋ Que fait le clic droit ?" onChange={(u, m) => setUse('secondary', u, m)} />
     </div>
   );
 }

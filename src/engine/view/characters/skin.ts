@@ -166,6 +166,12 @@ export function layoutCharacter(doc: CharacterDoc): CharacterLayout {
       case 'keyring':
         add('keyring', 'body', [-torsoW / 2 - 1, 0, 0], [1.2, 3, 1.2]);
         break;
+      case 'mask':
+        add('mask', 'head', [-4.3, 0.6, 4.45], [8.6, 7, 0.8]);
+        break;
+      case 'halfmask':
+        add('mask', 'head', [-4.3, 3, 4.45], [8.6, 3.8, 0.8]);
+        break;
       default:
         break; // painted accessories (glasses, badge, gloves, pendant, belt, bandana)
     }
@@ -472,6 +478,10 @@ export function paintCharacter(doc: CharacterDoc): SkinResult {
       case 'keyring':
         paintSolid('keyring', col);
         break;
+      case 'mask':
+      case 'halfmask':
+        paintMask(cv, box('mask')!, col, ac, a.pattern ?? 'plain', a.type === 'mask' ? 7.6 : 6.8, rng);
+        break;
       case 'bandana': {
         const hb = box('hair')?.uv.front ?? head.uv.front;
         cv.px(hb, 0, 0.6, 8.8, 1.5, col);
@@ -503,6 +513,65 @@ function paintGlasses(cv: Canvas, f: Rect, c: RGB): void {
     cv.px(f, ex + 1.5, 3.5, 0.5, 2, c);
   }
   cv.px(f, 3.5, 4, 1, 0.5, c);
+}
+
+/**
+ * Paints a mask box. `top` is the head-local height of the mask's top edge: the eye holes are cut
+ * where the eyes of the face are (head-local y 3 to 4), so the character still looks through it.
+ */
+function paintMask(cv: Canvas, b: BoxPart, col: RGB, ac: RGB, pattern: string, top: number, rng: Rng): void {
+  const f = b.uv.front;
+  const w = b.size[0];
+  const h = b.size[1];
+  for (const face of faces(b)) cv.fill(face, shade(col, -0.12), rng, 0.03);
+  cv.fill(f, col, rng, 0.04);
+  // Darker rim.
+  cv.px(f, 0, 0, w, 0.5, shade(col, -0.2));
+  cv.px(f, 0, h - 0.5, w, 0.5, shade(col, -0.2));
+  const eyeY = top - 4.1;
+  const holes = [1.7, 5.2];
+  switch (pattern) {
+    case 'ember':
+      // Glowing cracks, like cooling ash.
+      for (const [x, y, len] of [
+        [1, 1.2, 2],
+        [6, 0.8, 1.5],
+        [2.5, h - 2.2, 2.5],
+        [5.5, h - 1.6, 2],
+      ] as const)
+        for (let i = 0; i < len * 2; i++) cv.px(f, x + i * 0.5, y + (i % 2) * 0.5, 0.5, 0.5, ac);
+      break;
+    case 'threads':
+      for (let i = 0; i < 6; i++) for (let k = 0; k < h * 2; k++) cv.px(f, (i * 1.6 + k * 0.5) % w, k * 0.5, 0.5, 0.5, shade(ac, (k % 3) * 0.05));
+      break;
+    case 'rivets':
+      cv.px(f, 0, eyeY + 1.6, w, 0.6, shade(ac, -0.1));
+      for (const x of [0.5, w - 1]) for (const y of [0.6, h - 1.1]) cv.px(f, x, y, 0.5, 0.5, ac);
+      break;
+    case 'lens':
+      for (const x of holes) {
+        cv.px(f, x - 0.5, eyeY - 0.5, 2.6, 0.5, ac);
+        cv.px(f, x - 0.5, eyeY + 1.2, 2.6, 0.5, ac);
+        cv.px(f, x - 0.5, eyeY - 0.5, 0.5, 2.2, ac);
+        cv.px(f, x + 1.6, eyeY - 0.5, 0.5, 2.2, ac);
+      }
+      break;
+    case 'ornate':
+      for (let x = 0.5; x < w - 0.5; x += 1.5) cv.px(f, x, 0, 0.5, 1, ac);
+      cv.px(f, w / 2 - 0.5, 0.8, 1, 1, shade(ac, 0.2));
+      cv.px(f, 0.5, h - 1, w - 1, 0.5, ac);
+      break;
+    case 'mirror':
+      // No eyes: a mirror face with a bright diagonal streak.
+      for (let i = 0; i < 6; i++) cv.px(f, 1 + i, h - 1.5 - i, 1, 0.5, mixRgb(col, { r: 1, g: 1, b: 1 }, 0.7));
+      return;
+    case 'split':
+      cv.px(f, w / 2, 0, w / 2, h, ac);
+      break;
+    default:
+      break;
+  }
+  for (const x of holes) cv.px(f, x, eyeY, 1.6, 1.2, { r: 0, g: 0, b: 0 }, 0);
 }
 
 /** Paints eyes, brows, nose and mouth on the head front (8×8 px). */

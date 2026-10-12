@@ -140,7 +140,10 @@ export const coreActions = [
     label: 'Afficher/masquer un élément d’interface',
     category: 'Interface',
     props: {
-      element: prop.enum(['crosshair', 'prompt', 'objectives', 'notifications', 'inventory', 'abilities', 'location'] as const, { label: 'Élément', default: 'objectives' }),
+      element: prop.enum(['crosshair', 'prompt', 'objectives', 'notifications', 'inventory', 'abilities', 'location', 'hotbar', 'health', 'bossBar', 'handHints'] as const, {
+        label: 'Élément',
+        default: 'objectives',
+      }),
       visible: prop.boolean({ label: 'Visible', default: true }),
     },
     run: (ctx, p) => ctx.ui.setHudVisible(p.element, p.visible),

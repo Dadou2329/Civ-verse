@@ -79,6 +79,8 @@ export const npcBehavior = defineBehavior({
       },
       onPropsChanged: applyCollider,
       update: () => {
+        // A character in a fight (core.combatant) moves and looks on its own.
+        if (ctx.entity.behavior<{ engaged: boolean }>('core.combatant')?.engaged) return;
         const dist = ctx.entity.distanceToPlayer();
         const busyScripted = ctx.entity.moving && !ownMove;
         if (talkingToMe()) {

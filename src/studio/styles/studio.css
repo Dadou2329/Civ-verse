@@ -990,3 +990,16 @@ textarea {
 html.st-playing:root {
   font-size: 17px;
 }
+
+/* Item in hand (items editor). */
+.st-subtitle {
+  margin: 1rem 0 0.4rem;
+}
+.st-held {
+  margin: 0.5rem 0 1rem;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--st-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}

@@ -72,7 +72,8 @@ export const DEFAULT_BINDINGS: Record<GameAction, string[]> = {
   quicksave: ['F5'],
   attack: ['Mouse0'],
   block: ['Mouse2'],
-  dodge: ['KeyC'],
+  // Left of the forward key on QWERTY and AZERTY alike (shown « A » on AZERTY).
+  dodge: ['KeyQ'],
   hotbar1: ['Digit1'],
   hotbar2: ['Digit2'],
   hotbar3: ['Digit3'],

@@ -306,7 +306,22 @@ export interface DocumentSpec {
 export type HudSlot = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right' | 'center' | 'overlay';
 
 /** Built-in HUD elements a civilization can hide or replace. */
-export type HudElement = 'crosshair' | 'prompt' | 'objectives' | 'notifications' | 'inventory' | 'abilities' | 'location';
+export type HudElement =
+  | 'crosshair'
+  | 'prompt'
+  | 'objectives'
+  | 'notifications'
+  | 'inventory'
+  | 'abilities'
+  | 'location'
+  /** Six-slot bar of the items in hand. */
+  | 'hotbar'
+  /** Player health (civilizations with combat). */
+  | 'health'
+  /** Boss health bar. */
+  | 'bossBar'
+  /** Mouse button verbs and progress ring around the crosshair. */
+  | 'handHints';
 
 export interface UiApi {
   notify(text: string, opts?: NotifyOptions): void;

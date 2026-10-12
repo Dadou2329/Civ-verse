@@ -8,6 +8,7 @@ import { ObjectiveMarkers } from './Markers';
 import { LocationTitle, Notifications } from './Notifications';
 import { Barks, CinematicOverlay, ScreenFx, useCinematicHidesHud } from './Cinematic';
 import { AbilityBar } from './Abilities';
+import { BossBar, CombatOverlay, DefeatOverlay, HandHints, HealthBar, Hotbar } from './Combat';
 import { CivHudSlot, CivPanels } from './CivUi';
 import { ConfirmDialog, DocumentViewer, EndScreen } from './Modals';
 import { Journal } from './Journal';
@@ -92,10 +93,13 @@ export function Hud() {
         <>
           {show('crosshair') && !session.dialogue.isActive && <Crosshair />}
           {show('prompt') && !session.dialogue.isActive && <InteractionPrompt />}
+          {show('handHints') && overlay === null && <HandHints />}
+          <CombatOverlay />
           <div className="cv-hud__top-left">
             <CivHudSlot slot="top-left" />
           </div>
           <div className="cv-hud__top-center">
+            {show('bossBar') && <BossBar />}
             <CivHudSlot slot="top-center" />
           </div>
           <div className="cv-hud__top-right">
@@ -103,10 +107,12 @@ export function Hud() {
             <CivHudSlot slot="top-right" />
           </div>
           <div className="cv-hud__bottom-left">
+            {show('health') && <HealthBar />}
             <CivHudSlot slot="bottom-left" />
           </div>
           <div className="cv-hud__bottom-center">
             {show('abilities') && <AbilityBar />}
+            {show('hotbar') && <Hotbar />}
             <CivHudSlot slot="bottom-center" />
           </div>
           <div className="cv-hud__bottom-right">
@@ -118,6 +124,7 @@ export function Hud() {
           <Barks />
         </>
       )}
+      <DefeatOverlay />
       {show('notifications') && <Notifications />}
       {show('location') && <LocationTitle />}
       <DialoguePanel />

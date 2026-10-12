@@ -27,6 +27,8 @@ import { EnvironmentRenderer } from './environment';
 import { CameraRig } from './cameraRig';
 import { QUALITY, type QualityLevel } from './quality';
 import { createParticles, type ParticlePreset } from './particles';
+import { HeldItemView } from './heldItemView';
+import { CombatEffects } from './combatEffects';
 import { AudioEngine } from '../audio/audioEngine';
 import { InputManager } from '../input/inputManager';
 import type { GameSettings } from '../platform/settings';
@@ -61,6 +63,8 @@ export class GameView {
   private voxels: VoxelRenderer | null = null;
   private env: EnvironmentRenderer | null = null;
   private ambient: ParticleSystem | null = null;
+  private held: HeldItemView | null = null;
+  private combatFx: CombatEffects | null = null;
   private world: SceneWorld | null = null;
   private qualityLevel: QualityLevel;
   private presentationSub: Disposable;
@@ -135,6 +139,7 @@ export class GameView {
     }
     this.mouseSensitivity = s.mouseSensitivity;
     this.invertY = s.invertY;
+    this.session.combat.difficulty = s.difficulty;
   }
 
   private mouseSensitivity = 1;
@@ -166,6 +171,8 @@ export class GameView {
       this.entities?.sync(dt);
       this.env?.update(dt);
       this.rig.update(session, dt);
+      this.held?.update(dt);
+      this.combatFx?.update(dt);
       if (this.ambient) (this.ambient.emitter as Vector3).copyFrom(this.rig.camera.position);
       this.audio.update(this.rig.camera.position, session.player.forward);
       this.updateColliderDebug();
@@ -193,6 +200,7 @@ export class GameView {
       p.intent.jump = false;
       p.intent.sprint = false;
       inp.consumeLook();
+      this.releaseHand();
       return;
     }
     const cinematic = s.cinematics.current;
@@ -216,7 +224,31 @@ export class GameView {
       if (inp.consume('jump')) p.intent.jump = true;
       if (inp.consume('interact')) void s.interaction.interact('primary');
       if (inp.consume('secondary')) void s.interaction.interact('secondary');
-    }
+      this.handleHand();
+    } else this.releaseHand();
+  }
+
+  /** Item in hand: mouse buttons (press and release), hotbar keys, wheel, dodge. */
+  private handleHand(): void {
+    const inp = this.input;
+    const eq = this.session.equipment;
+    if (inp.consume('attack')) eq.press('primary');
+    else if (!inp.isDown('attack') && eq.isUsing('primary')) eq.release('primary');
+    if (inp.consume('block')) eq.press('secondary');
+    else if (!inp.isDown('block') && eq.isUsing('secondary')) eq.release('secondary');
+    const slots = ['hotbar1', 'hotbar2', 'hotbar3', 'hotbar4', 'hotbar5', 'hotbar6'] as const;
+    slots.forEach((action, i) => {
+      if (inp.consume(action)) eq.select(i);
+    });
+    if (inp.consume('nextItem')) eq.cycle(1);
+    if (inp.consume('prevItem')) eq.cycle(-1);
+    if (inp.consume('dodge')) this.session.combat.dodge();
+  }
+
+  private releaseHand(): void {
+    const eq = this.session.equipment;
+    if (eq.isUsing('primary')) eq.release('primary');
+    if (eq.isUsing('secondary')) eq.release('secondary');
   }
 
   private buildWorld(world: SceneWorld): void {
@@ -238,6 +270,9 @@ export class GameView {
     this.models = new ModelRenderer(this.scene, session.models, this.env.shadows);
     this.entities = new EntityViewManager(this.scene, session, this.models, this.env, 'game');
     this.entities.sync(0);
+    const entities = this.entities;
+    this.held = new HeldItemView(this.scene, this.rig.camera, session, (p) => entities.ctx.lightAt(p));
+    this.combatFx = new CombatEffects(this.scene, session, (id) => this.entities?.rootOf(id) ?? null, (m) => this.env?.addGlowMesh(m));
     const particles = world.doc.environment.particles;
     if (particles && q.particles > 0) {
       this.ambient = createParticles(this.scene, 'ambiance', this.rig.camera.position.clone(), {
@@ -255,6 +290,10 @@ export class GameView {
   }
 
   private clearWorld(): void {
+    this.held?.dispose();
+    this.held = null;
+    this.combatFx?.dispose();
+    this.combatFx = null;
     this.ambient?.dispose();
     this.ambient = null;
     this.colliderDebug?.dispose();

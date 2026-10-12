@@ -21,13 +21,38 @@ export interface AnimatorInput {
   yaw: number;
   talking: boolean;
   expression: string;
+  /** Combat state of a core.combatant ('chase', 'recover'…): a guard stance between gestures. */
+  stance?: string | null;
 }
 
 type Pose = Record<'bodyX' | 'bodyY' | 'bodyZ' | 'headX' | 'headY' | 'armLX' | 'armLZ' | 'armRX' | 'armRZ' | 'legLX' | 'legRX', number>;
 
 const ZERO: Pose = { bodyX: 0, bodyY: 0, bodyZ: 0, headX: 0, headY: 0, armLX: 0, armLZ: 0, armRX: 0, armRZ: 0, legLX: 0, legRX: 0 };
 
-const GESTURES = new Set(['wave', 'point', 'nod', 'shake', 'kneel', 'interact', 'cross', 'surprised', 'sad', 'bow', 'talk']);
+const GESTURES = new Set([
+  'wave',
+  'point',
+  'nod',
+  'shake',
+  'kneel',
+  'interact',
+  'cross',
+  'surprised',
+  'sad',
+  'bow',
+  'talk',
+  // Combat (core.combatant, core.health).
+  'combat_idle',
+  'windup',
+  'attack',
+  'slam',
+  'cast',
+  'block',
+  'stagger',
+  'defeat',
+  'yield',
+  'cheer',
+]);
 
 export class CharacterAnimator {
   private phase = 0;
@@ -106,6 +131,7 @@ export class CharacterAnimator {
     // Gestures.
     this.bodyDrop = 0;
     if (this.gesture) this.applyGesture(this.gesture, this.gestureTime, target);
+    else if (input.stance === 'chase' || input.stance === 'recover') this.applyGesture('combat_idle', this.t, target);
 
     // Head look-at (relative to body yaw).
     if (input.lookAt && !(this.gesture === 'shake')) {
@@ -201,12 +227,110 @@ export class CharacterAnimator {
         p.armRX = -0.5 + wave * 0.15;
         p.armLX = -0.3 - wave * 0.1;
         break;
+      // ---- Combat ----
+      case 'combat_idle':
+        // Guard stance: fists up, weight forward (the legs keep walking).
+        p.armLX = -1.0 + Math.sin(this.t * 3) * 0.05;
+        p.armRX = -1.2 + Math.sin(this.t * 3 + 1) * 0.05;
+        p.armLZ = 0.35;
+        p.armRZ = -0.3;
+        p.bodyX += 0.12;
+        break;
+      case 'windup': {
+        // Drawn back, arm high: readable from afar.
+        const k = Math.min(1, t / 0.25);
+        p.armRX = -2.7 * k;
+        p.armRZ = 0.35 * k;
+        p.armLX = -0.8 * k;
+        p.bodyY = 0.55 * k;
+        p.bodyX = -0.12 * k;
+        p.headX = -0.1 * k;
+        break;
+      }
+      case 'attack': {
+        const k = Math.min(1, t / 0.12);
+        p.armRX = -2.7 + 2.5 * k;
+        p.armRZ = 0.35 - 0.5 * k;
+        p.armLX = -0.4;
+        p.bodyY = 0.55 - 1.0 * k;
+        p.bodyX = -0.12 + 0.4 * k;
+        break;
+      }
+      case 'slam': {
+        const k = Math.min(1, t / 0.18);
+        p.armLX = p.armRX = -2.9 + 2.6 * k;
+        p.bodyX = -0.15 + 0.55 * k;
+        this.bodyDrop = this.rig.dims().legH * this.rig.scale * 0.2 * k;
+        break;
+      }
+      case 'cast':
+        p.armLX = p.armRX = -1.5;
+        p.armLZ = 0.15;
+        p.armRZ = -0.15;
+        p.bodyX = -0.08;
+        break;
+      case 'block':
+        p.armLX = -1.4;
+        p.armLZ = 0.6;
+        p.armRX = -0.9;
+        p.bodyX = 0.1;
+        break;
+      case 'stagger':
+        p.bodyX = -0.3 + Math.sin(t * 14) * 0.08 * Math.max(0, 1 - t);
+        p.bodyZ = Math.sin(t * 9) * 0.12 * Math.max(0, 1 - t);
+        p.headX = -0.35;
+        p.armLZ = -0.9;
+        p.armRZ = 0.9;
+        break;
+      case 'defeat': {
+        const legH = this.rig.dims().legH * this.rig.scale;
+        const k = Math.min(1, t / 0.5);
+        this.bodyDrop = legH * 0.45 * k;
+        p.legLX = -1.45 * k;
+        p.legRX = -1.2 * k;
+        p.bodyX = 0.75 * k;
+        p.headX = 0.4 * k;
+        p.armLX = p.armRX = 0.3 * k;
+        break;
+      }
+      case 'yield': {
+        const legH = this.rig.dims().legH * this.rig.scale;
+        this.bodyDrop = legH * 0.42;
+        p.legLX = -1.45;
+        p.legRX = 0.25;
+        p.armLZ = -2.6;
+        p.armRZ = 2.6;
+        p.headX = 0.25;
+        break;
+      }
+      case 'cheer':
+        p.armLZ = -2.7 + wave * 0.1;
+        p.armRZ = 2.7 - wave * 0.1;
+        p.bodyX = -0.1;
+        break;
     }
   }
 }
 
 function gestureDuration(g: string): number {
   switch (g) {
+    case 'combat_idle':
+    case 'windup':
+    case 'block':
+    case 'defeat':
+    case 'yield':
+      // Held until the simulation asks for another animation.
+      return Infinity;
+    case 'attack':
+      return 0.45;
+    case 'slam':
+      return 0.6;
+    case 'cast':
+      return 0.5;
+    case 'stagger':
+      return 1.1;
+    case 'cheer':
+      return 2.5;
     case 'wave':
       return 2;
     case 'nod':

@@ -45,7 +45,14 @@ const fightSetup = defineMechanic({
   },
 });
 
-const elan = defineAbility({ id: 'fight.elan', label: 'Élan', key: 'KeyV', activate: () => true });
+const elan = defineAbility({
+  id: 'fight.elan',
+  name: 'fight.ability.elan',
+  description: 'fight.ability.elan.desc',
+  key: 'KeyV',
+  icon: { shape: 'feather', color: '#88ccff' },
+  activate: () => true,
+});
 
 function arenaScene() {
   const v = new VoxelVolume(48, 16, 48);
@@ -163,6 +170,8 @@ function fightPack(): MemoryPack {
         'fight.item.masqueOutil': 'Outil de masque',
         'fight.item.masque': 'Masque',
         'fight.item.desc': 'Un objet de test.',
+        'fight.ability.elan': 'Élan',
+        'fight.ability.elan.desc': 'Un bond en avant.',
       },
     },
   };

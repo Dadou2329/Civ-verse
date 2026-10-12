@@ -9,6 +9,11 @@ export function InventoryPanel() {
   const t = useT();
   const [, bump] = useReducer((x: number) => x + 1, 0);
   useEffect(() => session.inventory.onChange(bump), [session]);
+  useEffect(() => {
+    const d = session.equipment.onChange(bump);
+    return () => d.dispose();
+  }, [session]);
+  const eq = session.equipment;
   const entries = session.inventory.entries();
   const [selected, setSelected] = useState<string | null>(entries[0]?.id ?? null);
   const sel = selected ? session.items.get(selected) : undefined;
@@ -33,6 +38,7 @@ export function InventoryPanel() {
                 >
                   {def && <img src={iconDataUrl(def.icon)} alt="" />}
                   {e.count > 1 && <span className="cv-slot__count">{e.count}</span>}
+                  {(eq.held === e.id || [...eq.worn.values()].includes(e.id)) && <span className="cv-slot__badge" aria-hidden="true" />}
                 </button>
               );
             })}
@@ -43,6 +49,29 @@ export function InventoryPanel() {
               <h3>{t(sel.name)}</h3>
               <p>{t(sel.description)}</p>
               {sel.questItem && <p className="cv-muted">{t('ui.inventory.questItem')}</p>}
+              {eq.held === sel.id && <p className="cv-inventory__state">{t('ui.inventory.inHand')}</p>}
+              {sel.slot && eq.wornIn(sel.slot) === sel.id && <p className="cv-inventory__state">{t('ui.inventory.worn')}</p>}
+              {sel.held && eq.held !== sel.id && (
+                <Button
+                  variant="primary"
+                  testId="inventory-hold"
+                  onClick={() => {
+                    if (eq.hold(sel.id)) controller.closeOverlay();
+                  }}
+                >
+                  {t('ui.inventory.hold')}
+                </Button>
+              )}
+              {sel.slot && eq.wornIn(sel.slot) !== sel.id && (
+                <Button testId="inventory-equip" onClick={() => eq.equip(sel.id)}>
+                  {t('ui.inventory.equip')}
+                </Button>
+              )}
+              {sel.slot && eq.wornIn(sel.slot) === sel.id && (
+                <Button testId="inventory-unequip" onClick={() => eq.unequip(sel.slot!)}>
+                  {t('ui.inventory.unequip')}
+                </Button>
+              )}
               {sel.actions?.map((a) => (
                 <Button
                   key={a.id}

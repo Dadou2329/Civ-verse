@@ -1414,3 +1414,382 @@ button {
   cursor: pointer;
   animation: cv-blink 2s ease-in-out infinite;
 }
+
+/* ---- Item in hand and combat ------------------------------------------------------------- */
+.cv-hotbar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+.cv-hotbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+.cv-hotbar__slot {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  background: var(--civ-panel);
+  border: 1px solid var(--civ-panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease;
+}
+.cv-hotbar__slot.is-empty {
+  opacity: 0.55;
+}
+.cv-hotbar__slot.is-selected {
+  transform: translateY(-5px) scale(1.08);
+  border: 2px solid var(--civ-accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--civ-accent) 45%, transparent);
+}
+.cv-hotbar__slot img {
+  width: 34px;
+  height: 34px;
+  image-rendering: pixelated;
+}
+.cv-hotbar__key {
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+  text-shadow: 0 1px 2px #000;
+}
+.cv-hotbar__draw {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  transform-origin: bottom;
+  animation-name: cv-hotbar-draw;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes cv-hotbar-draw {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+.cv-hotbar__name {
+  font-size: 0.95rem;
+  color: var(--ink);
+  text-shadow: 0 1px 3px #000;
+  animation: cv-fade-name 2.2s ease forwards;
+}
+@keyframes cv-fade-name {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.cv-hotbar__worn {
+  display: flex;
+  gap: 0.25rem;
+  margin-right: 0.6rem;
+}
+.cv-hotbar__worn-item {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--civ-panel);
+  border: 1px solid var(--civ-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cv-hotbar__worn-item img {
+  width: 26px;
+  height: 26px;
+  image-rendering: pixelated;
+}
+
+.cv-hand-hints {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 34px);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  text-shadow: 0 1px 3px #000;
+  opacity: 0.82;
+  pointer-events: none;
+}
+.cv-prompt ~ .cv-hand-hints {
+  top: calc(50% + 96px);
+}
+.cv-hand-hints__row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.cv-hand-hints__row.is-waiting {
+  opacity: 0.45;
+}
+.cv-use-progress {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -22px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+.cv-use-progress svg {
+  transform: rotate(-90deg);
+}
+.cv-use-progress__track {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.45);
+  stroke-width: 4;
+}
+.cv-use-progress__fill {
+  fill: none;
+  stroke: var(--civ-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.cv-use-progress__label {
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  text-shadow: 0 1px 3px #000;
+}
+.cv-hit-marker {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  pointer-events: none;
+  animation: cv-hit 0.26s ease-out forwards;
+  --hit: #fff1c9;
+}
+.cv-hit-marker::before,
+.cv-hit-marker::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  margin-left: -1px;
+  background: var(--hit);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+  transform: rotate(45deg);
+}
+.cv-hit-marker::after {
+  transform: rotate(-45deg);
+}
+.cv-hit-marker--defeated {
+  --hit: #ff9a5c;
+}
+.cv-hit-marker--blocked {
+  --hit: #8fc8ff;
+}
+.cv-hit-marker--immune {
+  --hit: #9aa3ad;
+}
+@keyframes cv-hit {
+  from {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+.cv-health {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 240px;
+}
+.cv-health__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  text-shadow: 0 1px 2px #000;
+}
+.cv-health__bar {
+  position: relative;
+  height: 14px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--civ-panel-border);
+  overflow: hidden;
+}
+.cv-health__fill,
+.cv-health__trail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+.cv-health__fill {
+  background: linear-gradient(90deg, #b8322a, #e0645a);
+  transition: width 0.08s linear;
+}
+.cv-health__trail {
+  background: rgba(255, 230, 200, 0.55);
+  transition: width 0.7s ease 0.25s;
+}
+.cv-health.is-low .cv-health__bar {
+  animation: cv-pulse-low 0.9s ease-in-out infinite;
+}
+.cv-health.is-hurt .cv-health__bar {
+  box-shadow: 0 0 12px rgba(224, 100, 90, 0.8);
+}
+@keyframes cv-pulse-low {
+  50% {
+    box-shadow: 0 0 14px rgba(224, 70, 60, 0.9);
+  }
+}
+
+.cv-boss {
+  width: min(560px, 70vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  animation: cv-fade-in 0.4s ease;
+}
+.cv-boss__name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 4px #000;
+}
+.cv-boss__title {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  text-shadow: 0 1px 3px #000;
+}
+.cv-boss__bar {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--civ-accent);
+  overflow: hidden;
+}
+.cv-boss__fill,
+.cv-boss__trail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+.cv-boss__fill {
+  background: linear-gradient(90deg, #8a2a6a, #d4508a);
+  transition: width 0.1s linear;
+}
+.cv-boss__trail {
+  background: rgba(255, 240, 220, 0.5);
+  transition: width 0.8s ease 0.3s;
+}
+@keyframes cv-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.cv-combat-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cv-enemy-bar {
+  position: absolute;
+  width: 54px;
+  height: 6px;
+  margin-left: -27px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+.cv-enemy-bar__fill {
+  height: 100%;
+  background: #e0645a;
+}
+.cv-hurt-arc {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border-top: 6px solid rgba(220, 40, 30, 0.75);
+  filter: blur(1px);
+  animation: cv-hurt 0.8s ease-out forwards;
+}
+@keyframes cv-hurt {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.cv-defeat {
+  position: absolute;
+  inset: 0;
+  /* Above the screen fade (8) and flash (9). */
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  pointer-events: none;
+  animation: cv-fade-in 0.8s ease;
+}
+.cv-defeat__title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.4rem;
+  color: #f2d4c8;
+  text-shadow: 0 3px 12px #000;
+}
+.cv-defeat__hint {
+  color: var(--ink-dim);
+  text-shadow: 0 1px 4px #000;
+}
+
+.cv-slot__badge {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--civ-accent);
+  box-shadow: 0 0 6px var(--civ-accent);
+}
+.cv-inventory__state {
+  color: var(--civ-accent);
+  font-size: 0.9rem;
+}

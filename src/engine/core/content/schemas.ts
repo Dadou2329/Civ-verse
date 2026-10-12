@@ -419,7 +419,14 @@ export const ACCESSORY_TYPES = [
   'flower',
   'veil',
   'keyring',
+  /** Face mask (covers the face; eye holes unless its pattern is « mirror »). */
+  'mask',
+  /** Half mask (eyes and nose). */
+  'halfmask',
 ] as const;
+
+/** Painted motif of masks (and future painted accessories). */
+export const ACCESSORY_PATTERNS = ['plain', 'ember', 'threads', 'rivets', 'lens', 'ornate', 'mirror', 'split'] as const;
 
 export const CharacterSchema = z.object({
   id: z.string(),
@@ -454,7 +461,7 @@ export const CharacterSchema = z.object({
     accent: hex,
     trim: hex.optional(),
   }),
-  accessories: z.array(z.object({ type: z.enum(ACCESSORY_TYPES), color: hex, accent: hex.optional() })).default([]),
+  accessories: z.array(z.object({ type: z.enum(ACCESSORY_TYPES), color: hex, accent: hex.optional(), pattern: z.enum(ACCESSORY_PATTERNS).optional() })).default([]),
   idle: z.enum(['calm', 'nervous', 'proud', 'tired', 'playful']).default('calm'),
   voicePitch: z.number().min(0.5).max(2).default(1),
 });

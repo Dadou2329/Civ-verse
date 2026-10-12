@@ -5,6 +5,7 @@
  */
 import { useState } from 'react';
 import type { ActionData, ConditionData } from '@engine/core/logic/types';
+import type { ItemUseData } from '@engine/core/packs/definitions';
 import { normalizeProps, type PropSchema } from '@engine/core/props/props';
 import { PropFields, type FieldEnv, type OnChange } from './PropField';
 
@@ -231,6 +232,39 @@ export function EventEditor({
             }}
           />
         </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * What a mouse button does with an item in hand: a registered item use (engine or pack) and its
+ * props, edited like an action block.
+ */
+export function ItemUseEditor({ value, onChange, env, placeholder }: { value: ItemUseData | null | undefined; onChange: OnChange<ItemUseData | null>; env: FieldEnv; placeholder: string }) {
+  const uses = env.studio.session.itemUses;
+  const defs = [...uses.values()].map((u) => u.def) as unknown as LogicDef[];
+  const pick = (id: string) => onChange(withDefaults(uses.get(id)?.def as unknown as LogicDef | undefined, id) as ItemUseData);
+  if (!value) return <TypeSelect defs={defs} value="" placeholder={placeholder} onPick={pick} />;
+  const def = uses.get(value.type)?.def as unknown as LogicDef | undefined;
+  const { type, ...props } = value;
+  return (
+    <div className="st-block">
+      <div className="st-block__head">
+        <TypeSelect defs={defs} value={type} placeholder="Utilisation…" onPick={pick} />
+        <span style={{ flex: 1 }} />
+        <button type="button" className="st-btn st-btn--small st-btn--ghost st-btn--danger" title="Retirer l’utilisation" onClick={() => onChange(null)}>
+          ✕
+        </button>
+      </div>
+      {def ? (
+        Object.keys(def.props).length > 0 && (
+          <div className="st-block__body">
+            <PropFields schema={def.props} value={props} env={env} onChange={(next, merge) => onChange({ type, ...next } as ItemUseData, merge)} />
+          </div>
+        )
+      ) : (
+        <div className="st-line--error">Utilisation inconnue : {type}</div>
       )}
     </div>
   );
