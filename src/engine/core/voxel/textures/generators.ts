@@ -735,6 +735,48 @@ const generators: Record<string, TextureGenerator> = {
     }
   },
 
+  /** Cross-shaped plant with flower heads (cutout): c0 stem, c1 dark stem, c2 flower, c3 flower center. */
+  plant(ctx) {
+    const { t, rng } = ctx;
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) t.set(x, y, ctx.c(0), 0);
+    const stems = ctx.p('stems', 4);
+    for (let k = 0; k < stems; k++) {
+      let x = 2 + Math.floor((k + 0.5) * (12 / stems)) + rng.int(-1, 1);
+      const top = rng.int(3, 7);
+      for (let y = S - 1; y >= top; y--) {
+        t.set(x, y, y % 3 === 0 ? ctx.c(1) : ctx.c(0), 1);
+        if (rng.chance(0.18)) x += rng.chance(0.5) ? 1 : -1;
+        x = Math.max(1, Math.min(14, x));
+        if (rng.chance(0.25) && y > top + 2) t.set(x + (rng.chance(0.5) ? 1 : -1), y, ctx.c(0), 1);
+      }
+      if (ctx.p('flowers', 1)) {
+        for (const [dx, dy] of [
+          [0, -1],
+          [-1, 0],
+          [1, 0],
+          [0, 1],
+        ] as const)
+          t.set(x + dx, top + dy, ctx.c(2), 1);
+        t.set(x, top, ctx.c(3), 1);
+      }
+    }
+  },
+
+  /** Grass tuft (cutout). */
+  grassTuft(ctx) {
+    const { t, rng } = ctx;
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) t.set(x, y, ctx.c(0), 0);
+    for (let k = 0; k < 9; k++) {
+      let x = rng.int(1, 14);
+      const h = rng.int(5, 12);
+      for (let i = 0; i < h; i++) {
+        const y = S - 1 - i;
+        t.set(x, y, shade(i > h * 0.6 ? ctx.c(2) : ctx.c(0), (rng.next() - 0.5) * 0.15), 1);
+        if (rng.chance(0.2)) x = Math.max(0, Math.min(15, x + (rng.chance(0.5) ? 1 : -1)));
+      }
+    }
+  },
+
   thatch(ctx) {
     const { t } = ctx;
     for (let y = 0; y < S; y++) {

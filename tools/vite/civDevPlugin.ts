@@ -8,7 +8,8 @@
  * Safety rules (see docs/DECISIONS.md, ADR-006):
  * - every request must carry the `x-civ-studio: 1` header (blocks simple cross-site requests);
  * - the Host header must be a loopback address (DNS-rebinding protection);
- * - paths are repository-relative, must live under `civilizations/<pack>/<allowed dir>/`, must
+ * - paths are repository-relative, must live under `civilizations/<pack>/<allowed dir>/` (or be
+ *   the pack's manifest.json), must
  *   use an allowed extension, and must resolve (after symlinks) inside the repository;
  * - writes are atomic (temp file + rename) and the previous version is copied to `.civ-backups/`;
  * - deletes move the file to `.civ-backups/` instead of destroying it.
@@ -63,7 +64,8 @@ export function resolvePackPath(relPath: string, mode: 'read' | 'write'): string
   const ext = path.posix.extname(normalized);
   if (mode === 'write') {
     const dir = parts[2] ?? '';
-    if (!(WRITABLE_PACK_DIRS as readonly string[]).includes(dir) || parts.length < 4) {
+    const isManifest = parts.length === 3 && dir === 'manifest.json';
+    if (!isManifest && (!(WRITABLE_PACK_DIRS as readonly string[]).includes(dir) || parts.length < 4)) {
       throw new CivApiError(403, `Écriture interdite hors de : ${WRITABLE_PACK_DIRS.join(', ')}.`);
     }
     if (!(WRITABLE_EXTENSIONS as readonly string[]).includes(ext)) {

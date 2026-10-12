@@ -7,6 +7,7 @@ import { prop } from '../props/props';
 
 export const coreEvents = [
   defineEvent({ id: 'civ.started', label: 'Civilisation démarrée', fields: { civId: prop.string({ label: 'Civilisation' }) } }),
+  defineEvent({ id: 'civ.finished', label: 'Civilisation terminée', fields: { civId: prop.string({ label: 'Civilisation' }) } }),
   defineEvent({ id: 'scene.entered', label: 'Entrée dans une scène', fields: { sceneId: prop.scene({ label: 'Scène' }) } }),
   defineEvent({ id: 'zone.entered', label: 'Entrée dans une zone', fields: { zoneId: prop.entity({ label: 'Zone', withComponent: 'core.zone' }) } }),
   defineEvent({ id: 'zone.exited', label: "Sortie d'une zone", fields: { zoneId: prop.entity({ label: 'Zone', withComponent: 'core.zone' }) } }),

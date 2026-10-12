@@ -1,0 +1,7 @@
+{
+  "core.pack.name": "Bibliothèque commune",
+  "core.pack.description": "Blocs, modèles, sons et personnages partagés par toutes les civilisations.",
+  "core.char.citizen": "Habitant",
+  "core.char.child": "Enfant",
+  "core.char.guard": "Garde"
+}

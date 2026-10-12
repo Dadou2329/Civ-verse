@@ -319,6 +319,17 @@ export class GameSession {
     return api;
   }
 
+  /** Character appearance from any loaded pack (civilization first, then libraries). */
+  characterDoc(id: string): import('../content/schemas').CharacterDoc | undefined {
+    const own = this.civ?.pack.characters.get(id);
+    if (own) return own;
+    for (const p of this.loadedPacks.values()) {
+      const c = p.characters.get(id);
+      if (c) return c;
+    }
+    return undefined;
+  }
+
   /** Effective props of a mechanic's settings (Civilization Rules editor). */
   settingsOf(mechanicId: string): Record<string, unknown> {
     return this.civ?.settings.get(mechanicId) ?? {};

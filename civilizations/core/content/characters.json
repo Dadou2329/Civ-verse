@@ -1,0 +1,84 @@
+{
+  "format": "civverse.characters",
+  "version": 1,
+  "characters": [
+    {
+      "id": "core:citizen_a",
+      "name": "core.char.citizen",
+      "build": { "body": "adult", "height": 1 },
+      "skin": "#d8a882",
+      "eyes": "#4a3a2a",
+      "hair": { "style": "short", "color": "#4a3020" },
+      "face": { "brows": "#3a2418" },
+      "outfit": { "style": "tunic", "top": "#7a5a3a", "bottom": "#4a4038", "shoes": "#2e2620", "accent": "#a8834a" },
+      "accessories": [{ "type": "belt", "color": "#3a2a1a" }],
+      "idle": "calm",
+      "voicePitch": 1
+    },
+    {
+      "id": "core:citizen_b",
+      "name": "core.char.citizen",
+      "build": { "body": "slim", "height": 0.96 },
+      "skin": "#b98463",
+      "eyes": "#2f4a3a",
+      "hair": { "style": "bun", "color": "#2a1c14" },
+      "face": { "brows": "#2a1c14" },
+      "outfit": { "style": "dress", "top": "#6a7a8a", "bottom": "#4a5868", "shoes": "#2e2a28", "accent": "#d8cfc0" },
+      "accessories": [{ "type": "apron", "color": "#e2d8c4" }],
+      "idle": "calm",
+      "voicePitch": 1.15
+    },
+    {
+      "id": "core:citizen_c",
+      "name": "core.char.citizen",
+      "build": { "body": "broad", "height": 1.04 },
+      "skin": "#8a5a3e",
+      "eyes": "#2a1a10",
+      "hair": { "style": "bald", "color": "#1a1210" },
+      "face": { "beard": "#2a1a10", "brows": "#1a1210" },
+      "outfit": { "style": "vest", "top": "#8a3a2a", "bottom": "#3a3430", "shoes": "#221c18", "accent": "#c9a24a" },
+      "accessories": [],
+      "idle": "proud",
+      "voicePitch": 0.85
+    },
+    {
+      "id": "core:citizen_d",
+      "name": "core.char.citizen",
+      "build": { "body": "elder", "height": 0.94 },
+      "skin": "#e0b898",
+      "eyes": "#5a6a7a",
+      "hair": { "style": "swept", "color": "#cfcac0" },
+      "face": { "wrinkles": true, "brows": "#cfcac0", "mustache": "#cfcac0" },
+      "outfit": { "style": "coat", "top": "#4a5a4a", "bottom": "#3a3a34", "shoes": "#2a2420", "accent": "#a89a7a" },
+      "accessories": [{ "type": "glasses", "color": "#2a2a2a" }],
+      "idle": "tired",
+      "voicePitch": 0.9
+    },
+    {
+      "id": "core:child",
+      "name": "core.char.child",
+      "build": { "body": "child", "height": 0.72 },
+      "skin": "#c89070",
+      "eyes": "#3a2a1a",
+      "hair": { "style": "curly", "color": "#3a2214" },
+      "face": { "freckles": true, "brows": "#3a2214" },
+      "outfit": { "style": "shirt", "top": "#a87a3a", "bottom": "#5a4a3a", "shoes": "#3a2a20", "accent": "#e2d8c4" },
+      "accessories": [],
+      "idle": "playful",
+      "voicePitch": 1.4
+    },
+    {
+      "id": "core:guard",
+      "name": "core.char.guard",
+      "build": { "body": "broad", "height": 1.05 },
+      "skin": "#c89878",
+      "eyes": "#2a2a2a",
+      "hair": { "style": "short", "color": "#2a2018" },
+      "face": { "brows": "#2a2018", "scar": true },
+      "outfit": { "style": "uniform", "top": "#3a4a6a", "bottom": "#2a3040", "shoes": "#1a1a1c", "accent": "#c9a24a", "trim": "#c9a24a" },
+      "accessories": [{ "type": "helmet", "color": "#6d7178", "accent": "#c9a24a" }, { "type": "epaulettes", "color": "#c9a24a" }],
+      "idle": "proud",
+      "voicePitch": 0.9
+    }
+  ]
+}

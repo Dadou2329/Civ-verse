@@ -429,6 +429,16 @@ export const coreActions = [
     run: (ctx, p) => ctx.multiverse.setFlag(p.flag, p.value as JsonValue),
   }),
   defineAction({
+    id: 'core.finishCivilization',
+    label: 'Terminer la civilisation (retour à la sélection)',
+    category: 'Multivers',
+    props: {},
+    run: (ctx) => {
+      ctx.multiverse.markCompleted();
+      ctx.events.emit('civ.finished', { civId: ctx.civId });
+    },
+  }),
+  defineAction({
     id: 'core.markCivCompleted',
     label: 'Marquer la civilisation terminée',
     category: 'Multivers',

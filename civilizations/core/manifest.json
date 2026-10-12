@@ -1,0 +1,18 @@
+{
+  "format": "civverse.pack",
+  "version": 1,
+  "id": "core",
+  "kind": "library",
+  "name": "core.pack.name",
+  "description": "core.pack.description",
+  "packVersion": "0.1.0",
+  "engineApi": "^1.0.0",
+  "dependencies": [],
+  "scenes": [],
+  "stateVersion": 1,
+  "globalWrites": [],
+  "fragments": [],
+  "order": 0,
+  "credits": ["Bibliothèque partagée CIVILIZATIONVERSE — blocs, modèles et sons originaux procéduraux."],
+  "tags": ["bibliothèque"]
+}

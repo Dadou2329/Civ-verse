@@ -14,6 +14,8 @@
 export interface CivEventMap {
   'civ.started': { civId: string };
   'civ.unloading': { civId: string };
+  /** The civilization's story is over: the game returns to the civilization selection. */
+  'civ.finished': { civId: string };
   'scene.entered': { sceneId: string };
   'scene.exiting': { sceneId: string };
   'zone.entered': { zoneId: string; name: string };
