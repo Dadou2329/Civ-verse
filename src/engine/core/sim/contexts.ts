@@ -65,7 +65,7 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
     },
     has: (name) => session.vars.has(name),
     declare(name, decl) {
-      if (!name.startsWith(`${civId}.`)) throw new Error(`Variable hors de l'espace "${civId}." : ${name}`);
+      if (!name.startsWith(`${civId}.`)) throw new Error(`Variable hors de l’espace "${civId}." : ${name}`);
       session.vars.declare(name, decl);
     },
     watch: (name, cb) => scope.add(session.vars.watch(name, (v, p) => cb(v, p))),
@@ -113,7 +113,7 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
     teleport(target, yawDeg) {
       if (typeof target === 'string') {
         const e = session.world?.entities.get(target);
-        if (!e) throw new Error(`Point d'apparition introuvable : ${target}`);
+        if (!e) throw new Error(`Point d’apparition introuvable : ${target}`);
         const ground = session.world!.groundAt(e.position.x, e.position.z, e.position.y + 0.5);
         session.player.teleport({ x: e.position.x, y: ground ?? e.position.y, z: e.position.z }, yawDeg ?? e.yaw);
       } else session.player.teleport(target, yawDeg);
@@ -504,7 +504,7 @@ export function dropMotor(e: RuntimeEntity): void {
 export function createEntityApi(session: GameSession, e: RuntimeEntity): EntityApi {
   const world = () => {
     const w = session.world;
-    if (!w || w.entities.get(e.id) !== e) throw new Error(`L'entité ${e.id} n'est plus dans la scène.`);
+    if (!w || w.entities.get(e.id) !== e) throw new Error(`L’entité ${e.id} n’est plus dans la scène.`);
     return w;
   };
   const resolveTarget = (target: Vec3 | string): Vec3 | null => {

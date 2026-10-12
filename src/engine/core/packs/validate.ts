@@ -88,7 +88,7 @@ export async function validateCivilization(session: GameSession, civId: string, 
     checkKey(ctx, f.name, `fragments.${i}.name`);
     checkKey(ctx, f.hint, `fragments.${i}.hint`);
   });
-  if (m.entry && !pack.scenes.has(m.entry.scene)) err(ctx, 'entry.scene', `Scène d'entrée inconnue : ${m.entry.scene}`);
+  if (m.entry && !pack.scenes.has(m.entry.scene)) err(ctx, 'entry.scene', `Scène d’entrée inconnue : ${m.entry.scene}`);
 
   // --- Mechanics: setup failures and their settings (content/rules.json) ------------------------
   for (const [id, record] of civ.mechanics) {
@@ -98,7 +98,7 @@ export async function validateCivilization(session: GameSession, civId: string, 
   for (const def of pack.defs.mechanics) {
     if (def.settings) checkProps(ctx, def.settings, pack.rules.settings[def.id] ?? {}, `settings.${def.id}`);
   }
-  if (m.entry && scenes.has(m.entry.scene) && !entityIds.get(m.entry.scene)?.has(m.entry.spawn)) err(ctx, 'entry.spawn', `Point d'apparition introuvable : ${m.entry.spawn}`);
+  if (m.entry && scenes.has(m.entry.scene) && !entityIds.get(m.entry.scene)?.has(m.entry.spawn)) err(ctx, 'entry.spawn', `Point d’apparition introuvable : ${m.entry.spawn}`);
 
   // --- Scenes -------------------------------------------------------------------------------------
   for (const [sid, doc] of scenes) {
@@ -295,7 +295,7 @@ function checkKey(ctx: CheckCtx, key: string | undefined | null, path: string, e
   ctx.stats.keysChecked++;
   if (ctx.session.i18n.has(key, 'fr-FR')) return;
   if (editorOnly) return;
-  if (/\s/.test(key) || !/^[a-zA-Z0-9_.-]+$/.test(key)) err(ctx, path, `Texte brut au lieu d'une clé de traduction : « ${key.slice(0, 60)} »`);
+  if (/\s/.test(key) || !/^[a-zA-Z0-9_.-]+$/.test(key)) err(ctx, path, `Texte brut au lieu d’une clé de traduction : « ${key.slice(0, 60)} »`);
   else err(ctx, path, `Clé de traduction manquante en français : ${key}`);
 }
 
@@ -306,10 +306,10 @@ function checkEvent(ctx: CheckCtx, name: string, path: string): void {
 function checkVariable(ctx: CheckCtx, name: string, path: string, write: boolean): void {
   if (!name) return;
   if (name.startsWith('global.')) {
-    if (write) err(ctx, path, `Les variables globales ne s'écrivent pas directement : ${name} (utiliser core.grantFragment / core.setGlobalFlag)`);
+    if (write) err(ctx, path, `Les variables globales ne s’écrivent pas directement : ${name} (utiliser core.grantFragment / core.setGlobalFlag)`);
     return;
   }
-  if (!name.startsWith(`${ctx.civId}.`)) err(ctx, path, `Variable hors de l'espace « ${ctx.civId}. » : ${name}`);
+  if (!name.startsWith(`${ctx.civId}.`)) err(ctx, path, `Variable hors de l’espace « ${ctx.civId}. » : ${name}`);
 }
 
 function checkCondition(ctx: CheckCtx, c: ConditionData | null | undefined, path: string): void {
@@ -367,7 +367,7 @@ function checkValue(ctx: CheckCtx, def: PropDef, v: unknown, path: string, isWri
         case 'entity':
           if (SPECIAL_ENTITIES.has(v) || v.startsWith('$')) return;
           if (ctx.sceneEntities && !ctx.sceneEntities.has(v)) {
-            if (ctx.allEntityIds.has(v)) warn(ctx, path, `Entité d'une autre scène : ${v}`);
+            if (ctx.allEntityIds.has(v)) warn(ctx, path, `Entité d’une autre scène : ${v}`);
             else err(ctx, path, `Entité inconnue : ${v}`);
           } else if (!ctx.sceneEntities && !ctx.allEntityIds.has(v)) err(ctx, path, `Entité inconnue : ${v}`);
           return;

@@ -272,7 +272,7 @@ export const chamberConditions = [
   }),
   defineCondition({
     id: 'memory.shardState',
-    label: "État d'un éclat",
+    label: 'État d’un éclat',
     category: 'Mémoire',
     props: {
       shard: shardProp,

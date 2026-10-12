@@ -230,7 +230,7 @@ function withObject(b: ModelBuilder, what: 'kite' | 'cup' | 'bell') {
 
 export const extractionMachine = defineModel({
   id: 'memory:extraction_machine',
-  label: "Machine d'extraction",
+  label: 'Machine d’extraction',
   category: 'Réminence — Machines',
   light: { level: 10, color: '#c08aff', offset: [0, 2.2, 0] },
   build(b) {
@@ -282,7 +282,7 @@ export const namePlaques = defineModel({
 
 export const queueRope = defineModel({
   id: 'memory:queue_rope',
-  label: "Poteaux de file d'attente",
+  label: 'Poteaux de file d’attente',
   category: 'Réminence — Rue',
   build(b) {
     for (const x of [0, 30]) {

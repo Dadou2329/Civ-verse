@@ -1,7 +1,7 @@
 import { definePack } from '@sdk';
 
 /**
- * Door Civilization — « La Porte qui n'existe pas ».
+ * Door Civilization — « La Porte qui n’existe pas ».
  *
  * mechanics/  règles du monde (registre des accès, serrures, empreinte, mémoire des portes, soupçon)
  * assets/     blocs, modèles, sons et musiques de Verrou

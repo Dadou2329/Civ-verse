@@ -16,7 +16,7 @@ export const npcBehavior = defineBehavior({
     character: prop.character({ label: 'Apparence' }),
     name: prop.text({ label: 'Nom affiché' }),
     dialogue: prop.dialogue({ label: 'Dialogue' }),
-    talkPrompt: prop.text({ label: "Invite d'interaction", default: 'core.prompt.talk' }),
+    talkPrompt: prop.text({ label: 'Invite d’interaction', default: 'core.prompt.talk' }),
     interactable: prop.boolean({ label: 'On peut lui parler', default: true }),
     mode: prop.enum(
       [

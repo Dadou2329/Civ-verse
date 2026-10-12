@@ -144,6 +144,8 @@ function ActionBlock({
   const def = registry.action(action.type) as unknown as LogicDef | undefined;
   const { type, note, ...props } = action;
   const [open, setOpen] = useState(Object.keys(props).length <= 3);
+  // The designer note travels with the action but is never shown to players.
+  const withNote = (n: string | undefined, rest: Record<string, unknown>) => ({ type, ...(n ? { note: n } : {}), ...rest }) as ActionData;
   return (
     <div className="st-block">
       <div className="st-block__head">
@@ -152,6 +154,11 @@ function ActionBlock({
         </button>
         <span className="st-block__title">{def?.label ?? type}</span>
         {!open && <span className="st-block__summary">{summary(def, props)}</span>}
+        {!open && note && (
+          <span className="st-block__summary st-block__note" title={note}>
+            ✎ {note}
+          </span>
+        )}
         <span style={{ flex: 1 }} />
         <button type="button" className="st-btn st-btn--small st-btn--ghost" title="Monter" disabled={index === 0} onClick={() => onMove(-1)}>
           ↑
@@ -166,10 +173,14 @@ function ActionBlock({
       {open && (
         <div className="st-block__body">
           {def ? (
-            <PropFields schema={def.props} value={props} env={env} onChange={(next, merge) => onChange({ type, ...(note ? { note } : {}), ...next } as ActionData, merge)} />
+            <PropFields schema={def.props} value={props} env={env} onChange={(next, merge) => onChange(withNote(note, next), merge)} />
           ) : (
             <div className="st-line--error">Action inconnue : {type}</div>
           )}
+          <label className="st-field">
+            <span className="st-field__label">Note</span>
+            <input className="st-input st-block__note" value={note ?? ''} placeholder="Note de conception (jamais montrée aux joueurs)" onChange={(e) => onChange(withNote(e.target.value || undefined, props), 'note')} />
+          </label>
         </div>
       )}
     </div>

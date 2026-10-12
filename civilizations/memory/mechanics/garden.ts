@@ -82,7 +82,7 @@ export const offeringMechanic = defineMechanic({
 /** A pedestal: shows the placed object, offers « Déposer » (panel) and « Reprendre ». */
 export const pedestal = defineBehavior({
   id: 'memory.pedestal',
-  label: "Socle de l'énigme",
+  label: 'Socle de l’énigme',
   category: 'Mémoire',
   props: {
     models: prop.object(

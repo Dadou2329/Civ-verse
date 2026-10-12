@@ -1,5 +1,5 @@
 /**
- * Seed of the scene "reminence": the Marché des Éclats, the Atelier d'Oriane, the Maison des
+ * Seed of the scene "reminence": the Marché des Éclats, the Atelier d’Oriane, the Maison des
  * Absences, the Jardin des Noms and the Salle de Vente.
  */
 import {
@@ -78,7 +78,7 @@ export function buildReminence(): SceneDoc {
     fillBox(v, [a[0], G, a[1]], [b[0], G + 9, b[1]], 'memory:black_bricks');
   }
   s.inFolder('Marché des Éclats', () => market(s));
-  s.inFolder("Atelier d'Oriane", () => workshop(s));
+  s.inFolder('Atelier d’Oriane', () => workshop(s));
   s.inFolder('Maison des Absences', () => absences(s));
   s.inFolder('Canal', () => canal(s));
   s.inFolder('Jardin des Noms', () => garden(s));

@@ -222,7 +222,8 @@ function TopBar({ onPlay, onValidate, playing }: { onPlay: (here: boolean) => vo
           data-testid="st-pack"
           onChange={(e) => {
             if (studio.project.dirty().length > 0 && !confirm('Des modifications ne sont pas encore enregistrées : elles restent en mémoire et seront écrites au prochain « Enregistrer ». Changer de pack ?')) return;
-            void studio.openPack(e.target.value);
+            const pack = e.target.value;
+            studio.openPack(pack).catch((err: unknown) => studio.print('error', `Ouverture de « ${pack} » impossible : ${err instanceof Error ? err.message : String(err)}`));
           }}
         >
           {!studio.packId && <option value="">—</option>}

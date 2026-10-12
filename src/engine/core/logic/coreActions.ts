@@ -137,7 +137,7 @@ export const coreActions = [
   }),
   defineAction({
     id: 'core.setHudVisible',
-    label: "Afficher/masquer un élément d'interface",
+    label: 'Afficher/masquer un élément d’interface',
     category: 'Interface',
     props: {
       element: prop.enum(['crosshair', 'prompt', 'objectives', 'notifications', 'inventory', 'abilities', 'location'] as const, { label: 'Élément', default: 'objectives' }),
@@ -188,7 +188,7 @@ export const coreActions = [
   }),
   defineAction({
     id: 'core.setQuestStage',
-    label: "Changer d'étape de quête",
+    label: 'Changer d’étape de quête',
     category: 'Narration',
     props: { quest: prop.quest({ label: 'Quête' }), stage: prop.string({ label: 'Étape' }) },
     run: (ctx, p) => ctx.quests.setStage(p.quest, p.stage),
@@ -261,7 +261,7 @@ export const coreActions = [
   }),
   defineAction({
     id: 'core.setProp',
-    label: "Modifier une propriété d'entité",
+    label: 'Modifier une propriété d’entité',
     category: 'Entités',
     props: {
       entity: prop.entity({ label: 'Entité' }),
@@ -280,7 +280,7 @@ export const coreActions = [
       target: prop.entity({ label: 'Vers le repère/entité' }),
       position: prop.vec3({ label: 'Ou vers la position' }),
       run: prop.boolean({ label: 'Courir' }),
-      wait: prop.boolean({ label: "Attendre l'arrivée", default: true }),
+      wait: prop.boolean({ label: 'Attendre l’arrivée', default: true }),
     },
     run: async (ctx, p, scope) => {
       const e = ctx.world.require(p.entity);
@@ -376,14 +376,14 @@ export const coreActions = [
     id: 'core.teleportPlayer',
     label: 'Téléporter le joueur',
     category: 'Joueur',
-    props: { spawn: prop.spawn({ label: "Point d'apparition / repère" }) },
+    props: { spawn: prop.spawn({ label: 'Point d’apparition / repère' }) },
     run: (ctx, p) => ctx.player.teleport(p.spawn),
   }),
   defineAction({
     id: 'core.changeScene',
     label: 'Changer de scène',
     category: 'Joueur',
-    props: { scene: prop.scene({ label: 'Scène' }), spawn: prop.string({ label: "Point d'apparition" }) },
+    props: { scene: prop.scene({ label: 'Scène' }), spawn: prop.string({ label: 'Point d’apparition' }) },
     run: (ctx, p) => ctx.scenes.goTo(p.scene, p.spawn || undefined),
   }),
   defineAction({
@@ -483,14 +483,14 @@ export const coreActions = [
   }),
   defineAction({
     id: 'core.ambience',
-    label: "Changer l'ambiance sonore",
+    label: 'Changer l’ambiance sonore',
     category: 'Audio et effets',
     props: { ambience: prop.sound({ label: 'Ambiance (vide = silence)' }), fade: prop.number({ label: 'Fondu (s)', default: 2 }) },
     run: (ctx, p) => ctx.audio.ambience(p.ambience || null, { fade: p.fade }),
   }),
   defineAction({
     id: 'core.fade',
-    label: "Fondu à l'écran",
+    label: 'Fondu à l’écran',
     category: 'Audio et effets',
     props: {
       opacity: prop.number({ label: 'Opacité (0 = clair, 1 = noir)', default: 1, min: 0, max: 1, step: 0.05 }),
@@ -525,7 +525,7 @@ export const coreActions = [
   }),
   defineAction({
     id: 'core.environment',
-    label: "Changer l'environnement (ciel, brouillard...)",
+    label: 'Changer l’environnement (ciel, brouillard...)',
     category: 'Audio et effets',
     props: { patch: prop.json({ label: 'Modifications (JSON)', default: {} }), seconds: prop.number({ label: 'Transition (s)', default: 2 }) },
     run: (ctx, p) => ctx.fx.environment((p.patch ?? {}) as Record<string, unknown>, p.seconds),

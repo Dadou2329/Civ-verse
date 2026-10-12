@@ -144,9 +144,12 @@ export function layoutCharacter(doc: CharacterDoc): CharacterLayout {
       case 'cape':
         add('cape', 'body', [-torsoW / 2, -legH * 0.7, -torsoD / 2 - 1], [torsoW, torsoH + legH * 0.7, 1]);
         break;
-      case 'plaque':
-        add('plaque', 'body', [-1.5, torsoH - 6, torsoD / 2], [3, 2.5, 0.6]);
+      case 'plaque': {
+        // Worn on the chest: below a pendant, in front of an apron.
+        const has = (type: string) => doc.accessories.some((a) => a.type === type);
+        add('plaque', 'body', [-1.5, torsoH - 6 - (has('pendant') ? 2.5 : 0), torsoD / 2 + (has('apron') ? 0.6 : 0)], [3, 2.5, 0.6]);
         break;
+      }
       case 'apron':
         add('apron', 'body', [-torsoW / 2 + 1, -legH * 0.6, torsoD / 2], [torsoW - 2, torsoH - 3 + legH * 0.6, 0.6]);
         break;

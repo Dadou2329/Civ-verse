@@ -86,7 +86,7 @@
           "wait": false
         }
       ],
-      "name": "Oriane remarque l'éclat (après le premier écho)",
+      "name": "Oriane remarque l’éclat (après le premier écho)",
       "if": {
         "type": "core.not",
         "condition": {
@@ -190,7 +190,7 @@
           "amount": 1
         }
       ],
-      "name": "Objet d'enfance trouvé (cerf_volant)"
+      "name": "Objet d’enfance trouvé (cerf_volant)"
     },
     {
       "id": "objet_tasse",
@@ -209,7 +209,7 @@
           "amount": 1
         }
       ],
-      "name": "Objet d'enfance trouvé (tasse)"
+      "name": "Objet d’enfance trouvé (tasse)"
     },
     {
       "id": "objet_clochette",
@@ -228,7 +228,7 @@
           "amount": 1
         }
       ],
-      "name": "Objet d'enfance trouvé (clochette)"
+      "name": "Objet d’enfance trouvé (clochette)"
     },
     {
       "id": "confrontation",
@@ -325,7 +325,7 @@
           "target": "player"
         }
       ],
-      "name": "Léa et Silas attendent dans l'atelier",
+      "name": "Léa et Silas attendent dans l’atelier",
       "if": {
         "type": "core.all",
         "of": [
@@ -478,29 +478,6 @@
           "fragment": "remanence"
         },
         {
-          "type": "core.if",
-          "condition": {
-            "type": "core.var",
-            "var": "memory.restorationOutcome",
-            "op": "==",
-            "value": "acceptee"
-          },
-          "then": [
-            {
-              "type": "core.setGlobalFlag",
-              "flag": "memory.restoration",
-              "value": "acceptee"
-            }
-          ],
-          "else": [
-            {
-              "type": "core.setGlobalFlag",
-              "flag": "memory.restoration",
-              "value": "refusee"
-            }
-          ]
-        },
-        {
           "type": "core.wait",
           "seconds": 2
         },
@@ -515,7 +492,7 @@
           "spawn": "spawn_epilogue"
         }
       ],
-      "name": "Rémanence, puis retour à Réminence pour l'épilogue"
+      "name": "Rémanence, puis retour à Réminence pour l’épilogue"
     },
     {
       "id": "epilogue",

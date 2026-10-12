@@ -750,7 +750,7 @@
         90,
         0
       ],
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "enseigne_atelier",
@@ -777,7 +777,7 @@
         90,
         0
       ],
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "table_emplacements",
@@ -800,7 +800,7 @@
         180,
         0
       ],
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "lampe_resonance",
@@ -840,7 +840,7 @@
           ]
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "shelf_14",
@@ -859,7 +859,7 @@
         90,
         0
       ],
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "workbench_15",
@@ -873,7 +873,7 @@
           "model": "core:workbench"
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "books_stack_16",
@@ -887,7 +887,7 @@
           "model": "core:books_stack"
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "shard_violet_17",
@@ -901,7 +901,7 @@
           "model": "memory:shard_violet"
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "shard_teal_18",
@@ -915,7 +915,7 @@
           "model": "memory:shard_teal"
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "lumiere_atelier",
@@ -935,7 +935,7 @@
           ]
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "lumiere_atelier_fond",
@@ -955,7 +955,7 @@
           ]
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "lumiere_atelier_vitrine",
@@ -975,7 +975,7 @@
           ]
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "liasse_bastien",
@@ -1010,7 +1010,7 @@
           }
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "spawn_atelier",
@@ -1027,7 +1027,7 @@
         90,
         0
       ],
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "marque_oriane_porte",
@@ -1039,7 +1039,7 @@
       "components": {
         "core.marker": {}
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "marque_oriane_atelier",
@@ -1051,7 +1051,7 @@
       "components": {
         "core.marker": {}
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "marque_lea_atelier",
@@ -1063,7 +1063,7 @@
       "components": {
         "core.marker": {}
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "marque_silas_atelier",
@@ -1075,7 +1075,7 @@
       "components": {
         "core.marker": {}
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "oriane",
@@ -1122,7 +1122,7 @@
         90,
         0
       ],
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "zone_atelier",
@@ -1150,7 +1150,7 @@
           "ambience": ""
         }
       },
-      "folder": "Atelier d'Oriane"
+      "folder": "Atelier d’Oriane"
     },
     {
       "id": "porte_absences",

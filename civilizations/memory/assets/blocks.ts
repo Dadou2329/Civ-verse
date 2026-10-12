@@ -27,7 +27,7 @@ export const memoryBlocks = [
   b({ id: 'memory:amber_wood_slab', label: 'Dalle de bois ambré', category: 'Réminence', sound: 'wood', shape: 'slab', textures: { all: tex('planks', ['#b07a3a', '#5a3a18', '#d09a52']) } }),
   // --- Toits ---------------------------------------------------------------------------------------
   b({ id: 'memory:slate', label: 'Ardoise bleu pétrole', category: 'Réminence', textures: { all: SLATE } }),
-  b({ id: 'memory:slate_slab', label: "Dalle d'ardoise bleu pétrole", category: 'Réminence', shape: 'slab', textures: { all: SLATE } }),
+  b({ id: 'memory:slate_slab', label: 'Dalle d’ardoise bleu pétrole', category: 'Réminence', shape: 'slab', textures: { all: SLATE } }),
   b({ id: 'memory:mauve_roof', label: 'Tuiles mauves', category: 'Réminence', textures: { all: tex('roofTiles', ['#6a4a7a', '#3a2848', '#8a6a9a']) } }),
   // --- Verres ---------------------------------------------------------------------------------------
   b({ id: 'memory:frosted_mauve', label: 'Verre dépoli mauve', category: 'Réminence', sound: 'glass', transparency: 'blend', textures: { all: tex('frosted', ['#c6aed6', '#5e4a6c'], { alpha: 0.72 }) } }),
@@ -53,7 +53,7 @@ export const memoryBlocks = [
   // --- Lumières -------------------------------------------------------------------------------------
   b({ id: 'memory:amber_lamp', label: 'Lampe à éclats ambrée', category: 'Réminence', emissive: true, light: { level: 13, color: '#ffb35c' }, textures: { all: tex('lamp', ['#ffd08a', '#3a2a1a']) } }),
   b({ id: 'memory:mauve_lamp', label: 'Lampe mauve', category: 'Réminence', emissive: true, light: { level: 12, color: '#c08aff' }, textures: { all: tex('lamp', ['#d6b4ff', '#2e2238']) } }),
-  b({ id: 'memory:shard_vein', label: "Veine d'éclats", category: 'Réminence', emissive: true, light: { level: 9, color: '#a8e0ff' }, textures: { all: tex('crystal', ['#9ad8ff', '#3a6a9a', '#e0f4ff']) } }),
+  b({ id: 'memory:shard_vein', label: 'Veine d’éclats', category: 'Réminence', emissive: true, light: { level: 9, color: '#a8e0ff' }, textures: { all: tex('crystal', ['#9ad8ff', '#3a6a9a', '#e0f4ff']) } }),
   // --- Chambre Blanche --------------------------------------------------------------------------------
   b({ id: 'memory:white', label: 'Blanc de la Chambre', category: 'Chambre Blanche', textures: { all: WHITE } }),
   b({ id: 'memory:white_glow', label: 'Blanc lumineux', category: 'Chambre Blanche', emissive: true, light: { level: 14, color: '#f4f0ff' }, textures: { all: tex('noise', ['#ffffff'], { amount: 0.01 }) } }),

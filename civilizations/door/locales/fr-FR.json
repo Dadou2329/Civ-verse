@@ -233,7 +233,7 @@
   "door.lock.closedShop": "Fermé. Une étiquette indique : « Réservé à la clientèle de rang supérieur. »",
   "door.lock.motherHouse": "La maison est vide. Sa propriétaire attend devant la maison de soins.",
   "door.lock.noPlaque": "Vous n’avez pas de plaque de seuil. Aucune serrure ne vous répond.",
-  "door.lock.rankDenied": "Accès refusé — Rang {rank} requis ({name}).",
+  "door.lock.rankDenied": "Autorisation insuffisante — Rang {rank} requis ({name}).",
   "door.lock.needItem": "Il faut : {item}.",
   "door.lock.usesItem": "Utilise : {item}.",
   "door.lock.condition": "Cette serrure attend autre chose qu’une plaque.",

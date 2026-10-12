@@ -81,7 +81,7 @@ Paths in this section are relative to `civilizations/door/`.
 | D-W3 | Rank 2 « Gardien »: access to the Archives « et à l'escalier des tours »; double-seal doors | `door.rank.2`; `porte_archives` (model `door:door_rank2`, blocks `door:mark_seal` above it) | D1, D2, D4 (open `porte_archives` at temporary rank 2) | Partial | The four towers of the Archives tier (`archives()` in `seed/verrou.ts`) are hollow decorative cylinders without an entrance. « Escalier des tours » exists only as a label of the permission map (`door.permission.towers`). |
 | D-W4 | Rank is an authorization checked by every lock, not a strength stat; « Certaines portes vérifient aussi un secret ou une clé physique » | Mechanic `door.access` (`mechanics/access.ts`, `canPass`); component `door.lock` (`mechanics/locks.ts`) on 21 doors | D1–D4 | Partial | Rank checks work. The `item` and `condition` lock variants exist in `locks.ts` but no door of `verrou.scene.json` or `porte_absente.scene.json` uses them (variants in content: 7 `rank`, 12 `sealed`, 1 `palm`, 1 `impossible`). Secrets and objects gate containers instead (e.g. `armoire_dossiers` needs `door.foundTransferTrace`). |
 | D-W5 | A black door erased from the registers belongs to no rank and recognizes the protagonist | `porte_absente` (model `door:door_black`, lock variant `impossible`), revealed and opened by `C04b_porte` (`door.cin.c04b.1`: the palm mark ignites) | D1, D2, D4 | Implemented | The recognition is scripted in the cinematic, not produced by the lock (see D-M2, D-M5). |
-| D-W6 | Inhabitants wear a visible threshold plaque; the interface shows the current rank and allowed accesses | HUD `door.rankPlaque` (`ui/RankPlaque.tsx`); panel `door.permissions` (`ui/PermissionsPanel.tsx`, key R from `content/rules.json` `door.access.permissionsKey`) | manual/visual | Partial | Interface part done. Among the 12 characters of `content/characters.json`, only `door:mere` has a `plaque` accessory; `door:varen`, `door:tomas` and `door:greffier` wear a `badge`; the others nothing. |
+| D-W6 | Inhabitants wear a visible threshold plaque; the interface shows the current rank and allowed accesses | HUD `door.rankPlaque` (`ui/RankPlaque.tsx`); panel `door.permissions` (`ui/PermissionsPanel.tsx`, key R from `content/rules.json` `door.access.permissionsKey`); `plaque` accessory on all 12 characters of `content/characters.json`, colored by rank (iron grey for Sans-Seuil: `mere`, `noe`, `balayeur`, `lavandiere`; brass for Porteur: `mira`, `tomas`, `garde`, `greffier`, `odran`, `marchande`; pale steel for Gardien: `varen`, `eda`) | manual/visual | Implemented | The two generic extras borrowed from the core library (`gamin` → `core:child`, `porteur` → `core:citizen_b`) wear no plaque, since the core characters are shared with Memory. |
 
 ### 1.3 Map and art direction (§3)
 
@@ -111,7 +111,7 @@ Paths in this section are relative to `civilizations/door/`.
 
 | ID | Requirement | Implementation | Verified by | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| D-M1 | AccessRegistry: rank status and per-door permissions; contextual refusals (« Accès refusé — Rang 1 requis ») | Mechanic `door.access` (`mechanics/access.ts`: `setRank`, `deny`, events `door.rankChanged`, `door.accessDenied`); refusal `door.lock.rankDenied` (« Accès refusé — Rang {rank} requis ({name}). ») and stamp `door.hud.denied` / `door.hud.deniedRank` (`ui/RankPlaque.tsx`) | D1–D4 (refusal at rank 0; text not asserted) | Implemented | |
+| D-M1 | AccessRegistry: rank status and per-door permissions; contextual refusals (« Accès refusé — Rang 1 requis ») | Mechanic `door.access` (`mechanics/access.ts`: `setRank`, `deny`, events `door.rankChanged`, `door.accessDenied`); refusal `door.lock.rankDenied` (« Autorisation insuffisante — Rang {rank} requis ({name}). ») and stamp `door.hud.denied` / `door.hud.deniedRank` (« ACCÈS REFUSÉ », « Rang {rank} requis », `ui/RankPlaque.tsx`) | D1–D4 (refusal at rank 0; text not asserted) | Implemented | |
 | D-M2 | LockVariants: rank, object, narrative-condition and impossible locks; same interaction, distinct rules | Component `door.lock` (`mechanics/locks.ts`) with variants `rank`, `item`, `condition`, `sealed`, `palm`, `impossible`, decorating the `core.door` prompt and vetoing the opening | D1–D4 (`rank`, `palm`) | Partial | `item` and `condition` are never placed on a door. `impossible` is only on `porte_absente`, which has `interactable: false` and stays hidden until `C04b_porte` opens it, so the refusal branch of that variant (sound `door:voice`, flash) never runs in play. |
 | D-M3 | KeyImprint: imprint a key into blank metal after a simple three-dial mini-game; not a « passer rang 1 » button | Mechanic `door.keyImprint` (`mechanics/imprint.ts`), action `door.openImprint`, condition `door.imprintReady`, panel `door.imprint` (`ui/ImprintPanel.tsx`); solution in `content/rules.json` (dials 2, 0, 4 → tour, lune, main); hint revealed by examining `porte_galerie` (`door.gateEngravingSeen`) or asking `tomas/t4` | D1–D4 (wrong combination refused, right one accepted) | Implemented | |
 | D-M4 | DoorMemory: some doors record that the player touched them and change their descriptions | Component `door.memory` (`mechanics/doorMemory.ts`, saved state `touches`) on `cell_door` (3 descriptions), `porte_galerie` (2), `couloir_porte_1`…`6` (2 each) | D1–D4 (examine `porte_galerie`) | Implemented | No test asserts a description change after several touches. |
@@ -193,7 +193,7 @@ Durations are the `duration` fields of `content/cinematics/*.cinematic.json`.
 | D-U1 | The whole pack interface, quests, subtitles, rank names, notifications, help and dialogues in natural French | `locales/fr-FR.json` (438 keys); content text fields hold keys, checked by `validateCivilization` | none (playthroughs) | Implemented | Also checked by `tests/acceptance/localization.test.ts` and `J-regression.test.ts`. Exceptions in the shell are listed in [`../LOCALIZATION.md`](../LOCALIZATION.md). |
 | D-U2 | « Examiner » | `core.prompt.examine` (« Examiner »), `door.prompt.examineDoor` (« Examiner la porte ») | none | Implemented | Key present (static check). |
 | D-U3 | « Parler à Mira » | `core.prompt.talk` (« Parler à {name} ») with `door.npc.mira` (« Mira »), built by `core.npc` (`src/engine/core/behaviors/npc.ts`) | none | Implemented | |
-| D-U4 | « Autorisation insuffisante » | Not present in any table; refusals use `door.lock.rankDenied` and `door.hud.denied` (« ACCÈS REFUSÉ ») | none | Partial | Equivalent wording; the example phrase itself is absent. |
+| D-U4 | « Autorisation insuffisante » | `door.lock.rankDenied` (« Autorisation insuffisante — Rang {rank} requis ({name}). »), shown on a rank lock; the refusal stamp keeps `door.hud.denied` / `door.hud.deniedRank` (« ACCÈS REFUSÉ », « Rang {rank} requis », see D-M1) | none | Implemented | |
 | D-U5 | « Rang : Sans-Seuil » | HUD label `door.hud.rankLabel` (« Rang ») and value `door.rank.0` (« Sans-Seuil ») in two elements (`ui/RankPlaque.tsx`) | manual/visual | Implemented | No colon between label and value. |
 | D-U6 | « Nouvelle piste découverte » | `door.notify.newLead` (same text), sent by `door.foundPoster` and by `registre_transferts` | none | Implemented | |
 | D-U7 | Avoid English in visible texts; technical ids may stay English | Every visible text comes from a key; ids (`porte_galerie`, `door.rank`) are never shown in normal play | none | Implemented | The F3 diagnostics overlay shows raw ids (see M-U8). |
@@ -365,7 +365,7 @@ Paths in this section are relative to `civilizations/memory/`.
 | M-U5 | « Souvenir retrouvé » | `memory.notify.shardFound` (« Souvenir retrouvé : {name} ») | M1–M5 (« Souvenir retrouvé : Le goûter des noms » asserted) | Implemented | |
 | M-U6 | « Léa refuse la restauration » | `memory.notify.leaRefuses` (« Léa refuse la restauration. ») | M1–M5 (asserted) | Implemented | |
 | M-U7 | « Rejouer l'écho » | `memory.prompt.replay` (secondary action of echo points, button of the chamber panel) | M1–M5 (replay used; label not asserted) | Implemented | |
-| M-U8 | Lively, sober, natural French; « Ne jamais afficher les identifiants de variables ou les noms anglais de classes en jeu » | `locales/fr-FR.json` (486 keys); all player texts are keys | none | Partial | The F3 diagnostics overlay (`src/game/hud/Debug.tsx`), available in player builds, lists raw variable names, quest, entity and mechanic ids. Writing quality: manual. |
+| M-U8 | Lively, sober, natural French; « Ne jamais afficher les identifiants de variables ou les noms anglais de classes en jeu » | `locales/fr-FR.json`; all player texts are keys; the F3 diagnostics overlay (`src/game/hud/Debug.tsx`) shows only performance figures in player builds — variables, quest, entity and mechanic ids and logic traces are shown in development only (dev server, Studio playtest) | `tests/acceptance/localization.test.ts` (no hardcoded interface text) | Implemented | Writing quality: manual. |
 
 ### 2.12 Acceptance criteria (§10)
 
@@ -378,7 +378,7 @@ Paths in this section are relative to `civilizations/memory/`.
 | M-AC5 | « L'histoire traite le consentement à la restauration avec sérieux » | ConsentCheck; Léa's first refusal; Silas's decision; Margaux's refusal; Aurèle (`truth_keep`) | M1–M5 | Implemented | Qualitative. |
 | M-AC6 | « La Salle de Vente n'est pas une copie d'une zone restreinte à rangs de Door Civilization » | Open monumental entrance (`salle()`), theatre, no `door.*` component anywhere in the pack | none | Implemented | |
 | M-AC7 | « Le pack n'utilise aucun système de rang comme mécanique centrale » | No rank code or content in `civilizations/memory`; the only link to Door is `core.civCompleted` with `civ: door` | none | Implemented | Static search. |
-| M-AC8 | « La Rémanence est persistée en global, et les états sociaux en local » | `core.grantFragment remanence` (global); social state in `memory.*` variables (local) | M5 (Rémanence absent before the end, social variables restored), M1, M2, M3 (`hasFragment`) | Partial | The restoration outcome is also copied to the global flag `flags.memory.restoration` (rule `remanence`), allowed by `globalWrites` `flags.memory.*` and read by no content. |
+| M-AC8 | « La Rémanence est persistée en global, et les états sociaux en local » | `core.grantFragment remanence` (global, rule `remanence`); social state, including the restoration outcome `memory.restorationOutcome`, in `memory.*` variables (local); `globalWrites` is `["fragments.remanence"]` only | M5 (Rémanence absent before the end, social variables restored), M1, M2, M3 (`hasFragment`; the outcome is local and no `memory.*` global flag exists) | Implemented | |
 | M-AC9 | « La fin est atteignable par les deux voies du deuxième acte et respecte les décisions finales » | Both Act II routes and every consent outcome reach the end screen | M1 (aide), M2 and M5 (echange), M3 | Implemented | |
 
 ### 2.13 Articulation between the two mini-civilizations (§11)
@@ -403,7 +403,7 @@ Paths in this section are relative to `civilizations/memory/`.
 The player's own shard `chemin` (« Les pas sous la pluie ») and its footprint trail; secondary NPCs
 `bastien`, `margaux`, `aurele`, `jules`, `iris`, `marchand`, `file_1`–`file_3`; variables
 `memory.silasConsent`, `memory.finalHonest`, `memory.julesChoice`; Léa's refusal branch; the
-diapason; global flag `flags.memory.restoration`; epilogue variants.
+diapason; epilogue variants.
 
 ---
 
@@ -415,12 +415,8 @@ No requirement was found entirely missing (*Not implemented*). Partial rows:
 | --- | --- |
 | D-W3 | « Escalier des tours » does not exist: the towers are decorative and closed. |
 | D-W4 | No door checks a secret or a physical key (`item` / `condition` lock variants unused). |
-| D-W6 | Only one NPC (`door:mere`) wears a visible plaque. |
 | D-A1 | No « enseignes mécaniques »: Faubourg signs are static. |
 | D-M2 | LockVariants: `item` and `condition` unused; the `impossible` refusal branch is unreachable. |
 | D-M5 | The absent door's reaction is scripted in `C04b_porte`, not triggered by a failed check. |
 | D-N9 | Act II routes: the sneaking route is untested and the « dialogue différent » is limited to Varen's immediate answer (`door.registryPath` never read). |
 | D-K4 | C04 is split into rules, a dialogue and two cinematics totalling 27 s, under the 35–60 s range. |
-| D-U4 | The example text « Autorisation insuffisante » is not used (« Accès refusé — Rang {rank} requis » instead). |
-| M-U8 | The F3 diagnostics overlay displays variable names and ids in player builds. |
-| M-AC8 | The restoration outcome is also stored in the global flag `flags.memory.restoration`. |

@@ -81,7 +81,7 @@ export class ItemRegistry {
 
   register(def: ItemDefinition, owner: string): void {
     const prev = this.owners.get(def.id);
-    if (prev && prev !== owner) throw new Error(`L'objet ${def.id} est déjà défini par "${prev}".`);
+    if (prev && prev !== owner) throw new Error(`L’objet ${def.id} est déjà défini par "${prev}".`);
     this.defs.set(def.id, def);
     this.owners.set(def.id, owner);
   }

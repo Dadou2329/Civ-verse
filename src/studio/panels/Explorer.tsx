@@ -291,7 +291,7 @@ function NewScriptModal({ studio, onClose }: { studio: Studio; onClose: () => vo
       </div>
       {error && <div className="st-line--error">{error}</div>}
       <p className="st-field__help">
-        Le fichier est créé dans <code>mechanics/</code> à partir d’un modèle typé ; il est découvert automatiquement par le pack et apparaît dans les menus du Studio dès son enregistrement.
+        Le fichier est créé tout de suite dans <code>mechanics/</code> à partir d’un modèle typé ; le pack le découvre automatiquement et ses définitions apparaissent dans les menus du Studio.
       </p>
     </Modal>
   );
@@ -310,7 +310,7 @@ export function Hierarchy() {
     const map = new Map<string, NonNullable<typeof scene>['entities']>();
     const f = filter.trim().toLowerCase();
     for (const e of scene?.entities ?? []) {
-      if (f && !e.id.toLowerCase().includes(f) && !(e.name ?? '').toLowerCase().includes(f) && !Object.keys(e.components).some((c) => c.includes(f))) continue;
+      if (f && !e.id.toLowerCase().includes(f) && !(e.name ?? '').toLowerCase().includes(f) && !Object.keys(e.components).some((c) => c.toLowerCase().includes(f))) continue;
       const folder = e.folder ?? 'Sans dossier';
       map.set(folder, [...(map.get(folder) ?? []), e]);
     }

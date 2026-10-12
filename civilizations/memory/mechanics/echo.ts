@@ -5,7 +5,7 @@ import { chamber } from './chamber';
  * MemoryEcho — observing a place while carrying the right shard shows a brief translucent
  * superimposition: tinted light, a sound, ghost silhouettes or objects, and a few lines of the
  * remembered scene. Echoes are data (content/rules.json) and can always be replayed
- * (« Rejouer l'écho »), so a puzzle never relies on a single reading.
+ * (« Rejouer l’écho »), so a puzzle never relies on a single reading.
  */
 export interface EchoDef {
   id: string;
@@ -127,7 +127,7 @@ export const playEcho = defineAction({
  */
 export const echoPoint = defineBehavior({
   id: 'memory.echoPoint',
-  label: "Point d'écho",
+  label: 'Point d’écho',
   category: 'Mémoire',
   description: 'Rejoue un écho quand le bon éclat est ancré (automatiquement la première fois).',
   props: {

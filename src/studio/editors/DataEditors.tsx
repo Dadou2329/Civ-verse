@@ -225,7 +225,7 @@ const CHARACTER_SCHEMA: PropSchema = {
     ],
     { label: 'Attitude', default: 'calm' },
   ),
-  voicePitch: prop.number({ label: 'Hauteur de voix (bips)', min: 0.5, max: 2, step: 0.05, default: 1 }),
+  voicePitch: prop.number({ label: 'Hauteur de voix', description: 'Enregistrée pour de futurs sons de voix : les dialogues n’ont pour l’instant aucune voix, seulement des sous-titres.', min: 0.5, max: 2, step: 0.05, default: 1 }),
 };
 
 function CharacterPreview({ doc }: { doc: CharacterDoc }) {

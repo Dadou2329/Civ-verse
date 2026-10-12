@@ -35,7 +35,7 @@ async function boot() {
     el.innerHTML = '';
     const msg = document.createElement('pre');
     msg.className = 'cv-fatal';
-    msg.textContent = `CIVILIZATIONVERSE n'a pas pu démarrer.\n\n${(err as Error).message}`;
+    msg.textContent = `CIVILIZATIONVERSE n’a pas pu démarrer.\n\n${(err as Error).message}`;
     el.appendChild(msg);
   }
 }

@@ -136,7 +136,7 @@ export class InteractionSystem {
     try {
       await record?.instance?.onInteract?.(attempt);
     } catch (err) {
-      s.log.error(`Erreur d'interaction ${entityId}/${so.source}`, toError(err));
+      s.log.error(`Erreur d’interaction ${entityId}/${so.source}`, toError(err));
       return false;
     } finally {
       this.busy = false;

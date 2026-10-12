@@ -21,9 +21,9 @@ gameplay rule:
 | Way into the second scene | walk-in `core.portal` (`passage_efface`) | `core.portal` on a lamp, available only while the shard `vente` is anchored and the quest is at stage `chambre` |
 | Puzzle | three dials (`door.keyImprint`), solution in `content/rules.json` | three objects on pedestals (`memory.offering`), solution in `content/rules.json` |
 | HUD | `door.rankPlaque`, `door.accessDenied` | `memory.chamberHud`, `memory.echoOverlay`, `memory.touch` |
-| Panels | `door.imprint`, `door.permissions` (key R) | `memory.chamber` (key M), `memory.offering` |
+| Panels | `door.imprint`, `door.permissions` (key R) | `memory.chamber` (key C), `memory.offering` |
 | Rendering extension | visual `door.spinnerVisual` (`view/spinner.ts`) | view effect `memory.echoEffect` (`view/echoes.ts`) |
-| Multiverse | fragment `threshold`, flag `door.finalChoice` | fragment `remanence`, flag `memory.restoration`; reads whether Door is completed |
+| Multiverse | fragment `threshold`, flag `door.finalChoice` | fragment `remanence` (the restoration outcome stays a local variable); reads whether Door is completed |
 | Theme | accent `#e3b84d`, titles in Cinzel, cover motif `door` | accent `#f0a040`, titles in Cormorant Garamond, cover motif `memory` |
 
 Throughout the guide, `<id>` is the id of your new pack (for example `ambre`).
@@ -554,8 +554,8 @@ Reference: [PACK_FORMAT.md section 10](docs/PACK_FORMAT.md#10-multiverse-fragmen
    "fragments": [{ "id": "threshold", "name": "door.fragment.threshold", "hint": "door.fragment.threshold.hint", "icon": "fragment" }]
    ```
 
-   Memory: `"globalWrites": ["fragments.remanence", "flags.memory.*"]`, fragment `remanence` with
-   the icon `circle`. Fragment ids are shared by all packs: pick a unique one. The fragment appears
+   Memory: `"globalWrites": ["fragments.remanence"]` (its scenario keeps social states local, so it
+   writes no global flag), fragment `remanence` with the icon `circle`. Fragment ids are shared by all packs: pick a unique one. The fragment appears
    in the « Registre des éveils » screen.
 2. **Grant** it from your story with `core.grantFragment`, and record the outcome that other
    civilizations may read with `core.setGlobalFlag` under your own prefix. Both packs do it in a

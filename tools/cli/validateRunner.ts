@@ -58,6 +58,17 @@ export async function runValidation(only: string[] = []): Promise<ValidationSumm
     );
     for (const i of [...e, ...w]) console.log(format(i));
   }
+  // Library packs (loaded as dependencies above): their own content issues.
+  for (const m of session.manifests.values()) {
+    if (m.kind !== 'library' || (only.length > 0 && !only.includes(m.id))) continue;
+    const libIssues = session.contentIssues.filter((i) => i.pack === m.id);
+    for (const i of libIssues) {
+      if (i.severity === 'error') errors++;
+      else warnings++;
+      console.log(format({ pack: i.pack, file: i.file, severity: i.severity, message: i.message }));
+    }
+    console.log(`\n${libIssues.some((i) => i.severity === 'error') ? '✗' : '✓'} ${m.id} — bibliothèque, ${libIssues.length} problème(s)`);
+  }
   // The game interface's own keys (src/game, src/engine) are checked by
   // tests/acceptance/localization.test.ts.
   console.log(`\n${errors} erreur(s), ${warnings} avertissement(s).`);

@@ -99,7 +99,7 @@ export class MultiverseState {
 
   grantFragment(id: string, civId: string, allowed: readonly string[]): boolean {
     if (!isWriteAllowed(`fragments.${id}`, allowed)) {
-      throw new Error(`La civilisation "${civId}" n'est pas autorisée à écrire fragments.${id} (globalWrites du manifeste).`);
+      throw new Error(`La civilisation "${civId}" n’est pas autorisée à écrire fragments.${id} (globalWrites du manifeste).`);
     }
     if (this.hasFragment(id)) return false;
     this.state.fragments[id] = { civ: civId, acquiredAt: new Date().toISOString() };
@@ -113,7 +113,7 @@ export class MultiverseState {
 
   setFlag(name: string, value: JsonValue, civId: string, allowed: readonly string[]): void {
     if (!isWriteAllowed(`flags.${name}`, allowed)) {
-      throw new Error(`La civilisation "${civId}" n'est pas autorisée à écrire flags.${name} (globalWrites du manifeste).`);
+      throw new Error(`La civilisation "${civId}" n’est pas autorisée à écrire flags.${name} (globalWrites du manifeste).`);
     }
     this.state.flags[name] = deepClone(value);
     this.changed();

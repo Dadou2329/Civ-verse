@@ -30,7 +30,7 @@ const lockProps = {
   ),
   rank: prop.integer({ label: 'Rang requis', default: 1, min: 0, max: 2, group: 'Rang' }),
   item: prop.item({ label: 'Objet requis', group: 'Objet' }),
-  consumeItem: prop.boolean({ label: "L'objet est consommé", group: 'Objet' }),
+  consumeItem: prop.boolean({ label: 'L’objet est consommé', group: 'Objet' }),
   condition: prop.condition({ label: 'Condition', group: 'Condition' }),
   deniedText: prop.text({ label: 'Texte du refus' }),
   onUnlock: prop.actions({ label: 'Actions à la première ouverture' }),

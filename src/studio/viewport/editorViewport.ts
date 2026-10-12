@@ -484,7 +484,8 @@ export class EditorViewport {
       this.cursor.setEnabled(false);
       return;
     }
-    const c = this.targetCell(r.voxel, tool === 'place' || (tool === 'box' && !this.keys.has('ShiftLeft')));
+    const shift = this.keys.has('ShiftLeft') || this.keys.has('ShiftRight');
+    const c = this.targetCell(r.voxel, tool === 'place' || (tool === 'box' && !shift));
     this.cursor.position.set(c[0] + 0.5, c[1] + 0.5, c[2] + 0.5);
     this.cursor.setEnabled(true);
   }

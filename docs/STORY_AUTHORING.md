@@ -755,22 +755,16 @@ Writes go through dedicated actions, checked against the manifest's `globalWrite
 | `core.markCivCompleted` | none | marks the running civilization completed |
 | `core.finishCivilization` | none | marks it completed and emits `civ.finished` (the game returns to the civilization selection) |
 
-A refused write throws (`La civilisation "…" n'est pas autorisée à écrire …`), which stops the list. The manifests declare:
+A refused write throws (`La civilisation "…" n’est pas autorisée à écrire …`), which stops the list. The manifests declare:
 
 ```json
 "globalWrites": ["fragments.threshold", "flags.door.*"]
 ```
 
-(`civilizations/door/manifest.json`) and `["fragments.remanence", "flags.memory.*"]` (`civilizations/memory/manifest.json`). Memory's rule `remanence` (`main.logic.json`) grants its fragment and records the outcome:
+(`civilizations/door/manifest.json`) and `["fragments.remanence"]` (`civilizations/memory/manifest.json`). Memory's rule `remanence` (`main.logic.json`) only grants its fragment; the restoration outcome stays in the local variable `memory.restorationOutcome`, as its scenario asks (« les états sociaux en local »):
 
 ```json
-{ "type": "core.grantFragment", "fragment": "remanence" },
-{
-  "type": "core.if",
-  "condition": { "type": "core.var", "var": "memory.restorationOutcome", "op": "==", "value": "acceptee" },
-  "then": [ { "type": "core.setGlobalFlag", "flag": "memory.restoration", "value": "acceptee" } ],
-  "else": [ { "type": "core.setGlobalFlag", "flag": "memory.restoration", "value": "refusee" } ]
-}
+{ "type": "core.grantFragment", "fragment": "remanence" }
 ```
 
 In the Studio, `globalWrites` and the fragment registry are edited in « Civilisation et interface », section « Multivers » (« Écritures globales autorisées », « Fragments du registre multiversel »).
@@ -779,7 +773,7 @@ In the Studio, `globalWrites` and the fragment registry are edited in « Civilis
 
 Per civilization (`LocalCivState`, `src/engine/core/save/saveFormat.ts`, built by `GameSession.snapshotCivState`): current scene and player (position, look, abilities, `title` set by `core.setPlayerTitle`), every `<civId>.*` variable, inventory, quest states, dialogue seen/chosen sets, fired `once` rules, mechanic states, and per-scene entity states (component states such as a trigger's `fired` flag, property overrides from `core.setProp`, changed positions, visibility, `enabled`, block edits, spawned and removed entities). The multiverse is saved once per save game (`SaveGame.global`). A fresh start of a civilization (`loadCivilization(…, { fresh: true })`) drops its local state and keeps the multiverse.
 
-The F3 debug overlay (`src/game/hud/Debug.tsx`) lists the active quests with their current stage, every variable of the running civilization and the last errors.
+In development (dev server, Studio playtest), the F3 debug overlay (`src/game/hud/Debug.tsx`) lists the active quests with their current stage, every variable of the running civilization, the last logic executions and the last errors; player builds show only its performance line.
 
 ---
 

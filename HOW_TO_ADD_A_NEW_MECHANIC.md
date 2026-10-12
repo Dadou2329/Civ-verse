@@ -378,7 +378,7 @@ the pack (`door.lock.rankDenied`, `memory.notify.shardFound`).
 Entries from `civilizations/door/locales/fr-FR.json`:
 
 ```json
-  "door.lock.rankDenied": "Accès refusé — Rang {rank} requis ({name}).",
+  "door.lock.rankDenied": "Autorisation insuffisante — Rang {rank} requis ({name}).",
 ```
 
 ```json

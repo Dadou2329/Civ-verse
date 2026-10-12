@@ -69,7 +69,7 @@ export const coreConditions = [
   }),
   defineCondition({
     id: 'core.questStatus',
-    label: "État d'une quête",
+    label: 'État d’une quête',
     category: 'Narration',
     props: {
       quest: prop.quest({ label: 'Quête' }),

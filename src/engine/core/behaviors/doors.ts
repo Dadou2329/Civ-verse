@@ -34,7 +34,7 @@ export const doorBehavior = defineBehavior({
       ],
       { label: 'Charnière', default: 'left' },
     ),
-    openSound: prop.sound({ label: "Son d'ouverture", default: 'core:door_open' }),
+    openSound: prop.sound({ label: 'Son d’ouverture', default: 'core:door_open' }),
     closeSound: prop.sound({ label: 'Son de fermeture', default: 'core:door_close' }),
     autoClose: prop.number({ label: 'Fermeture auto (s, 0 = jamais)', default: 0, min: 0, max: 120 }),
     interactable: prop.boolean({ label: 'Le joueur peut l’ouvrir', default: true }),
@@ -122,7 +122,7 @@ export const portalBehavior = defineBehavior({
   description: 'Fait passer le joueur dans une autre scène de la civilisation (interaction ou zone).',
   props: {
     scene: prop.scene({ label: 'Scène de destination' }),
-    spawn: prop.string({ label: "Point d'apparition (identifiant)" }),
+    spawn: prop.string({ label: 'Point d’apparition (identifiant)' }),
     prompt: prop.text({ label: 'Invite', default: 'core.prompt.enter' }),
     mode: prop.enum(
       [

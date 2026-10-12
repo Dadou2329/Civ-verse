@@ -76,7 +76,7 @@ export async function talk(session: GameSession, entityId: string, choices: stri
   await flush();
   for (const c of choices) await choose(session, c);
   await advanceDialogue(session);
-  if (session.dialogue.isActive) throw new Error(`Le dialogue avec ${entityId} n'est pas terminé (${session.dialogue.view()?.nodeId}).`);
+  if (session.dialogue.isActive) throw new Error(`Le dialogue avec ${entityId} n’est pas terminé (${session.dialogue.view()?.nodeId}).`);
 }
 
 /**

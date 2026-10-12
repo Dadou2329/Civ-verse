@@ -79,7 +79,7 @@ export const memorySounds = [
   }),
   defineSound({
     id: 'memory:shard_touch',
-    label: "Contact d'un éclat",
+    label: 'Contact d’un éclat',
     category: 'sfx',
     recipe: {
       layers: [
@@ -111,7 +111,7 @@ export const memorySounds = [
   }),
   defineSound({
     id: 'memory:machine',
-    label: "Machine d'extraction",
+    label: 'Machine d’extraction',
     category: 'sfx',
     recipe: {
       layers: [

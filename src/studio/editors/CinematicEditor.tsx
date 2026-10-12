@@ -542,7 +542,8 @@ function ItemInspector({
           {time(a.t, (t, m) => set({ ...a, t }, 'Temps', m))}
           <Row label="">
             <label className="st-check">
-              <input type="checkbox" checked={!!a.essential} onChange={(e) => set({ ...a, essential: e.target.checked || undefined }, 'Action essentielle')} />
+              {/* Items are essential unless marked `essential: false` (see core/story/cinematics.ts). */}
+              <input type="checkbox" checked={a.essential !== false} onChange={(e) => set({ ...a, essential: e.target.checked ? undefined : false }, 'Action essentielle')} />
               Essentielle (s’exécute même si la cinématique est passée)
             </label>
           </Row>

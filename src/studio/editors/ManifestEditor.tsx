@@ -73,6 +73,19 @@ export function ManifestEditor({ path }: { path: string }) {
           <Row label="API du moteur" help="Plage semver de l’API du moteur pour laquelle le pack est écrit">
             <input className="st-input st-input--mono" value={data.engineApi} onChange={(e) => set('engineApi', e.target.value, 'API du moteur', 'api')} />
           </Row>
+          <Row label="Version de l’état" help="Version des données sauvegardées de la civilisation. L’augmenter quand leur forme change, avec la migration correspondante dans pack.ts (migrations)">
+            <input
+              className="st-input"
+              type="number"
+              min={1}
+              step={1}
+              value={data.stateVersion}
+              onChange={(e) => {
+                const v = Math.floor(Number(e.target.value));
+                if (v >= 1) set('stateVersion', v, 'Version de l’état', 'sv');
+              }}
+            />
+          </Row>
           <Row label="Ordre dans la sélection">
             <input className="st-input" type="number" value={data.order} onChange={(e) => set('order', Number(e.target.value), 'Ordre', 'order')} />
           </Row>

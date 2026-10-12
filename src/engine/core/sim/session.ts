@@ -353,7 +353,7 @@ export class GameSession {
         continue;
       }
       if (!satisfies(ENGINE_API_VERSION, manifest.engineApi)) {
-        const msg = `Le pack "${id}" requiert l'API ${manifest.engineApi} (moteur : ${ENGINE_API_VERSION}).`;
+        const msg = `Le pack "${id}" requiert l’API ${manifest.engineApi} (moteur : ${ENGINE_API_VERSION}).`;
         this.manifestIssues.set(id, [msg]);
         this.log.error(msg);
         continue;
@@ -398,7 +398,7 @@ export class GameSession {
    */
   async reloadPack(id: string): Promise<LoadedPack> {
     if (this.civ && (this.civ.id === id || this.civ.pack.manifest.dependencies.includes(id))) {
-      throw new Error(`Impossible de recharger « ${id} » pendant qu'une partie l'utilise.`);
+      throw new Error(`Impossible de recharger « ${id} » pendant qu’une partie l’utilise.`);
     }
     const dependents = (packId: string): string[] =>
       [...this.loadedPacks.values()].filter((p) => p.manifest.dependencies.includes(packId)).flatMap((p) => [...dependents(p.manifest.id), p.manifest.id]);
@@ -579,7 +579,7 @@ export class GameSession {
           record.api = def.setup(civ.ctx, state as never, (civ.settings.get(def.id) ?? {}) as never);
         } catch (err) {
           record.failed = toError(err).message;
-          this.log.error(`La mécanique ${def.id} a échoué à l'initialisation`, err);
+          this.log.error(`La mécanique ${def.id} a échoué à l’initialisation`, err);
         }
       }
       for (const hud of civ.huds) scope.add(this.ui.registerHud(hud, civId));
@@ -594,7 +594,7 @@ export class GameSession {
 
       const entry = manifest.entry;
       const sceneId = opts.scene ?? saved?.scene ?? entry?.scene;
-      if (!sceneId) throw new Error(`Aucune scène d'entrée pour "${civId}".`);
+      if (!sceneId) throw new Error(`Aucune scène d’entrée pour "${civId}".`);
       const restorePos = saved && !opts.scene && !opts.spawn ? saved.player : null;
       await this.enterScene(
         sceneId,
@@ -744,7 +744,7 @@ export class GameSession {
     }
     const spawns = [...world.entities.values()].filter((e) => e.has('core.spawn'));
     const spawn = (spawnId ? world.entities.get(spawnId) : undefined) ?? spawns.find((s) => s.components.get('core.spawn')?.props.isDefault) ?? spawns[0];
-    if (spawnId && !world.entities.get(spawnId)) this.log.warn(`Point d'apparition introuvable : ${spawnId}`);
+    if (spawnId && !world.entities.get(spawnId)) this.log.warn(`Point d’apparition introuvable : ${spawnId}`);
     if (spawn) {
       const ground = world.groundAt(spawn.position.x, spawn.position.z, spawn.position.y + 0.5);
       this.player.teleport({ x: spawn.position.x, y: ground ?? spawn.position.y, z: spawn.position.z });
@@ -754,7 +754,7 @@ export class GameSession {
       const x = v.sizeX / 2;
       const z = v.sizeZ / 2;
       this.player.teleport({ x, y: (world.groundAt(x, z, v.sizeY) ?? v.sizeY) + 0.01, z });
-      this.log.warn(`Aucun point d'apparition dans la scène ${world.id}.`);
+      this.log.warn(`Aucun point d’apparition dans la scène ${world.id}.`);
     }
   }
 
@@ -769,7 +769,7 @@ export class GameSession {
    * with initial state for visuals) but no behavior runs and there is no player.
    */
   openEditorWorld(doc: SceneDoc): SceneWorld {
-    if (this.civ) throw new Error("Le Studio édite les scènes sans civilisation en cours d'exécution.");
+    if (this.civ) throw new Error('Le Studio édite les scènes sans civilisation en cours d’exécution.');
     const world = new SceneWorld(doc, this.blocks);
     for (const ed of doc.entities) {
       const e = new RuntimeEntity(ed);
@@ -913,7 +913,7 @@ export class GameSession {
           try {
             h();
           } catch (err) {
-            this.log.error(`Erreur de l'action d'entrée ${actionId}`, err);
+            this.log.error(`Erreur de l’action d’entrée ${actionId}`, err);
           }
         }
       } else this.inputDown.delete(actionId);

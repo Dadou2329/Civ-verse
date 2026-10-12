@@ -62,7 +62,7 @@ async function boot() {
     el.innerHTML = '';
     const msg = document.createElement('pre');
     msg.style.cssText = 'padding:2rem;color:#e8705f;white-space:pre-wrap;font-family:monospace';
-    msg.textContent = `Civilization Studio n'a pas pu démarrer.\n\n${(err as Error).message}`;
+    msg.textContent = `Civilization Studio n’a pas pu démarrer.\n\n${(err as Error).message}`;
     el.appendChild(msg);
   }
 }

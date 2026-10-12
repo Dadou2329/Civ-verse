@@ -64,7 +64,7 @@ export const keyImprint = defineMechanic({
 
 export const imprintReady = defineCondition({
   id: 'door.imprintReady',
-  label: "Les trois pièces de l'empreinte sont réunies",
+  label: 'Les trois pièces de l’empreinte sont réunies',
   category: 'Verrou',
   props: {},
   test: (ctx) => IMPRINT_PARTS.every((id) => ctx.inventory.has(id)) && access(ctx).rank < 1,
@@ -72,7 +72,7 @@ export const imprintReady = defineCondition({
 
 export const openImprint = defineAction({
   id: 'door.openImprint',
-  label: "Ouvrir l'établi d'empreinte (trois cadrans)",
+  label: 'Ouvrir l’établi d’empreinte (trois cadrans)',
   category: 'Verrou',
   props: {},
   async run(ctx) {

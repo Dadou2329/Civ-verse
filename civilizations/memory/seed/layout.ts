@@ -21,7 +21,7 @@ export const R = {
   queue: [at(47, G, 32), at(49, G, 33.5), at(51, G, 32)],
   marketSign: at(44, G, 30),
   oriane: at(24, G, 38),
-  // --- Atelier d'Oriane (C) ----------------------------------------------------------------
+  // --- Atelier d’Oriane (C) ----------------------------------------------------------------
   workshop: { x0: 8, z0: 30, x1: 22, z1: 44 },
   workshopDoor: at(22, G, 37),
   orianeInside: at(16, G, 35),

@@ -811,7 +811,7 @@ A flat JSON object of `"key": "French text"` (`LocaleSchema`). See section 8.
 | Global (multiverse) values | `global.<path>`, read-only | `VariableStore.set` throws; validation reports writes | `global.fragments.threshold` |
 | Local ids | `^[A-Za-z0-9_-]+$` (`LOCAL_ID_RE`) | schemas | `spawn_cell`, `DOOR_Q00_REVEIL`, `C01_eveil` |
 | Fragment ids | local id, shared by all packs | not checked for uniqueness | `threshold`, `remanence` |
-| Global flags | `<pack>.<name>` | convention, plus the `globalWrites` pattern | `door.finalChoice`, `memory.restoration` |
+| Global flags | `<pack>.<name>` | convention, plus the `globalWrites` pattern | `door.finalChoice` |
 | UI store keys, input action ids | `<pack>.<name>` | convention | `door.rankFlash`, `door.permissions`, `memory.chamber` |
 | Localization keys | `<pack>.<area>.<...>` | convention (section 8) | `door.dlg.noe.intro1` |
 
@@ -962,8 +962,8 @@ Door grants its fragment when the player picks up the local item `door:fragment_
 ]
 ```
 
-Memory does the same with `remanence` and the flag `memory.restoration`, and reads Door's
-completion without requiring it (`civilizations/memory/content/logic/blanche.logic.json`, rule
+Memory grants `remanence` the same way but writes no global flag (its scenario keeps social
+states, such as the restoration outcome, local), and reads Door's completion without requiring it (`civilizations/memory/content/logic/blanche.logic.json`, rule
 `vision`):
 
 ```json

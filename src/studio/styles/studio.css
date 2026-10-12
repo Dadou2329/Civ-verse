@@ -688,6 +688,9 @@ textarea {
 .st-block__body {
   margin-top: 0.2rem;
 }
+.st-block__note {
+  font-style: italic;
+}
 .st-block__kids {
   margin: 0.25rem 0 0.1rem 0.4rem;
   padding-left: 0.5rem;

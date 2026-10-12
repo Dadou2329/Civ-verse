@@ -44,6 +44,11 @@
         {
           "type": "gloves",
           "color": "#5a3d27"
+        },
+        {
+          "type": "plaque",
+          "color": "#c9a54e",
+          "accent": "#f1d78a"
         }
       ],
       "idle": "playful",
@@ -93,6 +98,11 @@
         {
           "type": "cape",
           "color": "#5a1f1c"
+        },
+        {
+          "type": "plaque",
+          "color": "#8fb3d9",
+          "accent": "#dcebfa"
         }
       ],
       "idle": "proud",
@@ -133,6 +143,10 @@
         {
           "type": "scarf",
           "color": "#9a3a2a"
+        },
+        {
+          "type": "plaque",
+          "color": "#8e8e8c"
         }
       ],
       "idle": "playful",
@@ -175,6 +189,11 @@
         {
           "type": "scarf",
           "color": "#c2c9cf"
+        },
+        {
+          "type": "plaque",
+          "color": "#8fb3d9",
+          "accent": "#dcebfa"
         }
       ],
       "idle": "calm",
@@ -251,6 +270,11 @@
         {
           "type": "badge",
           "color": "#e3b84d"
+        },
+        {
+          "type": "plaque",
+          "color": "#c9a54e",
+          "accent": "#f1d78a"
         }
       ],
       "idle": "tired",
@@ -287,6 +311,11 @@
         {
           "type": "belt",
           "color": "#3a2a1e"
+        },
+        {
+          "type": "plaque",
+          "color": "#c9a54e",
+          "accent": "#f1d78a"
         }
       ],
       "idle": "proud",
@@ -321,6 +350,11 @@
         {
           "type": "badge",
           "color": "#e3b84d"
+        },
+        {
+          "type": "plaque",
+          "color": "#c9a54e",
+          "accent": "#f1d78a"
         }
       ],
       "idle": "nervous",
@@ -361,6 +395,11 @@
         {
           "type": "pendant",
           "color": "#e3b84d"
+        },
+        {
+          "type": "plaque",
+          "color": "#c9a54e",
+          "accent": "#f1d78a"
         }
       ],
       "idle": "calm",
@@ -394,6 +433,10 @@
         {
           "type": "hat",
           "color": "#5a4a3a"
+        },
+        {
+          "type": "plaque",
+          "color": "#8e8e8c"
         }
       ],
       "idle": "tired",
@@ -430,6 +473,10 @@
         {
           "type": "bandana",
           "color": "#7a4a6a"
+        },
+        {
+          "type": "plaque",
+          "color": "#8e8e8c"
         }
       ],
       "idle": "calm",
@@ -464,6 +511,11 @@
         {
           "type": "pendant",
           "color": "#e3b84d"
+        },
+        {
+          "type": "plaque",
+          "color": "#c9a54e",
+          "accent": "#f1d78a"
         }
       ],
       "idle": "playful",

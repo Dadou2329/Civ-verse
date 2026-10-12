@@ -267,6 +267,10 @@ describe('file API middleware (temporary repository)', () => {
     expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: 'demo', kind: 'behavior', name: 'Porte à résonance' } })).status).toBe(400);
     expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: '../x', kind: 'behavior', name: 'a' } })).status).toBe(400);
     expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: 'demo', kind: 'exec', name: 'a' } })).status).toBe(400);
+    expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: 'pas du json' })).status).toBe(400);
+    expect((await call(mw, 'POST', '/__civ/api/typecheck', { body: 'pas du json' })).status).toBe(400);
+    expect((await call(mw, 'POST', '/__civ/api/typecheck', { body: { paths: ['../../etc/passwd'] } })).status).toBe(400);
+    expect((await call(mw, 'POST', '/__civ/api/typecheck', { body: { paths: ['civilizations/demo/content/dehors/secret.json'] } })).status).toBe(403);
   });
 
   it('answers unknown routes with 404 and leaves other URLs to Vite', async () => {

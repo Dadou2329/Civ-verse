@@ -19,7 +19,7 @@ export const interactableBehavior = defineBehavior({
   props: {
     prompt: prop.text({ label: 'Invite', default: 'core.prompt.examine' }),
     detail: prop.text({ label: 'Détail sous l’invite' }),
-    actions: prop.actions({ label: "Actions à l'interaction" }),
+    actions: prop.actions({ label: 'Actions à l’interaction' }),
     condition: prop.condition({ label: 'Disponible si' }),
     hideIfUnavailable: prop.boolean({ label: 'Masquer si indisponible', default: true }),
     unavailableReason: prop.text({ label: 'Raison si indisponible' }),
@@ -76,7 +76,7 @@ export const pickupBehavior = defineBehavior({
   id: 'core.pickup',
   label: 'Objet à ramasser',
   category: 'Interactions',
-  description: "Ajoute un objet à l'inventaire puis disparaît du monde.",
+  description: 'Ajoute un objet à l’inventaire puis disparaît du monde.',
   props: {
     item: prop.item({ label: 'Objet' }),
     count: prop.integer({ label: 'Quantité', default: 1, min: 1, max: 999 }),

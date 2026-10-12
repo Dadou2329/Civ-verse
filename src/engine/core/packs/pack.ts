@@ -37,6 +37,7 @@ import {
 } from '../content/schemas';
 import type { z } from 'zod';
 import type { StringTable } from '../i18n/localizer';
+import { ASSET_ID_RE, TYPE_ID_RE, packOfAsset, packOfType } from '../util/ids';
 
 export interface PackModule {
   readonly __kind: 'pack';
@@ -128,6 +129,7 @@ export async function loadPack(provider: ContentProvider, manifest: PackManifest
   const module = await provider.loadPackModule(id);
   if (module.__kind !== 'pack') throw new Error(`pack.ts de "${id}" doit exporter definePack(...) par défaut.`);
   const defs = collectDefinitions(module.modules);
+  const issues0 = checkDefinitionIds(id, defs);
   const files = await provider.listFiles(id);
   const out: LoadedPack = {
     manifest,
@@ -146,6 +148,7 @@ export async function loadPack(provider: ContentProvider, manifest: PackManifest
     files,
     issues,
   };
+  issues.push(...issues0);
   const loads: Promise<void>[] = [];
   for (const file of files) {
     const cls = classifyContentPath(file);
@@ -165,7 +168,7 @@ export async function loadPack(provider: ContentProvider, manifest: PackManifest
         }
         const checkId = (docId: string) => {
           if (cls.id && docId !== cls.id) {
-            issues.push({ pack: id, file, severity: 'warning', message: `L'identifiant "${docId}" ne correspond pas au nom du fichier.` });
+            issues.push({ pack: id, file, severity: 'warning', message: `L’identifiant "${docId}" ne correspond pas au nom du fichier.` });
           }
         };
         switch (cls.kind) {
@@ -255,29 +258,21 @@ export async function loadSceneDoc(provider: ContentProvider, pack: LoadedPack, 
   return r.data;
 }
 
-/** In-memory overrides on top of another provider (Studio playtest of unsaved edits). */
-export class OverlayContentProvider implements ContentProvider {
-  constructor(
-    private readonly base: ContentProvider,
-    private readonly overrides: Map<string, unknown>,
-  ) {}
-  listManifests(): Promise<unknown[]> {
-    return this.base.listManifests();
+/**
+ * Identifier conventions of a pack's definitions (src/engine/core/util/ids.ts): types (behaviors,
+ * actions, conditions, events, mechanics, abilities, HUD elements, panels, visuals, view effects)
+ * are "<pack>.<name>", assets (blocks, models, sounds, music, items) are "<pack>:<name>" — with
+ * the pack's own id, so that two packs can never register the same name.
+ */
+export function checkDefinitionIds(packId: string, defs: CollectedDefinitions): ContentIssue[] {
+  const issues: ContentIssue[] = [];
+  const types = [...defs.mechanics, ...defs.behaviors, ...defs.actions, ...defs.conditions, ...defs.events, ...defs.abilities, ...defs.huds, ...defs.panels, ...defs.visuals, ...defs.viewEffects];
+  const assets = [...defs.blocks, ...defs.models, ...defs.sounds, ...defs.music, ...defs.items];
+  for (const d of types) {
+    if (!TYPE_ID_RE.test(d.id) || packOfType(d.id) !== packId) issues.push({ pack: packId, file: 'pack.ts', severity: 'error', message: `Identifiant « ${d.id} » : « ${packId}.<nom> » attendu.` });
   }
-  loadPackModule(packId: string): Promise<PackModule> {
-    return this.base.loadPackModule(packId);
+  for (const d of assets) {
+    if (!ASSET_ID_RE.test(d.id) || packOfAsset(d.id) !== packId) issues.push({ pack: packId, file: 'pack.ts', severity: 'error', message: `Identifiant « ${d.id} » : « ${packId}:<nom> » attendu.` });
   }
-  async listFiles(packId: string): Promise<string[]> {
-    const files = new Set(await this.base.listFiles(packId));
-    for (const key of this.overrides.keys()) {
-      const [p, ...rest] = key.split('/');
-      if (p === packId) files.add(rest.join('/'));
-    }
-    return [...files].sort();
-  }
-  async readJson(packId: string, relPath: string): Promise<unknown> {
-    const key = `${packId}/${relPath}`;
-    if (this.overrides.has(key)) return structuredClone(this.overrides.get(key));
-    return this.base.readJson(packId, relPath);
-  }
+  return issues;
 }

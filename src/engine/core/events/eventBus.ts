@@ -49,7 +49,7 @@ export class EventBus {
 
   emit<K extends string>(name: K, payload: EventPayload<K>): void {
     if (this.depth >= MAX_DEPTH) {
-      this.onError(new Error(`Boucle d'événements détectée (profondeur ${MAX_DEPTH}) sur "${name}".`), name);
+      this.onError(new Error(`Boucle d’événements détectée (profondeur ${MAX_DEPTH}) sur "${name}".`), name);
       return;
     }
     this.depth++;

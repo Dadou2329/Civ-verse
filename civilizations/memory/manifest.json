@@ -12,7 +12,7 @@
   "entry": { "scene": "reminence", "spawn": "spawn_banc" },
   "scenes": ["reminence", "chambre_blanche"],
   "stateVersion": 1,
-  "globalWrites": ["fragments.remanence", "flags.memory.*"],
+  "globalWrites": ["fragments.remanence"],
   "fragments": [{ "id": "remanence", "name": "memory.fragment.remanence", "hint": "memory.fragment.remanence.hint", "icon": "circle" }],
   "theme": {
     "accent": "#f0a040",

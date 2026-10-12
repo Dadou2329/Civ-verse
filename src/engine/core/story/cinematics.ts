@@ -103,7 +103,10 @@ export class CinematicSystem {
   }
 
   play(id: string): Promise<{ skipped: boolean }> {
-    const doc = this.host.getDoc(id);
+    const authored = this.host.getDoc(id);
+    // Tracks are read in time order: keys and items are sorted here, whatever their order in
+    // the file (the Studio and hand-edited JSON may leave them unsorted).
+    const doc = authored ? sortedTracks(authored) : null;
     if (!doc) {
       this.host.log.error(`Cinématique introuvable : ${id}`);
       return Promise.resolve({ skipped: true });
@@ -284,6 +287,10 @@ export function evaluateCameraTrack(doc: CinematicDoc, time: number, lookAtTarge
   while (i + 1 < keys.length && keys[i + 1]!.t <= time) i++;
   const k0 = keys[i]!;
   const k1 = keys[i + 1];
+  // A key without a field of view keeps the one of the key before it (the first defaults to 70°).
+  let fov0 = DEFAULT_FOV;
+  for (let j = 0; j <= i; j++) fov0 = keys[j]!.fov ?? fov0;
+  const fov1 = k1?.fov ?? fov0;
   const targetOf = (k: typeof k0): Vec3 => {
     if (k.lookAt) {
       const p = lookAtTarget(k.lookAt);
@@ -294,14 +301,23 @@ export function evaluateCameraTrack(doc: CinematicDoc, time: number, lookAtTarge
     return { x: pos.x, y: pos.y, z: pos.z + 1 };
   };
   if (!k1 || k1.cut || time <= k0.t) {
-    return { position: fromTuple(k0.position), target: targetOf(k0), fov: k0.fov ?? DEFAULT_FOV, roll: k0.roll ?? 0 };
+    return { position: fromTuple(k0.position), target: targetOf(k0), fov: fov0, roll: k0.roll ?? 0 };
   }
   const span = Math.max(1e-6, k1.t - k0.t);
   const a = ease((k1.ease ?? 'inOutSine') as EasingName, (time - k0.t) / span);
   return {
     position: lerpVec(fromTuple(k0.position), fromTuple(k1.position), a),
     target: lerpVec(targetOf(k0), targetOf(k1), a),
-    fov: lerp(k0.fov ?? DEFAULT_FOV, k1.fov ?? k0.fov ?? DEFAULT_FOV, a),
+    fov: lerp(fov0, fov1, a),
     roll: lerp(k0.roll ?? 0, k1.roll ?? 0, a),
+  };
+}
+
+/** A copy of a cinematic whose track keys and items are in time order (stable). */
+export function sortedTracks(doc: CinematicDoc): CinematicDoc {
+  const byTime = <T extends { t: number }>(list: T[]): T[] => (list.every((x, i) => i === 0 || list[i - 1]!.t <= x.t) ? list : [...list].sort((a, b) => a.t - b.t));
+  return {
+    ...doc,
+    tracks: doc.tracks.map((tr) => ('keys' in tr ? { ...tr, keys: byTime(tr.keys as { t: number }[]) } : { ...tr, items: byTime(tr.items as { t: number }[]) }) as CinematicTrackDoc),
   };
 }

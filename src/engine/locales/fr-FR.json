@@ -79,8 +79,12 @@
   "ui.debug.quests": "Quêtes",
   "ui.debug.mechanics": "Mécaniques",
   "ui.debug.locks": "Verrous du joueur",
-  "ui.debug.listeners": "Écouteurs orphelins :",
+  "ui.debug.listeners": "Écouteurs hors moteur :",
   "ui.debug.vars": "{count, plural, one {Variable ({count})} other {Variables ({count})}}",
+  "ui.debug.logic": "{count, plural, =0 {Logique récente (aucune exécution)} one {Logique récente (# exécution)} other {Logique récente (# exécutions)}}",
+  "ui.debug.trace.action": "action",
+  "ui.debug.trace.condition": "condition",
+  "ui.debug.trace.rule": "règle",
   "ui.debug.missingTexts": "{count, plural, one {# texte manquant :} other {# textes manquants :}}",
   "ui.debug.keys": "F3 : masquer · F4 : collisions · F5 : sauvegarde rapide",
 

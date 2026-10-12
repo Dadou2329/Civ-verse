@@ -161,7 +161,7 @@ export function parseSave(raw: unknown): { save: SaveGame; warnings: string[] } 
     }
     while (gv < GLOBAL_SCHEMA_VERSION) {
       const m = GLOBAL_MIGRATIONS[gv];
-      if (!m) throw new SaveLoadError(`Aucune migration de l'état multivers depuis la version ${gv}.`);
+      if (!m) throw new SaveLoadError(`Aucune migration de l’état multivers depuis la version ${gv}.`);
       data.global = m(data.global as Record<string, unknown>);
       gv++;
       (data.global as Record<string, unknown>).schemaVersion = gv;
@@ -188,7 +188,7 @@ export function migrateCivState(
   let s = structuredClone(state);
   if (s.stateVersion > targetVersion) {
     throw new SaveLoadError(
-      `La sauvegarde de « ${s.civId} » provient d'une version plus récente de la civilisation (état ${s.stateVersion} > ${targetVersion}).`,
+      `La sauvegarde de « ${s.civId} » provient d’une version plus récente de la civilisation (état ${s.stateVersion} > ${targetVersion}).`,
     );
   }
   while (s.stateVersion < targetVersion) {

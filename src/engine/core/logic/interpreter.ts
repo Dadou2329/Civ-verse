@@ -6,7 +6,9 @@
  * - String props may reference the logic scope: "$self", "$player", "$event.<field>".
  * - Each action list runs sequentially; async actions (waits, walks, dialogues) are awaited.
  * - A failing action stops its list and is reported with its origin (never silently ignored).
- * - Every execution is traced in a ring buffer for the debug overlay and the Studio console.
+ * - Executed actions and rules, and conditions that fail to evaluate, are recorded in a ring
+ *   buffer shown by the F3 debug overlay; failures are also logged (the Studio mirrors the log
+ *   in its journal during a playtest).
  */
 import type { ActionDefinition, ConditionDefinition } from '../packs/definitions';
 import type { ActionData, ConditionData, EventMatch } from './types';
@@ -107,7 +109,7 @@ export class LogicInterpreter {
       } catch (err) {
         const e = toError(err);
         this.record({ time: this.now(), origin, kind: 'action', type: action.type, ok: false, detail: e.message });
-        this.log.error(`Échec de l'action "${action.type}" (${origin}) : ${e.message}`, e);
+        this.log.error(`Échec de l’action "${action.type}" (${origin}) : ${e.message}`, e);
         return;
       }
     }

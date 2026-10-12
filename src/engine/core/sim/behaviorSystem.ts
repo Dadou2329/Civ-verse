@@ -164,7 +164,7 @@ export class BehaviorSystem {
 
   setProp(e: RuntimeEntity, type: string, key: string, value: JsonValue): void {
     const record = e.components.get(type);
-    if (!record) throw new Error(`L'entité ${e.id} n'a pas de composant ${type}.`);
+    if (!record) throw new Error(`L’entité ${e.id} n’a pas de composant ${type}.`);
     record.overrides[key] = value;
     if (record.def) {
       const { value: normalized } = normalizeProps(record.def.props, { ...record.baseProps, ...record.overrides });

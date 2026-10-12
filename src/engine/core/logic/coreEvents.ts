@@ -10,7 +10,7 @@ export const coreEvents = [
   defineEvent({ id: 'civ.finished', label: 'Civilisation terminée', fields: { civId: prop.string({ label: 'Civilisation' }) } }),
   defineEvent({ id: 'scene.entered', label: 'Entrée dans une scène', fields: { sceneId: prop.scene({ label: 'Scène' }) } }),
   defineEvent({ id: 'zone.entered', label: 'Entrée dans une zone', fields: { zoneId: prop.entity({ label: 'Zone', withComponent: 'core.zone' }) } }),
-  defineEvent({ id: 'zone.exited', label: "Sortie d'une zone", fields: { zoneId: prop.entity({ label: 'Zone', withComponent: 'core.zone' }) } }),
+  defineEvent({ id: 'zone.exited', label: 'Sortie d’une zone', fields: { zoneId: prop.entity({ label: 'Zone', withComponent: 'core.zone' }) } }),
   defineEvent({ id: 'trigger.entered', label: 'Déclencheur atteint', fields: { triggerId: prop.entity({ label: 'Déclencheur', withComponent: 'core.trigger' }) } }),
   defineEvent({ id: 'trigger.exited', label: 'Déclencheur quitté', fields: { triggerId: prop.entity({ label: 'Déclencheur', withComponent: 'core.trigger' }) } }),
   defineEvent({
@@ -44,4 +44,10 @@ export const coreEvents = [
   defineEvent({ id: 'ability.used', label: 'Capacité utilisée', fields: { abilityId: prop.ability({ label: 'Capacité' }) } }),
   defineEvent({ id: 'multiverse.fragmentAcquired', label: 'Fragment multivers obtenu', fields: { fragmentId: prop.string({ label: 'Fragment' }) } }),
   defineEvent({ id: 'player.landed', label: 'Atterrissage du joueur', fields: { fallSpeed: prop.number({ label: 'Vitesse de chute' }) } }),
+  defineEvent({ id: 'player.jumped', label: 'Saut du joueur', fields: {} }),
+  defineEvent({ id: 'civ.unloading', label: 'Civilisation quittée', fields: { civId: prop.string({ label: 'Civilisation' }) } }),
+  defineEvent({ id: 'scene.exiting', label: 'Sortie d’une scène', fields: { sceneId: prop.scene({ label: 'Scène' }) } }),
+  defineEvent({ id: 'save.completed', label: 'Partie sauvegardée', fields: { slot: prop.string({ label: 'Emplacement' }) } }),
+  defineEvent({ id: 'ui.panelOpened', label: 'Panneau ouvert', fields: { panelId: prop.string({ label: 'Panneau' }) } }),
+  defineEvent({ id: 'ui.panelClosed', label: 'Panneau fermé', fields: { panelId: prop.string({ label: 'Panneau' }) } }),
 ];

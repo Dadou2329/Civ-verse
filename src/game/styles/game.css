@@ -343,6 +343,15 @@ button {
     radial-gradient(220px 220px at 70% 80%, rgba(180, 120, 255, 0.35), transparent 70%);
 }
 
+/* Motif of a new civilization (npm run civ -- new-pack): a quiet horizon of blocks. */
+.cv-motif--default {
+  background:
+    linear-gradient(transparent 62%, rgba(255, 255, 255, 0.08) 62%, rgba(255, 255, 255, 0.08) 64%, transparent 64%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0 18px, transparent 18px 36px),
+    radial-gradient(260px 160px at 75% 85%, var(--civ-accent, #e8c27a), transparent 70%);
+  opacity: 0.7;
+}
+
 .cv-registry__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 260px));

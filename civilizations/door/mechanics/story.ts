@@ -28,7 +28,7 @@ export const addEvidence = defineAction({
 
 export const foundPoster = defineAction({
   id: 'door.foundPoster',
-  label: "Découvrir l'affiche d'Elias",
+  label: 'Découvrir l’affiche d’Elias',
   category: 'Verrou',
   props: {},
   run(ctx) {

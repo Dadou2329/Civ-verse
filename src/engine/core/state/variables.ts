@@ -58,7 +58,7 @@ export class VariableStore {
 
   /** Raw write (namespace checks happen in the scoped API). */
   set(name: string, value: JsonValue): void {
-    if (name.startsWith('global.')) throw new Error(`"${name}" est en lecture seule : utilisez l'API multivers.`);
+    if (name.startsWith('global.')) throw new Error(`"${name}" est en lecture seule : utilisez l’API multivers.`);
     const decl = this.declarations.get(name);
     if (decl && !typeMatches(decl.type, value)) {
       throw new Error(`Type invalide pour ${name} : ${decl.type} attendu, reçu ${JSON.stringify(value)}.`);

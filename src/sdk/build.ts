@@ -61,7 +61,7 @@ export class SceneBuilder {
   }
 
   entity(id: string, position: Vec3Tuple, components: Record<string, Record<string, unknown>>, opts: EntityOptions = {}): EntityDoc {
-    if (this.ids.has(id)) throw new Error(`Identifiant d'entité en double : ${id}`);
+    if (this.ids.has(id)) throw new Error(`Identifiant d’entité en double : ${id}`);
     this.ids.add(id);
     const doc: EntityDoc = {
       id,

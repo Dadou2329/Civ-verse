@@ -32,7 +32,7 @@ export function CivHudSlot({ slot }: { slot: HudSlot }) {
           if (def.visibleWhen && !session.interpreter.test(def.visibleWhen, { origin: `hud ${def.id}` })) return null;
           const C = def.component as unknown as ComponentType;
           return (
-            <CivErrorBoundary key={def.id} name={def.id} onError={(err) => session.log.error(`Élément d'interface ${def.id}`, err)}>
+            <CivErrorBoundary key={def.id} name={def.id} onError={(err) => session.log.error(`Élément d’interface ${def.id}`, err)}>
               <C />
             </CivErrorBoundary>
           );
@@ -57,7 +57,7 @@ export function CivPanels() {
       {panels.map(({ def, props }) => {
         const C = def.component as unknown as ComponentType<PanelProps>;
         return (
-          <div key={def.id} className="cv-panel-host" role="dialog" aria-modal="true">
+          <div key={def.id} className="cv-panel-host" role="dialog" aria-modal="true" aria-label={def.title ? session.t(def.title) : undefined}>
             <CivErrorBoundary
               name={def.id}
               onError={(err) => {

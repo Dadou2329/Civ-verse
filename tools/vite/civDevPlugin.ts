@@ -147,6 +147,16 @@ async function readBody(req: IncomingMessage): Promise<string> {
   return Buffer.concat(chunks).toString('utf8');
 }
 
+/** Parses a JSON request body (400 when it is not JSON). */
+async function readJsonBody<T>(req: IncomingMessage): Promise<T> {
+  const raw = (await readBody(req)) || '{}';
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    throw new CivApiError(400, 'Corps JSON invalide.');
+  }
+}
+
 function send(res: ServerResponse, status: number, body: unknown): void {
   const payload = JSON.stringify(body);
   res.statusCode = status;
@@ -273,11 +283,14 @@ export function civDevPlugin(opts: { root?: string } = {}): Plugin {
     }
 
     if (route === 'typecheck' && method === 'POST') {
-      const body = JSON.parse((await readBody(req)) || '{}') as { paths?: string[] };
-      const files = (body.paths ?? []).map((p) => {
-        const abs = resolvePackPath(p, 'read', roots.repo);
-        return abs;
-      });
+      const body = await readJsonBody<{ paths?: string[] }>(req);
+      if (!Array.isArray(body.paths)) throw new CivApiError(400, 'Champ "paths" manquant.');
+      const files: string[] = [];
+      for (const p of body.paths) {
+        const abs = resolvePackPath(String(p), 'read', roots.repo);
+        await assertRealPathInside(abs, roots.civ);
+        files.push(abs);
+      }
       typecheck ??= createTypecheckService(roots.repo);
       const started = Date.now();
       const diagnostics = typecheck.check(files);
@@ -286,7 +299,7 @@ export function civDevPlugin(opts: { root?: string } = {}): Plugin {
     }
 
     if (route === 'scaffold' && method === 'POST') {
-      const body = JSON.parse((await readBody(req)) || '{}') as ScaffoldRequest;
+      const body = await readJsonBody<ScaffoldRequest>(req);
       let result: Awaited<ReturnType<typeof scaffoldScript>>;
       try {
         result = await scaffoldScript(body, (rel) => resolvePackPath(rel, 'write', roots.repo));

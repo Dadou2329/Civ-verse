@@ -307,7 +307,7 @@ function normalizeValue(def: PropDef, value: unknown, path: string, issues: Prop
       if (Array.isArray(value) && value.every((a) => typeof a === 'object' && a !== null && typeof (a as { type?: unknown }).type === 'string')) {
         return value;
       }
-      return bad("Liste d'actions");
+      return bad('Liste d’actions');
     case 'list':
       if (!Array.isArray(value)) return bad('Liste');
       return value.map((item, i) => normalizeValue(def.item as PropDef, item, `${path}[${i}]`, issues));

@@ -1,18 +1,15 @@
 import { useController, useInterval, useT } from '../hooks';
 
-/** F3 developer overlay: performance, location, story state, mechanics, errors. */
+/**
+ * F3 developer overlay: performance, location, story state, mechanics, recent logic, errors.
+ * Player builds show the performance line only: identifiers of variables, quests, entities and
+ * mechanics are never displayed to players (the Studio's playtest runs in development).
+ */
 export function DebugOverlay() {
   useInterval(250);
   const controller = useController();
   const t = useT();
-  const s = controller.session;
   const st = controller.view?.stats;
-  const p = s.player.position;
-  const target = s.interaction.target;
-  const civ = s.civ;
-  const vars = civ ? Object.entries(s.vars.snapshot(civ.id)) : [];
-  const errors = s.logHub.errors().slice(-4);
-  const missing = s.i18n.missing();
   return (
     <div className="cv-debug" data-testid="debug">
       <div>
@@ -28,6 +25,25 @@ export function DebugOverlay() {
             })
           : '—'}
       </div>
+      {import.meta.env.DEV && <DevDetails />}
+      <div className="cv-muted">{t('ui.debug.keys')}</div>
+    </div>
+  );
+}
+
+function DevDetails() {
+  const controller = useController();
+  const t = useT();
+  const s = controller.session;
+  const p = s.player.position;
+  const target = s.interaction.target;
+  const civ = s.civ;
+  const vars = civ ? Object.entries(s.vars.snapshot(civ.id)) : [];
+  const errors = s.logHub.errors().slice(-4);
+  const missing = s.i18n.missing();
+  const traces = s.interpreter.traces().slice(-12).reverse();
+  return (
+    <>
       <div>
         <b>{t('ui.debug.location')}</b> {civ?.id ?? '—'} / {s.world?.id ?? '—'} · x {p.x.toFixed(2)} y {p.y.toFixed(2)} z {p.z.toFixed(2)} · {s.player.body.grounded ? t('ui.debug.grounded') : t('ui.debug.airborne')}
       </div>
@@ -55,6 +71,14 @@ export function DebugOverlay() {
         <summary>{t('ui.debug.vars', { count: vars.length })}</summary>
         <pre>{vars.map(([k, v]) => `${k} = ${JSON.stringify(v)}`).join('\n')}</pre>
       </details>
+      <details>
+        <summary>{t('ui.debug.logic', { count: traces.length })}</summary>
+        <pre>
+          {traces
+            .map((e) => `${e.time.toFixed(1)} s ${e.ok ? '✓' : '✗'} ${t(`ui.debug.trace.${e.kind}`)} ${e.type} — ${e.origin}${e.detail ? ` (${e.detail})` : ''}`)
+            .join('\n')}
+        </pre>
+      </details>
       {errors.length > 0 && (
         <div className="cv-debug__errors">
           {errors.map((e, i) => (
@@ -64,7 +88,6 @@ export function DebugOverlay() {
           ))}
         </div>
       )}
-      <div className="cv-muted">{t('ui.debug.keys')}</div>
-    </div>
+    </>
   );
 }

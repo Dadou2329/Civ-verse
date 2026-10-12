@@ -8,9 +8,9 @@ const ANCHOR_OFFSET = prop.vec3({ label: 'Décalage', default: [0, 0, 0], advanc
 
 export const spawnBehavior = defineBehavior({
   id: 'core.spawn',
-  label: "Point d'apparition",
+  label: 'Point d’apparition',
   category: 'Monde',
-  description: "Position et orientation où le joueur apparaît (référencée par son identifiant d'entité).",
+  description: 'Position et orientation où le joueur apparaît (référencée par son identifiant d’entité).',
   props: {
     isDefault: prop.boolean({ label: 'Point par défaut de la scène', default: false }),
   },

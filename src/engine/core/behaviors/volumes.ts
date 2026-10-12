@@ -23,7 +23,7 @@ export const triggerBehavior = defineBehavior({
     offset: prop.vec3({ label: 'Décalage', default: [0, 0, 0] }),
     once: prop.boolean({ label: 'Une seule fois', default: true }),
     condition: prop.condition({ label: 'Actif si' }),
-    onEnter: prop.actions({ label: "À l'entrée" }),
+    onEnter: prop.actions({ label: 'À l’entrée' }),
     onExit: prop.actions({ label: 'À la sortie' }),
   },
   state: { version: 1, initial: () => ({ fired: false }) },

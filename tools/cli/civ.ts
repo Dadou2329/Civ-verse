@@ -4,8 +4,8 @@
  *   validate [pack…]           démarre chaque civilisation sans rendu et vérifie le contenu,
  *                              les références et les textes français (aussi : npm run validate)
  *   seed <pack> [--force]      génère le contenu initial depuis civilizations/<pack>/seed/index.ts
- *                              (n'écrase jamais un fichier existant sans --force)
- *   new-pack <id> [--name "…"] crée le squelette d'une nouvelle civilisation
+ *                              (n’écrase jamais un fichier existant sans --force)
+ *   new-pack <id> [--name "…"] crée le squelette d’une nouvelle civilisation
  *   bench [pack…]              mesure les coûts CPU : chargement, lumière, maillage, simulation
  *                              (aussi : npm run bench)
  *

@@ -108,7 +108,7 @@ export interface PlayerApi {
     /** Seconds before the ability can be used again. */
     cooldown(id: string): number;
   };
-  /** How the world names the protagonist locally (e.g. "l'étranger sans plaque"). */
+  /** How the world names the protagonist locally (e.g. "l’étranger sans plaque"). */
   readonly identity: { readonly title: string | null; setTitle(locKey: string | null): void };
   box(): AABB;
 }

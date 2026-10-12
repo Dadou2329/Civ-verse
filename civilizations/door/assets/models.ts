@@ -238,7 +238,7 @@ export const paperStack = defineModel({
 
 export const imprintBench = defineModel({
   id: 'door:imprint_bench',
-  label: "Établi d'empreinte",
+  label: 'Établi d’empreinte',
   category: 'Verrou — Atelier',
   build(b) {
     // Heavy bench.
@@ -268,7 +268,7 @@ export const imprintBench = defineModel({
 
 export const testDoor = defineModel({
   id: 'door:test_door',
-  label: "Porte d'essai de Mira",
+  label: 'Porte d’essai de Mira',
   category: 'Verrou — Atelier',
   build(b) {
     // Free-standing frame with a half-assembled lock mechanism.

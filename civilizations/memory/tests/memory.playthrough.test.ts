@@ -360,7 +360,9 @@ async function denouement(game: HeadlessGame, decision: Decision, doorCompleted 
   expect(finished).toBe(true);
   expect(s.vars.get('memory.finished')).toBe(true);
   expect(s.multiverse.progress('memory').completed).toBe(true);
-  expect(s.multiverse.getFlag('memory.restoration')).toBe(outcome);
+  // Only the Rémanence is global; the social outcome stays in Memory's own state.
+  expect(s.vars.get('memory.restorationOutcome')).toBe(outcome);
+  expect(Object.keys(s.multiverse.snapshot().flags).filter((k) => k.startsWith('memory.'))).toEqual([]);
 }
 
 describe('Memory Civilization — parcours complet', () => {
