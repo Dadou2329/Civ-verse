@@ -13,7 +13,7 @@ gameplay rule:
 
 | | Door — `civilizations/door` | Memory — `civilizations/memory` |
 | --- | --- | --- |
-| Title | « La Porte qui n'existe pas » | « Le Nom qu'on t'a volé » |
+| Title | « La Porte qui n’existe pas » | « Le Nom qu’on t’a volé » |
 | Scenario spec | `docs/narrative/DOOR_CIVILIZATION_SCENARIO.txt` | `docs/narrative/MEMORY_CIVILIZATION_SCENARIO.txt` |
 | Central rule | an access rank checked by every lock (variable `door.rank`, mechanic `door.access`) | memory shards placed in three slots change what the player perceives (mechanic `memory.chamber`) |
 | Scenes | `verrou` (96 × 64 × 120), `porte_absente` (40 × 34 × 64) | `reminence` (96 × 40 × 96), `chambre_blanche` (32 × 24 × 32) |
@@ -81,9 +81,10 @@ whenever the content needs them.
 ## 2. Choose an id and scaffold the pack
 
 1. **Choose the id** carefully: it must match `^[a-z][a-z0-9-]*$`, it is the directory name, the
-   namespace of every story variable (`<id>.*`), the prefix of every localization key, and the key
-   of saves. Do not use `core` (taken), `engine` (internal owner name), `global` (reserved variable
-   namespace) or a prefix of engine events such as `scene`, `quest`, `item` (list in
+   namespace of every story variable (`<id>.*`), the prefix of every localization key and of every
+   definition id, and the key of saves. `core` is taken; `engine`, `global` and `ui` are reserved
+   and refused by the manifest schema. Do not use a prefix of engine events either, such as
+   `scene`, `quest`, `item` (list in
    [PACK_FORMAT.md section 7](docs/PACK_FORMAT.md#7-identifiers-and-naming-conventions)).
 2. **Run the scaffold:**
 
@@ -91,13 +92,13 @@ whenever the content needs them.
    npm run civ -- new-pack <id> --name "Nom affiché"
    ```
 
-   It refuses an existing directory (`Le dossier civilizations/<id> existe déjà : rien n'a été
+   It refuses an existing directory (`Le dossier civilizations/<id> existe déjà : rien n’a été
    modifié.`) and otherwise creates:
 
    | File | Content |
    | --- | --- |
    | `manifest.json` | `kind: "civilization"`, `name`/`description`/`tagline` keys, `packVersion: "0.1.0"`, `engineApi: "^1.0.0"` (from `ENGINE_API_VERSION`), `dependencies: ["core"]`, `entry: { scene: "depart", spawn: "depart_joueur" }`, `scenes: ["depart"]`, `theme: { accent: "#7fb7d9" }`, `cover: { colors: ["#1c2633", "#3f5d78"], motif: "default" }`, `order: 100` |
-   | `pack.ts` | `definePack` with the glob `['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', '!./**/*.test.ts']` |
+   | `pack.ts` | `definePack` with the glob `['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', './view/**/*.ts', '!./**/*.test.ts']` |
    | `locales/fr-FR.json` | `<id>.name` (the `--name` value), `<id>.description`, `<id>.tagline`, `<id>.scene.depart` |
    | `content/scenes/depart.scene.json` | a 32 × 24 × 32 scene: `core:stone` up to y = 6, a `core:grass` layer at y = 7, a `core.spawn` entity `depart_joueur` at `[16.5, 8, 16.5]` |
    | `mechanics/.gitkeep` | empty |
@@ -107,9 +108,10 @@ whenever the content needs them.
 3. **Start (or restart) `npm run dev`.** The card appears in « Civilisations » on the game's main
    menu; the Studio lists the pack in its « Pack » selector (`/studio.html?pack=<id>` opens it
    directly).
-4. **Adjust `pack.ts`** if you will write rendering code: add `'./view/**/*.ts'` to the glob, as in
+4. **Check `pack.ts`**: its glob covers `mechanics/`, `assets/`, `ui/` and `view/`, as in
    `civilizations/door/pack.ts` and `civilizations/memory/pack.ts`. Only files matched by the glob
-   are loaded, and only `.tsx` files are matched in `ui/`.
+   are loaded, and only `.tsx` files are matched in `ui/`; add an entry if you create another code
+   folder.
 5. **Create the content files the Studio cannot create** (its Explorer only creates scenes,
    dialogues, quests, cinematics, logic files and scripts):
 
@@ -150,12 +152,12 @@ Edit `manifest.json` directly or in the Studio (Explorer group « Civilisation e
    Cormorant Garamond, IM Fell English, JetBrains Mono. Door: amber accent `#e3b84d` and Cinzel;
    Memory: `#f0a040`, a violet `accentSoft` `#c8a8f0` and Cormorant Garamond.
 4. **Cover.** `cover.colors[0]` and `cover.colors[1]` make the card gradient. `cover.motif` adds
-   the class `cv-motif--<motif>`, styled only for `door` and `memory` in
-   `src/game/styles/game.css`; with `"default"` (the scaffold value) no motif is drawn. A new motif
-   requires a CSS rule in that engine file.
-5. **HUD.** `hud.hide` hides built-in elements (`crosshair`, `prompt`, `objectives`,
-   `notifications`, `inventory`, `abilities`, `location`). Door and Memory hide none and add their
-   own elements with `defineHud` (step 11).
+   the class `cv-motif--<motif>`, styled only for `door`, `memory` and `default` (the scaffold
+   value: a horizon of blocks lit with the accent color) in `src/game/styles/game.css`; any other
+   value draws no motif. A new motif requires a CSS rule in that engine file.
+5. **HUD.** `hud.hide` hides built-in elements (`crosshair`, `prompt`, `objectives`, which also
+   hides the on-screen objective markers, `notifications`, `inventory`, `abilities`, `location`).
+   Door and Memory hide none and add their own elements with `defineHud` (step 11).
 6. **Order and dependencies.** `order` places the card (Door 10, Memory 20, scaffold 100). Keep
    `"dependencies": ["core"]` to use the shared blocks, models, sounds and characters.
 7. **Versions.** Leave `packVersion` at `0.1.0`, `engineApi` at `^1.0.0` and `stateVersion` at `1`
@@ -184,10 +186,10 @@ the `pack.ts` glob is registered. Door and Memory keep them in `assets/blocks.ts
    `src/engine/core/voxel/textures/generators.ts`; an unknown generator name renders a magenta
    checker and is not reported by validation. Models are drawn with the `ModelBuilder` in
    micro-voxels of 1/16 m. Sounds and music are synthesis recipes: the format has no audio files.
-4. These folders cannot be saved from the Studio (`assets/` is not in the dev API's writable
-   folders); edit them in your editor. Under `npm run dev`, a changed pack script is re-imported by
-   the Studio without reloading the page (`civ:code-changed` in `tools/vite/civDevPlugin.ts` and
-   `src/studio/main.tsx`).
+4. Edit these modules in your editor or in the Studio's script editor (Explorer « Scripts »;
+   `assets/` and `models/` are writable through the dev API). Under `npm run dev`, a changed pack
+   script is re-imported by the Studio without reloading the page (`civ:code-changed` in
+   `tools/vite/civDevPlugin.ts` and `src/studio/main.tsx`).
 5. `tests/unit/corePack.test.ts` shows how to check that every block has a known texture generator
    and every model builds; you can copy it into your pack's tests.
 
@@ -273,9 +275,11 @@ afterwards.
 
 **The rule: the seed generates the first version; afterwards the JSON file is canonical.**
 `src/sdk/build.ts` states it ("A seed generates the first version of a scene; afterwards the JSON
-file is the source of truth and is edited in the Studio"), and so do the comments of both
-`seed/index.ts`. `--force` rewrites every file the seed returns, with no merge and no backup (the
-CLI writes with `fs.writeFileSync`; only the Studio's dev API copies files to `.civ-backups/`).
+file is the source of truth and is edited in Civilization Studio"), and so do the comments of both
+`seed/index.ts`. `--force` rewrites every file the seed returns, with no merge: a file whose content
+would not change is left alone (`· <path> inchangé`), any other existing file is first copied to
+`.civ-backups/civilizations/<id>/<path>.<timestamp>.seed.bak` (the CLI prints
+`ancienne version conservée : <backup path>`).
 Use `--force` only while nobody has edited the generated files, by hand or in the Studio. Once they
 have been edited, change them in the Studio or by hand, not by re-seeding. Door's `verrou` and
 Memory's `reminence` and `chambre_blanche` record in `editor.notes` that they were edited in the
@@ -345,7 +349,7 @@ Entity reference: [PACK_FORMAT.md section 6.1](docs/PACK_FORMAT.md#61-scenes--co
    Memory's white room is reached through a lamp that only works with the right shard anchored
    (`lampe_resonance` in `reminence.scene.json`: `"mode": "interact"` and a `condition` combining
    `memory.anchored` with `core.questStage`). Spawn ids in portals are plain strings: validation
-   does not check them; a wrong id logs `Point d'apparition introuvable` at runtime and the scene's
+   does not check them; a wrong id logs `Point d’apparition introuvable` at runtime and the scene's
    default spawn is used.
 5. **Doors**: `core.door` (model, name key, size, hinge, sounds, auto-close) plus your own lock
    component if passage is ruled by your mechanics (Door: `door.lock`; Memory: `memory.closed`).
@@ -421,7 +425,10 @@ Files `content/quests/<QUEST_ID>.quest.json`; Studio: Explorer « Quêtes » ＋
    completes `DOOR_Q00_REVEIL/sortir`). An objective with none of the three gets a validation
    warning.
 3. Use `progress` for counters (Memory: `{ "var": "memory.objectsFound", "count": 3 }`),
-   `optional` for objectives that must not block the main path, `target` for the marker.
+   `optional` for objectives that must not block the main path, `target` (an entity id) for the
+   on-screen marker that the game draws, with the distance, over the target of each open objective
+   of the quest shown by the objective tracker, and `targetScene` to draw that marker only in one
+   scene (entity ids are local to a scene).
 4. Chain quests explicitly. The first quest of each pack is started by the `onComplete` of its
    opening cinematic (`C01_eveil` starts `DOOR_Q00_REVEIL`, `M01_marche` starts `MEM_Q00_EVEIL`),
    and the quests' `onComplete` actions start the following ones (`DOOR_Q00_REVEIL` →
@@ -464,7 +471,7 @@ editor with camera preview; a new cinematic starts with a camera key at the edit
    cinematic editor. Door's helper `doc()` in that file sets `skippable`, `letterbox`,
    `lockPlayer`, `hideHud` to `true` and `returnCamera` to `"blend"` for every cinematic.
 2. Every cinematic of both packs is skippable (`tests/acceptance/J-regression.test.ts` checks it
-   for Door and Memory). Skipping runs the remaining essential action items and `onComplete`, and
+   for every bundled civilization). Skipping runs the remaining essential action items and `onComplete`, and
    skips presentational actions (`core.wait`, `core.playSound`, `core.say`...). Put every story
    state change in `onComplete` or in essential `actions` items, never only in timing.
 3. Play cinematics with `core.playCinematic` (`wait: true` to continue the action list after it).
@@ -478,14 +485,16 @@ How to write each kind of definition is the subject of
 [HOW_TO_ADD_A_NEW_MECHANIC.md](HOW_TO_ADD_A_NEW_MECHANIC.md). What a civilization needs to know:
 
 1. **Where.** Put definitions under `mechanics/` (logic and rules), `ui/` (`.tsx`, React) and
-   `view/` (Babylon.js, add the glob first, step 2). Any exported `define*` value is registered;
-   there is no list to update. Import only `@sdk`, `@sdk/ui` and `@sdk/view` (ESLint rule for
-   `civilizations/**`).
+   `view/` (Babylon.js). Any exported `define*` value is registered; there is no list to update.
+   Give each one an id prefixed with your pack id (`<id>.<name>`, `<id>:<name>` for assets): when
+   the pack loads, other ids are logged as errors (`Identifiant « … » : « <id>.<nom> » attendu.`),
+   which validation lists too (step 15). Import only `@sdk`, `@sdk/ui` and `@sdk/view` (ESLint
+   rule for `civilizations/**`).
 2. **What.** Door and Memory each implement their spec's section 5:
 
    | Kind | Door | Memory |
    | --- | --- | --- |
-   | `defineMechanic` | `door.access` (rank, refusals, key R), `door.keyImprint` (three dials) | `memory.chamber` (shards and slots, key M), `memory.echoes`, `memory.offering` (depends on `memory.chamber`) |
+   | `defineMechanic` | `door.access` (rank, refusals, key R), `door.keyImprint` (three dials) | `memory.chamber` (shards and slots, key C), `memory.echoes`, `memory.offering` (depends on `memory.chamber`) |
    | `defineBehavior` | `door.lock`, `door.memory`, `door.restricted`, `door.watcher`, `door.ambientLoop`, `door.spinner` | `memory.device`, `memory.closed`, `memory.echoPoint`, `memory.pedestal`, `memory.recollection`, `memory.recognition` |
    | `defineAction` | `door.setRank`, `door.openImprint`, `door.addEvidence`, `door.foundPoster` | `memory.giveShard`, `memory.anchorShard`, `memory.removeShard`, `memory.examineShard`, `memory.openChamber`, `memory.restore`, `memory.trade`, `memory.playEcho` |
    | `defineCondition` | `door.rankAtLeast`, `door.imprintReady` | `memory.anchored`, `memory.shardState`, `memory.consented` |
@@ -496,8 +505,12 @@ How to write each kind of definition is the subject of
 3. **Data in `content/rules.json`, not in code.** A mechanic's `settings` (declared with `prop.*`)
    are edited in the Studio (« Règles des mécaniques ») and stored in `content/rules.json`. Door
    stores the dial solution (`door.keyImprint`: `dial1`, `dial2`, `dial3`) and the permission-map
-   key; Memory stores its shards, echoes and the order of the three-object puzzle. Validation does
-   not look inside `rules.json`: test what it contains (step 14).
+   key; Memory stores its shards, echoes, the order of the three-object puzzle and the chamber key.
+   Validation checks the text keys, references and nested logic of the declared fields, not
+   numbers, other plain values or unknown fields: test what `rules.json` contains (step 14). Code
+   that needs a setting reads it with `ctx.settings.of(id)`: Door's permissions panel and Memory's
+   chamber panel close on their configured key, and their HUDs display it with `keyLabel` from
+   `@sdk/ui`.
 4. **State and variables.** Mechanic and component state declared with
    `state: { version, initial }` is saved with the game. Story variables are written with
    `ctx.vars.set('<id>.x', ...)`; writing another namespace throws. `door.access` declares
@@ -506,8 +519,10 @@ How to write each kind of definition is the subject of
 5. **Studio scaffolding.** Explorer « Scripts » ＋ « Nouveau script » creates
    `mechanics/<nom>.ts` from a typed template (behavior, action, condition or mechanic) with the id
    `<id>.<nom>`; the script editor shows type errors from the project's TypeScript service. The
-   Studio cannot save files in `assets/` or `view/` (the dev API only writes in `content/`,
-   `mechanics/`, `ui/`, `locales/`, `scripts/` and `manifest.json`).
+   dev API writes `manifest.json` and the `.json`, `.ts` and `.tsx` files of `content/`,
+   `locales/`, `mechanics/`, `ui/`, `view/`, `assets/` and `models/` (`WRITABLE_PACK_DIRS` in
+   `src/engine/platform/devApiRules.ts`); other files, such as `pack.ts`, open read-only
+   (« Lecture seule »), and `seed/` and `tests/` are not listed.
 
 ---
 
@@ -517,7 +532,7 @@ The whole player-facing game is in French (`docs/narrative/MISE_A_JOUR_PROMPT_FR
 Reference: [PACK_FORMAT.md section 8](docs/PACK_FORMAT.md#8-localization).
 
 1. Player-visible content never holds French text directly: every such field holds a key of
-   `locales/fr-FR.json`, and validation reports raw text (`Texte brut au lieu d'une clé de
+   `locales/fr-FR.json`, and validation reports raw text (`Texte brut au lieu d’une clé de
    traduction`) and missing keys (`Clé de traduction manquante en français`). Editor-only fields,
    which players never see (entity `name` and `folder`, dialogue and cinematic `title`, scene
    `editor.notes`, block and model labels), hold plain French text.
@@ -539,7 +554,8 @@ Reference: [PACK_FORMAT.md section 8](docs/PACK_FORMAT.md#8-localization).
 6. Only `locales/fr-FR.json` is allowed: the localization test fails on any other table in
    `civilizations/*/locales/`.
 7. Messages support `{name}` interpolation and ICU plurals/selects
-   (`{count, plural, one {# éclat} other {# éclats}}`). A missing key shows `⟦key⟧` in the game.
+   (`{count, plural, one {# éclat} other {# éclats}}`). A missing key shows `⟦key⟧` in the game;
+   in development the F3 overlay lists the missing keys.
 
 ---
 
@@ -558,9 +574,10 @@ Reference: [PACK_FORMAT.md section 10](docs/PACK_FORMAT.md#10-multiverse-fragmen
    writes no global flag), fragment `remanence` with the icon `circle`. Fragment ids are shared by all packs: pick a unique one. The fragment appears
    in the « Registre des éveils » screen.
 2. **Grant** it from your story with `core.grantFragment`, and record the outcome that other
-   civilizations may read with `core.setGlobalFlag` under your own prefix. Both packs do it in a
-   rule triggered when the player picks up a local item (`door:fragment_seuil`,
-   `memory:remanence`): the item stays local, the fragment is global. A write that `globalWrites`
+   civilizations may read with `core.setGlobalFlag` under your own prefix (Door does; Memory keeps
+   its outcome in a local variable). Both packs grant the fragment in a rule triggered when the
+   player picks up a local item (`door:fragment_seuil`, `memory:remanence`): the item stays local,
+   the fragment is global. A write that `globalWrites`
    does not allow throws at runtime, logs an error and stops the rest of the action list;
    validation does not detect it, the playthrough test does (assert that `logHub.errors()` is
    empty).
@@ -626,7 +643,8 @@ What the two playthroughs assert, and yours should too:
 - quest statuses and stages (`session.quests.status(...)`), variables (`session.vars.get(...)`),
   inventory (`session.civ!.ctx.inventory.has(...)`), mechanic APIs
   (`session.civ!.mechanics.get('door.keyImprint')!.api`);
-- the ending: `game.ui.endScreens`, `session.multiverse.progress('<id>').completed`, global flags;
+- the ending: `game.ui.endScreens`, `session.multiverse.progress('<id>').completed`, global flags
+  (Door checks `door.finalChoice`; Memory checks that it writes no `memory.*` flag);
 - no logged error: `expect(game.session.logHub.errors()).toEqual([])`;
 - persistence: `buildSaveGame`, `JSON` round trip, `parseSave`, `applySaveGame` in a new session,
   `loadCivilization('<id>')` without `fresh`, then continue to the end (Door: « the evidence
@@ -637,7 +655,8 @@ What the two playthroughs assert, and yours should too:
 Each Door test passes a 120 000 ms timeout and each Memory test 180 000 ms (the default is
 30 000 ms in `vitest.config.ts`). Two more patterns are available: validation inside a test
 (`tests/acceptance/J-regression.test.ts` calls `validateCivilization` and expects
-`report.issues` to be empty, for Door and Memory only), and unit tests of a mechanic on an
+`report.issues` to be empty, for every bundled civilization — yours included once its manifest
+exists), and unit tests of a mechanic on an
 in-memory pack with `MemoryContentProvider` (`src/engine/core/sim/session.test.ts`,
 `tests/acceptance/G-mechanics-extensibility.test.ts` with its fixture pack
 `tests/acceptance/fixtures/lanterne`).
@@ -650,17 +669,19 @@ Run one pack's tests with `npx vitest run civilizations/<id>`, everything with `
 
 1. `npm run civ -- validate <id>` while working, then `npm run validate` (all civilizations).
    Fix every `erreur`; read every `attention` (undocumented events, objectives that can never
-   complete, entities of another scene, empty dialogue nodes). The exit code is 1 as long as one
-   error remains.
+   complete, entities of another scene, empty dialogue nodes). The problems found while loading
+   your pack are listed too: content files that fail their schema, definition ids of the wrong
+   form, document ids that differ from their file name (`attention`). The exit code is 1 as long as
+   one error remains.
 2. In the Studio, « ✔ Valider » runs the same checks on the working copies, unsaved edits
    included, and lists them in the « Problèmes » tab.
 3. `npm run check` before finishing: types (including seeds), lint (including the import rule for
    pack code), validation and all tests.
 4. Validation does not cover everything (list in
    [PACK_FORMAT.md section 12.4](docs/PACK_FORMAT.md#124-not-checked-by-validation)): numbers,
-   enums and other plain values of props, the contents of `rules.json`, spawn ids of portals,
-   fragment and flag names, global write permissions. The playthrough test covers what validation
-   cannot.
+   enums and other plain values of props and of `rules.json` settings, spawn ids of portals,
+   fragment and flag names, and global write permissions. The playthrough test covers what
+   validation cannot.
 
 ---
 
@@ -687,11 +708,13 @@ Under `npm run dev`, in `/studio.html?pack=<id>`:
 1. Only add or change files under `civilizations/<id>/` (and your spec in `docs/narrative/`). Do
    not edit `civilizations/door`, `civilizations/memory` or `civilizations/core` for your pack:
    changing a `core` block or model changes the Door and Memory worlds too.
-2. Prefix every id. Blocks, models, items, actions, conditions and events that collide with an
-   existing id are refused at registration (`... est déjà défini par "<pack>"`); sounds, music,
-   visuals and view effects silently replace the previous one. The Studio keeps every pack it
-   opened registered in its session, so a collision with Door or Memory can appear there even if
-   your pack does not depend on them.
+2. Prefix every id with your pack id: the pack load logs an error for each definition id of
+   another form, and validation lists it (step 11). Blocks, models, items, actions, conditions and
+   events that collide with an existing id are refused at registration
+   (`... est déjà défini par "<pack>"`, or `... est déjà enregistré(e) par "<pack>"` for actions,
+   conditions and events); sounds, music, visuals and view effects silently replace the previous
+   one. The Studio keeps only the open pack and its dependencies registered (switching packs
+   unloads the others).
 3. Write only your variables (`<id>.*`) and the global paths of your `globalWrites`.
 4. If the engine really needs a change (a cover motif in `src/game/styles/game.css`, a new
    built-in), keep it additive and run the Door and Memory tests.
@@ -707,7 +730,7 @@ Under `npm run dev`, in `/studio.html?pack=<id>`:
 - [ ] Scenario spec in `docs/narrative/`, with stable ids (quests, variables, fragment) and acceptance criteria.
 - [ ] Central rule and mechanics that no other pack has; no copy of Door's ranks or Memory's shards.
 - [ ] Pack id valid and not reserved; directory name = manifest `id`.
-- [ ] `npm run civ -- new-pack <id> --name "…"` done; `view/` glob added to `pack.ts` if needed; `items.json`, `characters.json`, `rules.json` created if needed.
+- [ ] `npm run civ -- new-pack <id> --name "…"` done; `items.json`, `characters.json`, `rules.json` created if needed.
 - [ ] Manifest: name, description, tagline keys; `entry` scene and spawn; every scene listed in `scenes`; theme with bundled fonts; cover colors; `hud.hide` if needed; `dependencies: ["core"]`; `globalWrites` and `fragments`.
 - [ ] Blocks, models, sounds, music with `<id>:` ids and French labels; `core` assets reused where possible.
 - [ ] Scenes built (seed then Studio, or Studio only); no `seed --force` on files edited since generation.

@@ -11,9 +11,9 @@ code that implement it, the automated test that exercises it (if any), and an ho
 The scenarios are written in French. Requirements below are summarized in English and quote the
 French key phrase. Section numbers (§) are those of the scenario files.
 
-Verified against commit `7b2aa0a` (2026-10-12). French texts are quoted as they appear in the
-locale tables, which use typographic apostrophes and no-break spaces (see
-[`../LOCALIZATION.md`](../LOCALIZATION.md)).
+Verified against commit `7b2aa0a` (2026-10-12); rows affected by later changes were updated up to
+commit `0f92dd7`. French texts are quoted as they appear in the locale tables, which use
+typographic apostrophes and no-break spaces (see [`../LOCALIZATION.md`](../LOCALIZATION.md)).
 
 ## How to read the tables
 
@@ -190,13 +190,13 @@ Durations are the `duration` fields of `content/cinematics/*.cinematic.json`.
 
 | ID | Requirement | Implementation | Verified by | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| D-U1 | The whole pack interface, quests, subtitles, rank names, notifications, help and dialogues in natural French | `locales/fr-FR.json` (438 keys); content text fields hold keys, checked by `validateCivilization` | none (playthroughs) | Implemented | Also checked by `tests/acceptance/localization.test.ts` and `J-regression.test.ts`. Exceptions in the shell are listed in [`../LOCALIZATION.md`](../LOCALIZATION.md). |
+| D-U1 | The whole pack interface, quests, subtitles, rank names, notifications, help and dialogues in natural French | `locales/fr-FR.json` (437 keys); content text fields hold keys, checked by `validateCivilization` | none (playthroughs) | Implemented | Also checked by `tests/acceptance/localization.test.ts` and `J-regression.test.ts`. Exceptions in the shell are listed in [`../LOCALIZATION.md`](../LOCALIZATION.md). |
 | D-U2 | « Examiner » | `core.prompt.examine` (« Examiner »), `door.prompt.examineDoor` (« Examiner la porte ») | none | Implemented | Key present (static check). |
 | D-U3 | « Parler à Mira » | `core.prompt.talk` (« Parler à {name} ») with `door.npc.mira` (« Mira »), built by `core.npc` (`src/engine/core/behaviors/npc.ts`) | none | Implemented | |
 | D-U4 | « Autorisation insuffisante » | `door.lock.rankDenied` (« Autorisation insuffisante — Rang {rank} requis ({name}). »), shown on a rank lock; the refusal stamp keeps `door.hud.denied` / `door.hud.deniedRank` (« ACCÈS REFUSÉ », « Rang {rank} requis », see D-M1) | none | Implemented | |
 | D-U5 | « Rang : Sans-Seuil » | HUD label `door.hud.rankLabel` (« Rang ») and value `door.rank.0` (« Sans-Seuil ») in two elements (`ui/RankPlaque.tsx`) | manual/visual | Implemented | No colon between label and value. |
 | D-U6 | « Nouvelle piste découverte » | `door.notify.newLead` (same text), sent by `door.foundPoster` and by `registre_transferts` | none | Implemented | |
-| D-U7 | Avoid English in visible texts; technical ids may stay English | Every visible text comes from a key; ids (`porte_galerie`, `door.rank`) are never shown in normal play | none | Implemented | The F3 diagnostics overlay shows raw ids (see M-U8). |
+| D-U7 | Avoid English in visible texts; technical ids may stay English | Every visible text comes from a key; ids (`porte_galerie`, `door.rank`) are never shown in normal play | none | Implemented | The F3 diagnostics overlay shows raw ids in development only (see M-U8). |
 
 ### 1.12 Acceptance criteria (§10)
 
@@ -249,7 +249,7 @@ Paths in this section are relative to `civilizations/memory/`.
 | M-W3 | Someone deprived of a memory may recognize a sensation without its cause | Component `memory.recognition` level `sensation` on `silas` and `aurele` while `jardin` is anchored; nodes `silas/sensation`, `aurele/song` | M1–M5 (`memory.recognition.silas` and `.aurele` = `sensation`; node `aurele/song` seen) | Implemented | |
 | M-W4 | Shards are handled at a public device, « le Métier des souvenirs », and with a few portable instruments | `metier` and `table_emplacements` (`memory.device`); portable item `memory:diapason` (setting `instrument`) | M1–M5 (anchoring refused far from a device, allowed at the table and anywhere with the diapason) | Implemented | One portable instrument. |
 | M-W5 | Memories hold partial truths and perceptions, never absolute proof without context | `oriane/reconstruct3`, `memory.cin.m03.5` | manual/visual | Implemented | |
-| M-W6 | A three-slot « chambre mnésique », not a classic inventory | `slots: [null, null, null]` in `mechanics/chamber.ts`; panel `memory.chamber` (key M, `content/rules.json` `chamberKey: KeyM`); HUD `memory.chamberHud` | M1–M5 | Implemented | Childhood objects, the diapason, the record bundle and the Rémanence are ordinary inventory items. |
+| M-W6 | A three-slot « chambre mnésique », not a classic inventory | `slots: [null, null, null]` in `mechanics/chamber.ts`; panel `memory.chamber` (key C, `content/rules.json` `chamberKey: KeyC`); HUD `memory.chamberHud`, which shows the configured key | M1–M5 | Implemented | Childhood objects, the diapason, the record bundle and the Rémanence are ordinary inventory items. |
 | M-W7 | Memory may change lines, NPC recognition, the perception of a place or a puzzle, without incoherent world changes | `memory.recollection` (`stele_lea`, `seuil_service`), `memory.recognition`, `memory.echoPoint`, footprints `pas_1`…`pas_11` (`core.conditional` on `memory.anchored chemin`) | M1–M5 | Implemented | Coherence: manual. |
 
 ### 2.3 Map and art direction (§3)
@@ -268,7 +268,7 @@ Paths in this section are relative to `civilizations/memory/`.
 
 | ID | Requirement | Implementation | Verified by | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| M-C1 | Protagonist arrives with an unknown shard in hand and no memory of arriving; touching the shard, hears a woman's voice: « Ne me laisse pas me vendre une deuxième fois » | `M01_marche` (`memory.giveShard ambre`, `memory.cin.m01.5`); `memory.shard.ambre.touch` shown by HUD `memory.touch` (`TouchCaption` in `ui/ChamberHud.tsx`) | M1–M5 (caption text asserted in the UI store) | Implemented | A text caption with a sound, no recorded voice. The caption component adds a second pair of guillemets around a text that already has them (see [`../LOCALIZATION.md`](../LOCALIZATION.md)). |
+| M-C1 | Protagonist arrives with an unknown shard in hand and no memory of arriving; touching the shard, hears a woman's voice: « Ne me laisse pas me vendre une deuxième fois » | `M01_marche` (`memory.giveShard ambre`, `memory.cin.m01.5`); `memory.shard.ambre.touch` shown by HUD `memory.touch` (`TouchCaption` in `ui/ChamberHud.tsx`) | M1–M5 (caption text asserted in the UI store) | Implemented | A text caption with a sound, no recorded voice. |
 | M-C2 | Oriane (31): memory restorer, patient but distrustful; once worked for the Salle de Vente and knows memories are copied before erasure; helps but hides her part in an old sale | NPC `oriane`; dialogue `oriane` (`intro*`, `atelier*`, `confess1`–`5`, `expose*`); `memory.recognition` levels | M1–M5 | Implemented | Ages are not stated in game. |
 | M-C3 | Silas (29), street musician: sold the memory of his sister Léa to save a friend; keeps playing their song; emotional heart | NPC `silas` (sound `memory:silas_song`, echo point `chanson_enfants`, recognition levels); dialogue `silas`; shard `vente`; `aurele/truth1` | M1–M5 | Implemented | |
 | M-C4 | Léa (27), archivist at the Salle: remembers Silas and believes he abandoned her; not an object to save; refuses forced rewriting | NPC `lea`; dialogue `lea` (`meet*`, `consent*`, `key_*`, `strangers*`) | M1–M5 | Implemented | |
@@ -332,7 +332,7 @@ Paths in this section are relative to `civilizations/memory/`.
 | M-V4 | `memory.silasTrust` | Set to 0 by rule `intro`; +1 in choices `silas/echo_q.truth`, `silas/song2.truth`, `lea/silas_q.truth` and `.herask`; read by `lea/decide` (≥ 2) | M1–M5 (value after Act I asserted); M4 (refusal with trust 1) | Implemented | |
 | M-V5 | `memory.leaConsent` | `accepte` in `lea/consent_ask2`, `refuse` in `lea/consent_refuse` | M1–M5 | Implemented | Silas's own answer is the extra variable `memory.silasConsent`, which `memory.restore` checks. |
 | M-V6 | `memory.tradeChoice` | `echange` (then-actions of `memory.trade` in `bastien/trade1`), `aide` (`bastien/return1`); read by `confrontation_vel/c5` and the optional `liasse` objective | M1–M5 | Implemented | |
-| M-V7 | `memory.restorationOutcome` | `acceptee` / `refusee` in the `lea` nodes; read by `MEM_Q03_RECONSTRUCTION`, the `silas` and `lea` routes, the recognition levels, rules `lea_silas_atelier`, `apres_restauration`, `remanence`, `epilogue` | M1–M5 | Implemented | |
+| M-V7 | `memory.restorationOutcome` | `acceptee` / `refusee` in the `lea` nodes; read by `MEM_Q03_RECONSTRUCTION`, the `silas` and `lea` routes, the recognition levels, rules `lea_silas_atelier`, `apres_restauration`, `epilogue` | M1–M5 | Implemented | |
 | M-V8 | `memory.illegalCopiesExposed` | Written by `oriane/expose2`; read by `MEM_Q04_SUJET_ZERO`, `armoire_copies`, conditional entities, several dialogues, rule `copies_affichees` | M1, M2, M3, M5 | Implemented | |
 | M-V9 | `memory.finished` | Written by the `onComplete` of `M05_epilogue_*`; read by rule `epilogue` | M1, M2, M3, M5 (asserted) | Implemented | |
 | M-V10 | `global.fragments.remanence` | `core.grantFragment remanence` in rule `remanence` (`main.logic.json`); manifest `globalWrites` `fragments.remanence` | M1, M2, M3, M5 (`hasFragment('remanence')`) | Implemented | No content reads the `global.` path. |
@@ -365,7 +365,7 @@ Paths in this section are relative to `civilizations/memory/`.
 | M-U5 | « Souvenir retrouvé » | `memory.notify.shardFound` (« Souvenir retrouvé : {name} ») | M1–M5 (« Souvenir retrouvé : Le goûter des noms » asserted) | Implemented | |
 | M-U6 | « Léa refuse la restauration » | `memory.notify.leaRefuses` (« Léa refuse la restauration. ») | M1–M5 (asserted) | Implemented | |
 | M-U7 | « Rejouer l'écho » | `memory.prompt.replay` (secondary action of echo points, button of the chamber panel) | M1–M5 (replay used; label not asserted) | Implemented | |
-| M-U8 | Lively, sober, natural French; « Ne jamais afficher les identifiants de variables ou les noms anglais de classes en jeu » | `locales/fr-FR.json`; all player texts are keys; the F3 diagnostics overlay (`src/game/hud/Debug.tsx`) shows only performance figures in player builds — variables, quest, entity and mechanic ids and logic traces are shown in development only (dev server, Studio playtest) | `tests/acceptance/localization.test.ts` (no hardcoded interface text) | Implemented | Writing quality: manual. |
+| M-U8 | Lively, sober, natural French; « Ne jamais afficher les identifiants de variables ou les noms anglais de classes en jeu » | `locales/fr-FR.json`; all player texts are keys; the F3 diagnostics overlay (`src/game/hud/Debug.tsx`) shows only its performance line and key hints in player builds — variables, quest, entity and mechanic ids and logic traces are shown in development only (dev server, Studio playtest) | `tests/acceptance/localization.test.ts` (no hardcoded interface text) | Implemented | Writing quality: manual. |
 
 ### 2.12 Acceptance criteria (§10)
 

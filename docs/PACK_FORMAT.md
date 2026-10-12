@@ -59,8 +59,8 @@ The repository contains three packs:
 | Pack | `kind` | Name key / French title | `order` | `dependencies` |
 | --- | --- | --- | --- | --- |
 | `civilizations/core` | `library` | `core.pack.name` | 0 | none |
-| `civilizations/door` | `civilization` | `door.name` — « La Porte qui n'existe pas » | 10 | `["core"]` |
-| `civilizations/memory` | `civilization` | `memory.name` — « Le Nom qu'on t'a volé » | 20 | `["core"]` |
+| `civilizations/door` | `civilization` | `door.name` — « La Porte qui n’existe pas » | 10 | `["core"]` |
+| `civilizations/memory` | `civilization` | `memory.name` — « Le Nom qu’on t’a volé » | 20 | `["core"]` |
 
 Packs are read through a `ContentProvider` (interface in `src/engine/core/packs/pack.ts`):
 
@@ -80,10 +80,10 @@ Packs are read through a `ContentProvider` (interface in `src/engine/core/packs/
 | `manifest.json` | identity, versions, entry point, permissions, theme | eager manifest glob | yes |
 | `pack.ts` | `export default definePack({ modules: import.meta.glob([...], { eager: true }) })` | lazy `pack.ts` glob | no |
 | `mechanics/**/*.ts` | mechanics, behaviors, actions, conditions, events (`core` also keeps its blocks and sounds here) | the glob in `pack.ts` | yes |
-| `assets/**/*.ts` | blocks, models, sounds, music (Door, Memory) | the glob in `pack.ts` | no |
-| `models/**/*.ts` | models (`core` only) | the glob in `core/pack.ts` | no |
-| `ui/**/*.tsx` | HUD elements and panels (React), plus the CSS files they import | the glob in `pack.ts` (`.tsx` only) | yes |
-| `view/**/*.ts` | Babylon.js visuals and view effects | the glob in Door's and Memory's `pack.ts` (not in the scaffold's) | no |
+| `assets/**/*.ts` | blocks, models, sounds, music (Door, Memory) | the glob in `pack.ts` | yes |
+| `models/**/*.ts` | models (`core` only) | the glob in `core/pack.ts` | yes |
+| `ui/**/*.tsx` | HUD elements and panels (React), plus the CSS files they import | the glob in `pack.ts` (`.tsx` only) | yes (not the CSS files) |
+| `view/**/*.ts` | Babylon.js visuals and view effects | the glob in `pack.ts` (Door, Memory and the scaffold) | yes |
 | `content/scenes/<id>.scene.json` | scenes (voxels + entities) | content glob, parsed on demand | yes |
 | `content/dialogues/<id>.dialogue.json` | dialogue graphs | content glob | yes |
 | `content/quests/<id>.quest.json` | quests | content glob | yes |
@@ -104,9 +104,12 @@ Notes:
   (`content/scenes/x.scene.json`, not `content/scenes/sub/x.scene.json`). Other JSON files under
   `content/` are ignored without a message.
 - "Studio can save it": the dev server API (`tools/vite/civDevPlugin.ts`) only writes
-  `manifest.json` and files under `content/`, `mechanics/`, `ui/`, `locales/` and `scripts/`
-  (`WRITABLE_PACK_DIRS`), with the extensions `.json`, `.ts`, `.tsx`. Everything else is edited
-  outside the Studio. `scripts/` is writable but no `pack.ts` globs it.
+  `manifest.json` and files under `content/`, `locales/`, `mechanics/`, `ui/`, `view/`, `assets/`
+  and `models/` (`WRITABLE_PACK_DIRS` in `src/engine/platform/devApiRules.ts`, shared with the
+  Studio), with the extensions `.json`, `.ts`, `.tsx`. Everything else (`pack.ts`, `seed/`,
+  `tests/`, CSS files) is edited outside the Studio: its Explorer does not list `seed/` and
+  `tests/`, and its script editor opens the other code files it lists, such as `pack.ts`,
+  read-only (« Lecture seule »).
 - `seed/` is excluded from `tsconfig.json` and type-checked through `tsconfig.node.json`;
   `seed/`, `tests/` and `content/` are skipped when `npm run validate` extracts localization keys
   from code.
@@ -157,7 +160,7 @@ The Door manifest, verbatim (`civilizations/door/manifest.json`):
   "cover": { "colors": ["#1d1712", "#5a3a22", "#e3b84d"], "motif": "door" },
   "hud": { "hide": [] },
   "order": 10,
-  "credits": ["Scénario : dossier narratif 001 — « La Porte qui n'existe pas ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
+  "credits": ["Scénario : dossier narratif 001 — « La Porte qui n’existe pas ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
   "tags": ["énigme", "société", "mystère"]
 }
 ```
@@ -168,16 +171,16 @@ Fields (`ManifestSchema`):
 | --- | --- | --- |
 | `format` | literal `"civverse.pack"` | required |
 | `version` | literal `1` | required |
-| `id` | `^[a-z][a-z0-9-]*$` | must equal the directory name; namespace of the pack's variables (section 7) |
+| `id` | `^[a-z][a-z0-9-]*$`, except `engine`, `global` and `ui` | must equal the directory name; namespace of the pack's variables (section 7). The reserved ids are refused (`Identifiant de pack réservé par le moteur (engine, global, ui).`) |
 | `kind` | `"civilization"` or `"library"`, default `"civilization"` | only civilizations are listed, playable and validated by `validateCivilization` |
 | `name`, `description` | localization keys (required) | shown on the selection card; read from `locales/fr-FR.json` before the pack is loaded (`GameSession.refreshManifests`) |
 | `tagline` | localization key, optional | shown on the selection card |
-| `packVersion` | string matching `^\d+\.\d+\.\d+` | stored in each local save (`LocalCivState.packVersion`); not used to migrate anything |
+| `packVersion` | string matching `^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$` (`x.y.z`, optional pre-release suffix such as `1.2.0-beta.1`) | stored in each local save (`LocalCivState.packVersion`); not used to migrate anything |
 | `engineApi` | semver range | must be satisfied by `ENGINE_API_VERSION` (`1.0.0`), otherwise the pack is rejected (section 11) |
 | `dependencies` | pack ids, default `[]` | loaded before the pack (section 9) |
-| `entry` | `{ "scene": <local id>, "spawn": <local id> }`, optional in the schema | first scene and spawn entity; a civilization without an entry scene (and without a saved scene) fails to start with `Aucune scène d'entrée pour "<id>".` |
+| `entry` | `{ "scene": <local id>, "spawn": <local id> }`, optional in the schema | first scene and spawn entity; a civilization without an entry scene (and without a saved scene) fails to start with `Aucune scène d’entrée pour "<id>".` |
 | `scenes` | local ids, default `[]` | each listed id must have a scene file (error otherwise). Scenes are discovered from files: a scene file that is not listed still loads |
-| `stateVersion` | integer ≥ 1, default `1` | version of the pack's local save state; see `migrations` in section 4 |
+| `stateVersion` | integer ≥ 1, default `1` | version of the pack's local save state; see `migrations` in section 4. Editable in the Studio's manifest editor (« Version de l’état ») |
 | `globalWrites` | strings, default `[]` | global paths this pack may write: `fragments.<id>` or `flags.<name>`; a trailing `*` matches a prefix (section 10) |
 | `fragments` | `[{ id, name, hint, icon? }]`, default `[]` | entries of the « Registre des éveils » screen; `id` is a local id, `name`/`hint` are keys, `icon` is one of the item icon shapes (section 6.6) |
 | `theme` | object, optional | colors and fonts of the civilization's UI (below) |
@@ -197,13 +200,14 @@ Memory uses Cormorant Garamond.
 
 **Cover.** The selection card (`CivSelect` in `src/game/screens/Menus.tsx`) uses `colors[0]` and
 `colors[1]` for its gradient (further colors are not used), `theme.accent` for `--civ-accent`,
-`theme.titleFont` for the title, and adds the CSS class `cv-motif--<motif>`. Only `cv-motif--door`
-and `cv-motif--memory` have rules (`src/game/styles/game.css`); any other value, including the
-scaffold's `"default"`, draws no motif.
+`theme.titleFont` for the title, and adds the CSS class `cv-motif--<motif>`. Only `cv-motif--door`,
+`cv-motif--memory` and `cv-motif--default` (the scaffold's value: a quiet horizon of blocks lit
+with the accent color) have rules (`src/game/styles/game.css`); any other value draws no motif.
 
 **HUD.** `hud.hide` entries are passed to `ui.setHudVisible(element, false)` when the civilization
-loads. The built-in elements are `crosshair`, `prompt`, `objectives`, `notifications`, `inventory`,
-`abilities`, `location` (`HudElement` in `src/engine/core/sim/api.ts`). Values are not validated.
+loads. The built-in elements are `crosshair`, `prompt`, `objectives` (the objective tracker and the
+on-screen objective markers, section 6.3), `notifications`, `inventory`, `abilities`, `location`
+(`HudElement` in `src/engine/core/sim/api.ts`). Values are not validated.
 Civilization-specific HUD elements are code (`defineHud`, section 4). Door and Memory hide nothing.
 
 ---
@@ -216,7 +220,7 @@ Civilization-specific HUD elements are code (`defineHud`, section 4). Door and M
 import { definePack } from '@sdk';
 
 /**
- * Door Civilization — « La Porte qui n'existe pas ».
+ * Door Civilization — « La Porte qui n’existe pas ».
  *
  * mechanics/  règles du monde (registre des accès, serrures, empreinte, mémoire des portes, soupçon)
  * assets/     blocs, modèles, sons et musiques de Verrou
@@ -244,11 +248,15 @@ Rules:
   | --- | --- |
   | `core` | `['./mechanics/**/*.ts', './models/**/*.ts', '!./**/*.test.ts']` |
   | `door`, `memory` | `['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', './view/**/*.ts', '!./**/*.test.ts']` |
-  | scaffold (`tools/cli/newPack.ts`) | `['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', '!./**/*.test.ts']` |
+  | scaffold (`tools/cli/newPack.ts`) | `['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', './view/**/*.ts', '!./**/*.test.ts']` |
 
 - `migrations` (optional): `migrations[n]` converts a saved local state at `stateVersion` `n` into
-  `n + 1` (`migrateCivState` in `src/engine/core/save/saveFormat.ts`). Neither Door nor Memory
-  defines migrations (both are at `stateVersion` 1).
+  `n + 1` (`migrateCivState` in `src/engine/core/save/saveFormat.ts`, which sets `stateVersion` to
+  `n + 1` itself after each step). Neither Door nor Memory defines migrations (both are at
+  `stateVersion` 1).
+- When the pack loads, `checkDefinitionIds` (`src/engine/core/packs/pack.ts`) checks the ids of the
+  collected definitions (section 7) and adds an error to the pack's load issues for each id that
+  does not have the expected form.
 - Pack code imports only the public SDK: `@sdk`, `@sdk/ui` (React HUD and panels), `@sdk/view`
   (Babylon.js). ESLint (`eslint.config.js`) forbids `@engine/*`, `@studio/*`, `@game/*` and
   relative imports into `src/` (`../../src/*`, `../../../src/*`) for `civilizations/**`, except
@@ -283,10 +291,11 @@ HUD slots: `top-left`, `top-center`, `top-right`, `bottom-left`, `bottom-center`
 `center`, `overlay` (`HudSlot` in `src/engine/core/sim/api.ts`).
 
 Duplicate ids: for blocks, models, items, actions, conditions and events a second registration
-under another owner throws (`... est déjà défini par "<pack>"`); `registerPack` logs the error and
-skips the definition. A duplicate behavior id is logged as an error and ignored. Sounds, music,
-visuals and view effects are stored in maps: the last registration replaces the previous one
-without a message.
+under another owner throws (`... est déjà défini par "<pack>"`, or `... est déjà enregistré(e) par
+"<pack>"` for actions, conditions and events); `registerPack` logs the error and skips the
+definition. A duplicate behavior id is logged as an error and ignored. Sounds, music, visuals and
+view effects are stored in maps: the last registration replaces the previous one without a
+message.
 
 How to write mechanics, behaviors, actions, conditions, HUDs and panels is covered by
 [HOW_TO_ADD_A_NEW_MECHANIC.md](../HOW_TO_ADD_A_NEW_MECHANIC.md).
@@ -305,7 +314,7 @@ models are built from micro-voxels in code, and sounds and music are synthesis r
 
 | Field | Meaning |
 | --- | --- |
-| `id` | `<pack>:<name>`, checked against `ASSET_ID_RE` at registration |
+| `id` | `<pack>:<name>`, checked against `ASSET_ID_RE` at registration (refused otherwise); a prefix other than the pack's own id is reported when the pack loads (section 7) |
 | `label`, `category` | French texts shown in the Studio block palette (`category` defaults to `Divers`) |
 | `shape` | `cube` (default), `slab` or `cross` |
 | `solid` | collides with characters (default: true except for `cross`) |
@@ -351,7 +360,7 @@ export const doorBlocks = [
 ... in `src/engine/core/voxel/microModel.ts`). `ModelOptions`: `voxelSize` (meters, default 1/16),
 `collider` (`'auto'`, `'none'` or `{ min, max }` in meters), `light` (`{ level, color, offset? }`,
 baked into the voxel light field), `anchor` (`bottom-center` by default, `center`, `min`),
-`pickable` (default true), `tags`. Model ids are checked against `ASSET_ID_RE`. From
+`pickable` (default true), `tags`. Model ids are checked like block ids. From
 `civilizations/door/assets/models.ts`:
 
 ```ts
@@ -422,14 +431,15 @@ menu music (`core:music.menu`) in `civilizations/core/mechanics/sounds.ts`, mode
   `civverse.characters`, `civverse.rules`) and `version`, which must be `1` (Zod literal).
 - Scene, dialogue, quest, cinematic, logic and prefab documents have an `id` that must equal the
   file name without its suffix. A mismatch is a warning for parsed documents
-  (`L'identifiant "<id>" ne correspond pas au nom du fichier.`); scene files are not checked.
+  (`L’identifiant "<id>" ne correspond pas au nom du fichier.`); scene files are not checked.
 - Local ids (documents, entities, nodes, choices, stages, objectives, rules, fragments) match
   `^[A-Za-z0-9_-]+$`.
 - Player-visible strings are localization keys, never French text (section 8).
 - The Studio and the seed CLI write documents as `JSON.stringify(doc, null, 2)` plus a final newline.
 - **Logic data**, embedded in every document type:
   - condition: `{ "type": "<condition id>", ...props }` (`core.var`, `core.all`, `door.rankAtLeast`...);
-  - action: `{ "type": "<action id>", "note"?: "<designer note>", ...props }`;
+  - action: `{ "type": "<action id>", "note"?: "<designer note>", ...props }` (the Studio shows and
+    edits `note` in its action blocks as « Note »; the interpreter ignores it);
   - event matcher: `{ "event": "<event name>", "where"?: { "<payload path>": <value> } }`; every
     `where` entry must be deep-equal to the payload value; `"*"` matches any event;
   - string props may reference the scope: `"$self"`, `"$player"`, `"$event.<field>"`
@@ -614,8 +624,12 @@ Stage: `id`, `description` (key, added to the journal history), `objectives`, `c
 by default, or `any`), `onComplete?`, `next?` (absent = next stage in the array; `null` = the quest
 completes after this stage). Objective: `id`, `text` (key), `optional?`, `hidden?`, `completeWhen?`
 (condition re-evaluated on every event), `completeOn?` (event matcher), `progress?`
-(`{ var, count }`, shows `value/count`), `target?` (entity id shown with a marker when the quest
-is tracked), `targetScene?`. An objective with neither `completeWhen` nor `completeOn` must be
+(`{ var, count }`, shows `value/count`), `target?` (entity id: while the quest is the one the
+objective tracker shows, the tracked active quest or else the first active one, the game draws a
+marker with the distance above that entity until the objective is done; setting « Afficher les
+repères d’objectif », `src/game/hud/Markers.tsx`), `targetScene?` (scene of the target: the marker
+is drawn only in that scene; absent = whatever scene is current). An objective with neither
+`completeWhen` nor `completeOn` must be
 completed by a `core.completeObjective` action. A stage with no required objective completes when
 any of its objectives is done (`QuestSystem.stageComplete`). Door's first stage
 (`DOOR_Q00_REVEIL.quest.json`):
@@ -649,8 +663,11 @@ any of its objectives is done (`QuestSystem.stageComplete`). Door's first stage
 ### 6.4 Cinematics — `content/cinematics/<id>.cinematic.json`
 
 Top level: `id`, `title?` (editor label), `duration` (seconds, ≥ 0.1), `skippable` (true),
-`letterbox` (true), `lockPlayer` (true), `hideHud` (true), `returnCamera` (`blend` or `cut`,
-default `blend`), `tracks`, `onComplete?`. Track types (`CinematicTrackSchema`):
+`letterbox` (true), `lockPlayer` (true; `false` lets the player move and look around while it
+plays), `hideHud` (true), `returnCamera` (`blend` or `cut`, default `blend`), `tracks`,
+`onComplete?`. Keys and items do not have to be in time order: the tracks are sorted by `t` when the
+cinematic plays (`sortedTracks`). A camera key without `fov` keeps the field of view of the keys
+before it (70° when none sets one). Track types (`CinematicTrackSchema`):
 
 | `type` | Items |
 | --- | --- |
@@ -691,7 +708,7 @@ Door's opening rule (`civilizations/door/content/logic/main.logic.json`):
   "once": true,
   "when": { "event": "civ.started" },
   "then": [{ "type": "core.playCinematic", "cinematic": "C01_eveil", "wait": false }],
-  "name": "Éveil : cinématique d'ouverture"
+  "name": "Éveil : cinématique d’ouverture"
 }
 ```
 
@@ -735,9 +752,11 @@ dress, vest, uniform, rags, shirt; top, bottom, shoes, accent, trim? }`, `access
 color, accent? }]` (types: `hat`, `cap`, `hood`, `goggles`, `glasses`, `scarf`, `satchel`, `cape`,
 `plaque`, `apron`, `badge`, `gloves`, `pendant`, `helmet`, `epaulettes`, `belt`, `bandana`,
 `flower`, `veil`, `keyring`), `idle` (`calm` default, `nervous`, `proud`, `tired`, `playful`),
-`voicePitch` (0.5..2, default 1). Appearances are looked up in the civilization first, then in
-every loaded pack (`GameSession.characterDoc`), so `core:citizen_a` is usable everywhere. From
-Door:
+`voicePitch` (0.5..2, default 1; stored but not used: dialogues have no voice, only subtitles).
+Appearances are looked up in the civilization first, then in every loaded pack
+(`GameSession.characterDoc`), so `core:citizen_a` is usable everywhere. The renderer draws a
+`plaque` below a `pendant` and in front of an `apron`; each of Door's 12 characters wears one,
+colored by rank. From Door:
 
 ```json
 {
@@ -753,7 +772,8 @@ Door:
     { "type": "goggles", "color": "#8a6a3a", "accent": "#9fd0e8" },
     { "type": "apron", "color": "#6b4a2e" },
     { "type": "keyring", "color": "#c49c46" },
-    { "type": "gloves", "color": "#5a3d27" }
+    { "type": "gloves", "color": "#5a3d27" },
+    { "type": "plaque", "color": "#c9a54e", "accent": "#f1d78a" }
   ],
   "idle": "playful",
   "voicePitch": 1.1
@@ -766,8 +786,9 @@ Door:
 civilization starts, each mechanic that declares `settings` receives
 `normalizeProps(mechanic.settings, rules.settings[mechanic.id])`: missing values take their
 defaults, problems are logged as warnings under the `règles` logger. Keys for mechanics that do
-not exist are ignored. The file is optional (default: empty `settings`). The Studio edits it in
-« Règles des mécaniques ». Door's file is small:
+not exist are ignored. `validateCivilization` checks the declared fields like component props
+(text keys, references, nested conditions and actions; section 12.2). The file is optional
+(default: empty `settings`). The Studio edits it in « Règles des mécaniques ». Door's file is small:
 
 ```json
 {
@@ -803,10 +824,10 @@ A flat JSON object of `"key": "French text"` (`LocaleSchema`). See section 8.
 
 | What | Pattern | Enforced by | Examples |
 | --- | --- | --- | --- |
-| Pack id | `^[a-z][a-z0-9-]*$` (`PACK_ID_RE`) | manifest schema, `new-pack` CLI, dev API | `door`, `memory` |
-| Blocks, models | `<pack>:<name>`, `^[a-z][a-z0-9-]*:[a-z0-9_./-]+$` (`ASSET_ID_RE`) | `BlockRegistry.register`, `ModelRegistry.register` (shape only: the prefix is not compared with the owning pack) | `door:damp_stone`, `memory:shard_amber` |
-| Sounds, music, items, characters | `<pack>:<name>` | convention only | `door:rank_up`, `door:music.faubourg`, `door:plaque_r0`, `memory:lea` |
-| Mechanics, components, actions, conditions, events, HUDs, panels, visuals, view effects | `<pack>.<name>` (`TYPE_ID_RE` exists in `ids.ts` but nothing applies it) | convention only | `door.lock`, `door.setRank`, `memory.chamber`, `memory.echoEffect` |
+| Pack id | `^[a-z][a-z0-9-]*$` (`PACK_ID_RE`), not `engine`, `global` or `ui` | manifest schema (which also refuses the three reserved ids), `new-pack` CLI, dev API | `door`, `memory` |
+| Blocks, models | `<pack>:<name>`, `^[a-z][a-z0-9-]*:[a-z0-9_./-]+$` (`ASSET_ID_RE`) | `BlockRegistry.register`, `ModelRegistry.register` (shape: a malformed id is refused); `checkDefinitionIds` when the pack loads (shape and prefix equal to the pack's id) | `door:damp_stone`, `memory:shard_amber` |
+| Sounds, music, items, characters | `<pack>:<name>` | `checkDefinitionIds` for sounds, music and items defined with `defineItem`; convention only for `content/items.json` and characters | `door:rank_up`, `door:music.faubourg`, `door:plaque_r0`, `memory:lea` |
+| Mechanics, components, actions, conditions, events, abilities, HUDs, panels, visuals, view effects | `<pack>.<name>` (`TYPE_ID_RE`) | `checkDefinitionIds` when the pack loads (shape and prefix equal to the pack's id) | `door.lock`, `door.setRank`, `memory.chamber`, `memory.echoEffect` |
 | Story variables | `<civ id>.<name>` | runtime (`ctx.vars.set` / `declare` throw outside the namespace) and validation | `door.rank`, `memory.leaConsent` |
 | Global (multiverse) values | `global.<path>`, read-only | `VariableStore.set` throws; validation reports writes | `global.fragments.threshold` |
 | Local ids | `^[A-Za-z0-9_-]+$` (`LOCAL_ID_RE`) | schemas | `spawn_cell`, `DOOR_Q00_REVEIL`, `C01_eveil` |
@@ -814,6 +835,13 @@ A flat JSON object of `"key": "French text"` (`LocaleSchema`). See section 8.
 | Global flags | `<pack>.<name>` | convention, plus the `globalWrites` pattern | `door.finalChoice` |
 | UI store keys, input action ids | `<pack>.<name>` | convention | `door.rankFlash`, `door.permissions`, `memory.chamber` |
 | Localization keys | `<pack>.<area>.<...>` | convention (section 8) | `door.dlg.noe.intro1` |
+
+`checkDefinitionIds` (`src/engine/core/packs/pack.ts`) covers the definitions exported by the
+pack's code. Each id of the wrong form, or whose prefix is not the pack's own id, adds an error to
+the pack's load issues (file `pack.ts`, `Identifiant « <id> » : « <pack>.<nom> » attendu.` or
+`Identifiant « <id> » : « <pack>:<nom> » attendu.`), logged when the pack loads; the definition is
+still registered unless its registry refuses it (malformed block and model ids). Section 12 says
+where these issues are reported.
 
 Naming used by Door and Memory (convention): quests `DOOR_Q00_REVEIL` ... `DOOR_Q04_PORTE_ABSENTE`
 and `MEM_Q00_EVEIL` ... `MEM_Q04_SUJET_ZERO` (the ids of the scenario specs in `docs/narrative/`);
@@ -825,16 +853,18 @@ Engine names that packs share a namespace with:
 
 - Engine components, actions and conditions use `core.*` (owner `engine`), e.g. `core.door`,
   `core.setVar`. The `core` library pack only provides `core:*` assets and characters.
-- Engine events have no pack prefix: `civ.started`, `civ.finished`, `scene.entered`,
-  `zone.entered`, `zone.exited`, `trigger.entered`, `trigger.exited`, `entity.interacted`,
-  `interaction.blocked`, `door.opened`, `door.closed`, `item.acquired`, `item.removed`,
-  `item.used`, `var.changed`, `dialogue.*`, `quest.*`, `cinematic.*`, `npc.arrived`,
-  `ability.used`, `multiverse.fragmentAcquired`, `player.landed` (`coreEvents.ts`). `door.opened`
-  and `door.closed` belong to the engine's `core.door` component, not to the Door pack.
-- Pack ids to avoid: `core` (taken), `engine` (owner name of the engine's registrations and of its
-  string table; unloading a civilization unregisters everything owned by its id), `global`
-  (variables `global.*` are read-only, so the pack could not write any variable), and the event
-  prefixes above (a duplicate event id is refused at registration).
+- Engine events have no pack prefix: `civ.started`, `civ.unloading`, `civ.finished`,
+  `scene.entered`, `scene.exiting`, `zone.entered`, `zone.exited`, `trigger.entered`,
+  `trigger.exited`, `entity.interacted`, `interaction.blocked`, `door.opened`, `door.closed`,
+  `item.acquired`, `item.removed`, `item.used`, `var.changed`, `dialogue.*`, `quest.*`,
+  `cinematic.*`, `npc.arrived`, `ability.used`, `multiverse.fragmentAcquired`, `player.jumped`,
+  `player.landed`, `save.completed`, `ui.panelOpened`, `ui.panelClosed` (`coreEvents.ts`).
+  `door.opened` and `door.closed` belong to the engine's `core.door` component, not to the Door
+  pack.
+- Pack ids: `core` is taken; `engine`, `global` and `ui` are refused by the manifest schema
+  (`engine` is the owner name of the engine's registrations and of its string table, `global.*`
+  variables are the read-only multiverse values, `ui.*` keys are the game interface texts). Also
+  avoid the event prefixes above (a duplicate event id is refused at registration).
 
 ---
 
@@ -856,8 +886,9 @@ Engine names that packs share a namespace with:
   (namespace `<id>#manifeste`), for the selection and registry screens.
 - Message syntax (`src/engine/core/i18n/localizer.ts`): `{name}` interpolation,
   `{count, plural, one {# éclat} other {# éclats}}` (French rule: 0 and 1 are singular; `=n`
-  exact matches), `{g, select, f {...} m {...} other {...}}`. A missing key renders as `⟦key⟧` and
-  logs `[i18n] clé manquante`.
+  exact matches), `{g, select, f {...} m {...} other {...}}`. A missing key renders as `⟦key⟧`,
+  logs `[i18n] clé manquante` and is listed by the F3 overlay in development
+  (`ui.debug.missingTexts`).
 - Key layout used by Door and Memory:
 
   | Text | Key pattern | Example |
@@ -889,8 +920,9 @@ Engine names that packs share a namespace with:
   `src/engine/core/i18n/typography.ts`); no-break spaces before `? ! ; :` and `»` and after `«`;
   none of the English words it lists. It also rejects literal visible text in
   `civilizations/*/ui/**/*.tsx` (JSX text, `title`, `placeholder`, `aria-label`, `alt`, `label`
-  attributes). The Studio converts straight apostrophes between letters as authors type
-  (`frenchApostrophes`).
+  attributes). The Studio converts straight apostrophes between letters as authors type and in the
+  texts of the keys it creates (`frenchApostrophes`, used by `Studio.setText` and
+  `Studio.newTextKey`).
 
 ---
 
@@ -980,8 +1012,8 @@ states, such as the restoration outcome, local), and reads Door's completion wit
 | Field | Where | Meaning | Checked by |
 | --- | --- | --- | --- |
 | `format` + `version` | every JSON document | document type and schema version; all are `1` | Zod literals |
-| `packVersion` | manifest | the pack's own version | regex `^\d+\.\d+\.\d+`; copied into saves |
-| `engineApi` | manifest | semver range of the engine API the pack targets | `satisfies(ENGINE_API_VERSION, engineApi)` when manifests are read; supports `^`, `~`, `>=`, `<=`, `>`, `<`, `=`, exact versions and `*` |
+| `packVersion` | manifest | the pack's own version | regex `^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$`; copied into saves |
+| `engineApi` | manifest | semver range of the engine API the pack targets | `satisfies(ENGINE_API_VERSION, engineApi)` when manifests are read; supports a single range: `^`, `~`, `>=`, `<=`, `>`, `<`, `=`, exact versions and `*` (compound ranges such as `>=1.0.0 <2.0.0` and x-ranges such as `1.x` are never satisfied) |
 | `stateVersion` | manifest | version of the pack's local save state | `migrateCivState`: a save from a newer `stateVersion`, or a missing `migrations[n]`, makes loading fail |
 | `state.version` + `migrate` | `defineMechanic`, `defineBehavior` | version of one mechanic's or component's saved state | `migrateVersioned`: a newer or unmigratable state is replaced by `initial()` with a warning |
 
@@ -990,7 +1022,7 @@ states, such as the restoration outcome, local), and reads Door's completion wit
 Both packs declare `"engineApi": "^1.0.0"`; the scaffold writes `^<major>.0.0` from
 `ENGINE_API_VERSION`. A pack whose range is not satisfied is not registered: the selection screen
 shows the number of rejected packs (`ui.civs.invalidPacks`) and `npm run validate` reports
-`✗ <id>/manifest.json : Le pack "<id>" requiert l'API ...` as an error.
+`✗ <id>/manifest.json : Le pack "<id>" requiert l’API ...` as an error.
 
 ---
 
@@ -1001,19 +1033,27 @@ shows the number of rejected packs (`ui.civs.invalidPacks`) and `npm run validat
 | Stage | Code | Checks | Failure |
 | --- | --- | --- | --- |
 | Manifests are read | `GameSession.refreshManifests` | `ManifestSchema`, `engineApi` | pack excluded; reported by the CLI as errors |
-| Pack loads | `loadPack` (`src/engine/core/packs/pack.ts`) | schema of every content file except scenes; id = file name (warning); `fr-FR` table for civilizations; every `manifest.scenes` entry has a file | issues attached to the pack |
+| Pack loads | `loadPack` (`src/engine/core/packs/pack.ts`) | ids of the code definitions (`checkDefinitionIds`, section 7); schema of every content file except scenes; id = file name (warning); `fr-FR` table for civilizations; every `manifest.scenes` entry has a file | issues attached to the pack (`session.contentIssues`) and logged by the `contenu` logger; a document that fails its schema is left out of the pack |
 | Scene loads | `loadSceneDoc` | `SceneSchema`, voxel decoding | exception |
-| Validation | `validateCivilization` (`src/engine/core/packs/validate.ts`) | starts the civilization headless with a fresh state, then checks references and texts (below) | list of errors and warnings |
+| Validation | `validateCivilization` (`src/engine/core/packs/validate.ts`) | starts the civilization headless with a fresh state, adds the pack's load issues, then checks references and texts (below) | list of errors and warnings |
 | Seeding | `npm run civ -- seed` (`tools/cli/civ.ts`) | schema of generated scene, cinematic, dialogue, quest, logic and prefab files | the invalid file is not written; exit code 1 |
 
 ### 12.2 What `validateCivilization` checks
 
-The report starts with the pack's load issues (section 12.1). If the civilization does not start
-(missing dependency, missing entry scene...), validation stops there with the error
+Validation first starts the civilization, which loads its pack if the session has not loaded it
+yet (the case in the new sessions that `npm run validate`, the Studio's « ✔ Valider » and
+`tests/acceptance/J-regression.test.ts` create). The report then starts with the load issues
+(section 12.1) that the session holds for the pack: definition ids, content schemas, id = file
+name, missing `fr-FR` table... If the civilization does not start (missing dependency, missing
+entry scene...), validation stops there, after these issues, with the error
 `La civilisation ne démarre pas : <message>`. Otherwise:
 
 - **Manifest**: `name`, `description`, `tagline`, fragment `name`/`hint` keys exist in French;
   `entry.scene` exists; `entry.spawn` is an entity of that scene.
+- **Mechanics**: a mechanic whose `setup` threw is an error
+  (`La mécanique <id> a échoué à l’initialisation : <message>`); the values of
+  `content/rules.json` are checked against each mechanic's `settings` schema like component props
+  (text keys, nested conditions and actions, references).
 - **Scenes**: `name` key; every palette block is registered (except `core:air`); environment
   `music` and `ambience` exist; every component type is registered; component prop values: text
   keys, nested conditions and actions, references.
@@ -1039,7 +1079,7 @@ entity id of the pack), `sound` (a sound or a music), `music`, `model`, `charact
 `variable` (must start with `<civ id>.` or `global.`; writing `global.*` through `var`/`variable`
 props of actions is an error), `panel`, `ability`, `event` (warning). Text props: a missing key is
 `Clé de traduction manquante en français : <key>`; a value with spaces or other characters
-outside `[a-zA-Z0-9_.-]` is `Texte brut au lieu d'une clé de traduction`. Dialogue and cinematic
+outside `[a-zA-Z0-9_.-]` is `Texte brut au lieu d’une clé de traduction`. Dialogue and cinematic
 `title` fields are editor-only and may hold raw text.
 
 ### 12.3 Running validation
@@ -1049,8 +1089,11 @@ outside `[a-zA-Z0-9_.-]` is `Texte brut au lieu d'une clé de traduction`. Dialo
   behaves as in the game.
 - Output: one line per civilization (`✓ door — N scène(s), N entités, N dialogues, N quêtes,
   N cinématiques, N règles, N textes vérifiés (N ms)`), then one line per issue
-  (`  erreur <file> › <path> : <message>` or `  attention ...`), then the totals. The exit code is
-  1 when there is at least one error; warnings do not fail.
+  (`  erreur <file> › <path> : <message>` or `  attention ...`); then, for each library pack (all of
+  them when no id is given), its load issues (the pack is loaded as a dependency, or on its own
+  when no validated civilization needs it), followed by `✓ core — bibliothèque, N problème(s)`
+  (`✗` when one is an error); then the totals (`N erreur(s), N avertissement(s).`). The exit code
+  is 1 when there is at least one error; warnings do not fail.
 - In the Studio, « ✔ Valider » runs the same `validateCivilization` on the working copies,
   unsaved edits included (`src/studio/core/validation.ts`), and lists the results in the
   « Problèmes » tab.
@@ -1061,7 +1104,7 @@ Tests that apply to packs beyond their own `tests/` folder:
 | Test | What it requires |
 | --- | --- |
 | `tests/acceptance/localization.test.ts` | every pack has `locales/fr-FR.json` and no other table; every table is clean French in its own namespace; no literal visible text in pack UI components (section 8) |
-| `tests/acceptance/J-regression.test.ts` | no manifest issue for any pack; `core` is a library; Door and Memory validate with zero errors and zero warnings, keep their scenario quests, cinematics and fragments, have only skippable cinematics, and do not shrink below a recorded baseline |
+| `tests/acceptance/J-regression.test.ts` | no manifest issue for any pack; `core` is a library; every bundled civilization validates with zero errors and zero warnings and has only skippable cinematics; Door and Memory keep their scenario quests, cinematics and fragments and do not shrink below a recorded baseline |
 | `tests/unit/corePack.test.ts` | `core` loads without content issues; its blocks use known texture generators; its models build and stay under 4 m |
 
 ### 12.4 Not checked by validation
@@ -1069,8 +1112,9 @@ Tests that apply to packs beyond their own `tests/` folder:
 - Props of kinds `number`, `integer`, `boolean`, `enum`, `color`, `vec3`, `json`, `string`, and
   property names not declared by the component, action or condition. At runtime a value of the
   wrong type is replaced by its default and logged as a warning; unknown properties are ignored.
-- The content of `content/rules.json` (keys, model ids, item ids, entity ids inside mechanic
-  settings) and of prefabs.
+- In `content/rules.json`: settings of mechanics that do not exist, fields that a `settings` schema
+  does not declare, and plain values (as for props above). Prefabs are only checked against their
+  schema, not their references or text keys.
 - Plain-string props that name things: spawn ids of `core.portal` and `core.changeScene`, stage
   ids of `core.setQuestStage`, objective ids of `core.completeObjective`, fragment ids of
   `core.grantFragment` and `core.hasFragment`, flag names, `core.civCompleted.civ`.
@@ -1078,8 +1122,8 @@ Tests that apply to packs beyond their own `tests/` folder:
 - Manifest `hud.hide` values, `cover.motif`, theme fonts, environment particle presets, cinematic
   `fx` names, block texture generator names.
 - Localization keys used only as prop defaults in code, keys built at runtime, panel `title` keys.
-- Library packs: the CLI only reports their manifest issues; their content issues are not reported
-  (`tests/unit/corePack.test.ts` covers `core`).
+- Library packs are not started: the CLI reports their manifest issues and their load issues
+  (section 12.3), not their references or texts (`tests/unit/corePack.test.ts` covers `core`).
 - Uniqueness of fragment ids across packs; scene file name versus scene `id`.
 
 ---
@@ -1094,18 +1138,12 @@ Tests that apply to packs beyond their own `tests/` folder:
 - Only the first two `cover.colors` are used; `credits` and `tags` are not displayed in the game.
 - French is the only language: the settings only offer `fr-FR`, and the localization test rejects
   any other locale file, although the engine's `Localizer` supports several locales.
-- Content files only accept `version: 1`. The header of `schemas.ts` refers to
-  `content/migrations.ts`, which does not exist: there is no migration path for content documents
-  yet (see [VERSIONING.md](VERSIONING.md)).
-- The Studio cannot save `pack.ts`, `assets/`, `view/`, `seed/` or `tests/` files, cannot create a
-  pack, and its Explorer cannot create `items.json`, `characters.json` or `rules.json` (only
-  scenes, dialogues, quests, cinematics, logic files and scripts).
-- The scaffold's `pack.ts` glob does not include `./view/**/*.ts`.
-- `TYPE_ID_RE` and `packOfType`/`packOfAsset` in `src/engine/core/util/ids.ts` are not used: the
-  `<pack>.` and `<pack>:` prefixes are conventions (only the shape of block and model ids is
-  enforced).
-- `src/engine/platform/devApiContent.ts` (`DevApiContentProvider`) and the
-  `OverlayContentProvider` class exported by `src/engine/core/packs/pack.ts` are not referenced
-  anywhere; the Studio uses `src/studio/core/devContent.ts` and
-  `src/engine/platform/overlayContent.ts`.
+- Content files only accept `version: 1`, and there is no migration path for content documents
+  yet: the header of `schemas.ts` says that a format change must add one (see
+  [VERSIONING.md](VERSIONING.md)).
+- The Studio cannot save `pack.ts`, CSS, `seed/` or `tests/` files, cannot create a pack, and its
+  Explorer cannot create `items.json`, `characters.json` or `rules.json` (only scenes, dialogues,
+  quests, cinematics, logic files and scripts).
+- The id forms of section 7 are reported, not enforced: a definition with a wrong id is still
+  registered (only malformed block and model ids are refused by their registries).
 - The validation gaps listed in 12.4.

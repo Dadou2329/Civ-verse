@@ -1,10 +1,9 @@
 # Architecture Decision Records
 
 The decisions that shape CIVILIZATIONVERSE, written down from the code as verified on 2026-10-12
-(commit `7b2aa0a` and the work in progress of that day). Each record states the context, the
-decision as implemented (with the files that implement it) and its consequences, including the
-costs. All records are **accepted and implemented**; when the implementation is partial, the record
-says so.
+(commit `0f92dd7`). Each record states the context, the decision as implemented (with the files
+that implement it) and its consequences, including the costs. All records are **accepted and
+implemented**; when the implementation is partial, the record says so.
 
 System overview and module map: [ARCHITECTURE.md](ARCHITECTURE.md).
 
@@ -105,8 +104,9 @@ renderer should be replaceable without touching quests or mechanics.
 - Pack playthroughs (`civilizations/*/tests`), acceptance tests (`tests/acceptance`),
   `npm run validate` and the Studio's validation all run the real simulation in Node.
 - Gameplay cannot depend on visuals. Pack rendering (`defineVisual`, `defineViewEffect`) only
-  displays state. The declared escape hatch `CivContext.view` / `GameSession.view` is never assigned,
-  so it is always `null`, in the game too.
+  displays state. The declared escape hatch `CivContext.view` / `GameSession.view` is set by
+  `GameView` to `{ kind: 'babylon', native: { engine, scene } }` while it renders the session (game,
+  Studio playtest) and cleared on dispose; it is `null` headless and in the Studio's editor viewport.
 - The simulation cannot ask the renderer anything; for example `ctx.fx.fade()` resolves on the
   simulation clock, not when the screen has actually faded.
 - `GameView` notices a scene change by comparing `session.world` every frame and rebuilds all
@@ -159,7 +159,7 @@ language (`docs/narrative/MISE_A_JOUR_PROMPT_FRANCAIS.txt`).
 - Adding a content field touches the schema, possibly the loader and validator, and the Studio
   editor of that document kind.
 - All schemas are at `version: 1` and no content migration code exists yet (the header of
-  `schemas.ts` refers to a `content/migrations.ts` that is not in the repository).
+  `schemas.ts` says that a format change must add one).
 - `fr-FR` is the only locale shipped; any other locale would currently fall back to French.
 
 ---
@@ -195,7 +195,10 @@ running (listeners, timers, movement modifiers, HUD, variables, registrations).
   `DisposableScope` tree: `civ:<id>` → `scene:<id>` → `entité:<id>` → component.
   `unloadCivilization()` disposes the scope, clears the civilization's variables, inventory, quests,
   dialogue memory, player state and UI, and unregisters every definition owned by the pack.
-- Registrations carry an owner (the pack id); an id already owned by another pack is refused.
+- Registrations carry an owner (the pack id); an id already owned by another pack is refused. Type
+  ids must be `<pack>.<name>` and asset ids `<pack>:<name>` with the pack's own id: other ids are
+  reported as errors when the pack loads (`checkDefinitionIds`). The pack ids `engine`, `global`
+  and `ui` are reserved.
 - A civilization writes only `<civId>.*` variables; global writes must match the manifest's
   `globalWrites` patterns.
 - Each manifest declares an `engineApi` semver range, checked against `ENGINE_API_VERSION` (`1.0.0`).
@@ -251,7 +254,8 @@ without a generator overwriting their work.
 
 - Seeds and JSON can diverge as soon as the Studio edits a scene; the seed is then a historical
   starting point, not a build input.
-- `--force` overwrites Studio edits, and the CLI writes directly (no `.civ-backups/` copy).
+- `--force` overwrites Studio edits; the CLI first copies each file it replaces to `.civ-backups/`
+  (`….seed.bak`) and skips files whose content would not change.
 - Changing a layout constant does not update existing scenes; scene and cinematic changes are made
   in the JSON (Studio) instead.
 
@@ -260,7 +264,8 @@ without a generator overwriting their work.
 ## ADR-006 — Civilization Studio file access through a scoped dev-server API
 
 **Status:** accepted, implemented. **Code:** `tools/vite/civDevPlugin.ts` (its header refers to this
-record), client `src/engine/platform/devApi.ts`, users `src/studio/core/devContent.ts`,
+record), write rules shared with the Studio `src/engine/platform/devApiRules.ts`, client
+`src/engine/platform/devApi.ts`, users `src/studio/core/devContent.ts`,
 `src/studio/editors/ScriptEditor.tsx`. **Tests:** `tools/vite/civDevPlugin.test.ts`.
 
 ### Context
@@ -281,7 +286,7 @@ A Vite plugin, `civDevPlugin()`, adds a middleware under `/__civ/api/` to the **
 | GET | `file?path=` | Read a file: `{ path, content, mtimeMs }`. | read rules + realpath |
 | PUT | `file?path=` | Write `{ content, expectedMtimeMs? }`: `{ path, mtimeMs, backup }`. | write rules + realpath |
 | DELETE | `file?path=` | Delete: `{ path, backup }`. | write rules + realpath |
-| POST | `typecheck` | `{ paths }` → TypeScript diagnostics (ADR-007). | read rules |
+| POST | `typecheck` | `{ paths }` → TypeScript diagnostics (ADR-007). | read rules + realpath, for each path |
 | POST | `scaffold` | `{ pack, kind, name }` → new script in `mechanics/` (ADR-007). | write rules |
 
 Safety rules, as implemented:
@@ -302,17 +307,21 @@ Safety rules, as implemented:
    - must start with `civilizations/<pack>/` (at least 3 segments, otherwise 403) with a pack id
      matching `^[a-z][a-z0-9-]*$` (400);
    - **write mode** (PUT, DELETE, scaffold): only `civilizations/<pack>/manifest.json` or a file below
-     `content/`, `mechanics/`, `ui/`, `locales/` or `scripts/` (403), with extension `.json`, `.ts`
-     or `.tsx` (403);
-   - **read mode**: extension `.json`, `.ts`, `.tsx`, `.md` or `.css` (403);
+     `content/`, `locales/`, `mechanics/`, `ui/`, `view/`, `assets/` or `models/` (403), with
+     extension `.json`, `.ts` or `.tsx` (403) — `WRITABLE_PACK_DIRS` and `WRITABLE_EXTENSIONS` in
+     `src/engine/platform/devApiRules.ts`, whose `isWritablePackFile()` the Studio uses to open every
+     other file read-only;
+   - **read mode**: extension `.json`, `.ts`, `.tsx`, `.md` or `.css` (403, `READABLE_EXTENSIONS`);
    - no path segment may start with `.` (400);
    - the resolved absolute path must be inside `<repo>/civilizations/` (403).
-6. **Realpath containment** (`assertRealPathInside`, file GET/PUT/DELETE): the first existing
-   ancestor of the target is resolved with `realpath` and must be `civilizations/` or inside it, so a
-   symlink cannot lead out (403).
+6. **Realpath containment** (`assertRealPathInside`, file GET/PUT/DELETE and each `typecheck` path):
+   the first existing ancestor of the target is resolved with `realpath` and must be
+   `civilizations/` or inside it, so a symlink cannot lead out (403).
 7. **Body limit**: 32 MiB (413).
 8. **Valid JSON only**: a PUT on a `.json` path whose `content` does not parse is refused with 422 and
-   nothing is written. A body that is not JSON or lacks a string `content` → 400.
+   nothing is written. A body that is not JSON or lacks a string `content` → 400. The `typecheck`
+   and `scaffold` bodies are parsed by `readJsonBody()` (not JSON → 400); `typecheck` also requires a
+   `paths` array (400).
 9. **Conflict check**: when `expectedMtimeMs` is a number and the file exists, a difference of more
    than 1 ms with the current mtime returns **409** and nothing is written. The Studio sends the
    `mtimeMs` it read (`StudioProject.save`).
@@ -331,23 +340,24 @@ Safety rules, as implemented:
 
 ### Consequences
 
-- The Studio can only write content, locales, manifests and the scripts of the editable folders;
-  production builds have no write path at all. A build made with `CIV_BUILD_STUDIO=1` opens the
-  Studio read-only (`bundledProjectIO`).
+- The Studio can only write content, locales, manifests and the code modules of `mechanics/`,
+  `ui/`, `view/`, `assets/` and `models/`; production builds have no write path at all. A build made
+  with `CIV_BUILD_STUDIO=1` opens the Studio read-only (`bundledProjectIO`).
 - There is no authentication: any local process able to reach the loopback port can call the API
   while `npm run dev` runs. The header, Host, Origin and `Sec-Fetch-Site` checks target browsers
   (other web pages), not local programs.
-- Files a pack loads from `assets/`, `view/`, `models/` or the pack root (`pack.ts`) cannot be saved
-  from the Studio, although the Studio explorer lists them as scripts (a save fails with 403).
-  `scripts/` is writable, but no `pack.ts` loads modules from it.
+- `pack.ts` and other files outside these folders cannot be saved from the Studio: the script
+  editor applies the same rules and opens them read-only (« Lecture seule »). The explorer does not
+  list `seed/` and `tests/`.
 - The conflict check only protects documents the Studio read from disk: for a document it created
   (`isNew`) it sends `expectedMtimeMs: null`, so a file that appeared on disk in the meantime is
   overwritten (its previous version still goes to `.civ-backups/`).
-- `typecheck` and `scaffold` apply the path rules but not the realpath check, and a malformed JSON
-  body on these two routes produces HTTP 500 rather than 400.
+- Every route that touches a file checks its real path, `scaffold` and `typecheck` included: a
+  symlinked folder leading outside `civilizations/` is refused with a 403.
 - `.civ-backups/` is git-ignored and ESLint-ignored, and grows without pruning.
 - The rules are exercised by `tools/vite/civDevPlugin.test.ts` on a temporary directory (the plugin
-  accepts a `root` option for that purpose).
+  accepts a `root` option for that purpose), which also checks that the Studio's
+  `isWritablePackFile()` agrees with the server.
 
 ---
 
@@ -371,10 +381,13 @@ source maps, and would turn the editor into an arbitrary-code entry point.
 - Nothing typed in the editor is executed by the page. A search of `src/`, `tools/` and
   `civilizations/` finds no `eval` and no `new Function`.
 - A script is a TypeScript file of the pack. « Enregistrer et recharger » (Ctrl+S) writes it through
-  the scoped file API (ADR-006). Vite compiles it like any source module; the `hotUpdate` hook sends
+  the scoped file API (ADR-006); a file the API may not write (`pack.ts`, for example) opens
+  read-only. Vite compiles it like any source module; the `hotUpdate` hook sends
   `civ:code-changed`; the Studio calls `bumpPackCode(pack)` and `reloadPackCode(pack)`, which
   re-imports `/civilizations/<pack>/pack.ts?studio=<n>` — the only dynamic import with a computed URL,
   a same-origin module served by Vite — and `GameSession.reloadPack()` re-registers the definitions.
+  The new modules are loaded before anything is unregistered, so a script that fails to load leaves
+  the pack as it was.
 - Type checking runs on the server: `createTypecheckService()` keeps a TypeScript `LanguageService`
   over the repository's `tsconfig.json` (same paths, strictness and SDK types as
   `npm run typecheck`). Monaco's own worker keeps syntax checking but has semantic validation
@@ -393,7 +406,7 @@ source maps, and would turn the editor into an arbitrary-code entry point.
   explorer hides the « Scripts » group). That the Monaco import is dropped from builds rests on the
   compile-time constant; no bundle inspection in the repository verifies it.
 - A script must be saved before it runs or is type-checked: diagnostics describe the file on disk,
-  and the playtest uses the saved code (ADR-010).
+  and the playtest uses the saved code (ADR-010; starting a playtest warns about unsaved scripts).
 - Pack code is trusted code running with page privileges; the protection is that it goes through the
   normal toolchain, not a sandbox.
 - In the game page, a code change during a running civilization only shows a notification
@@ -440,11 +453,13 @@ do not corrupt each other. Saves must survive engine and pack updates.
   be explicit global writes declared in the manifest.
 - Saves are explicit: switching civilization keeps the previous local state in memory
   (`civStates`); it reaches storage at the next save or autosave.
-- A newer `formatVersion` or `stateVersion` than the code knows is refused with a French
-  `SaveLoadError`; a missing pack migration step aborts the load. A mechanic or component state with
-  no migration path falls back to its initial value with a logged warning.
-- The migration tables are empty today (everything is version 1). `SaveGameSchema` is a plain
-  `z.object` at the top level, so unknown top-level keys are dropped on load.
+- A newer `formatVersion`, `global.schemaVersion` or `stateVersion` than the code knows is refused
+  with a French `SaveLoadError`; a missing layout, multiverse or pack migration step aborts the load
+  (`migrateCivState()` sets `stateVersion` itself after each pack step). A mechanic or component
+  state with no migration path falls back to its initial value with a logged warning.
+- The migration tables are empty today (everything is version 1). `parseSave()` keeps unknown keys
+  (`z.looseObject` at the top level, in the multiverse state and in each civilization state), but
+  later saves are rebuilt from the session and do not carry unknown top-level keys over.
 - New cross-civilization data requires changing `GlobalState`, `GLOBAL_SCHEMA_VERSION` and a global
   migration.
 
@@ -534,9 +549,11 @@ players will see, without risking the player's saves.
 - Unsaved scenes, dialogues, quests, cinematics, rules, locales and manifests are tested as they are.
 - Saves made during a playtest are lost when it stops; the player's IndexedDB saves are never touched.
 - Pack code is not overlaid: the playtest runs the scripts saved on disk (as re-imported after
-  `civ:code-changed`), not unsaved editor buffers.
-- Each playtest is a new `GameSession` with an empty multiverse state: content that depends on
-  another civilization's fragments or global flags behaves as if that civilization was never played.
+  `civ:code-changed`), not unsaved editor buffers; starting a playtest prints a warning listing the
+  unsaved scripts.
+- Each playtest is a new `GameSession` with an empty multiverse state (the player's autosave is not
+  loaded, unlike in the game): content that depends on another civilization's fragments or global
+  flags behaves as if that civilization was never played.
 - Settings are not isolated: `GameController` reads and writes the player's settings in
   `localStorage` (`civverse.settings.v1`).
 - The playtest creates its own Babylon `Engine` on its own canvas; `GameViewOptions.engine` (engine
@@ -638,13 +655,15 @@ in a behavior, a rule or a HUD component should not take the whole game down.
   reacting to a props or visibility change is marked `faulted` and is then no longer updated nor
   asked for offers, decorations or vetoes. A `beforeInteract` veto that throws is logged and ignored;
   an `onInteract` that throws is logged and the interaction reports failure. A mechanic whose `setup`
-  throws is recorded as failed while the others start.
+  throws is recorded as failed while the others start; validation reports it as an error.
 - An unknown or failing logic action stops its own action list and is logged with its origin; an
-  unknown condition evaluates to `false`.
+  unknown or failing condition evaluates to `false` and is logged. Both are also recorded in the
+  interpreter's 300-entry trace.
 - Each pack registration is guarded individually; duplicate ids owned by another pack are refused.
 - Pack HUD elements and panels render inside a React error boundary (`CivErrorBoundary`); a failing
   panel is closed.
-- Errors go to `LogHub` (ring buffer of 500 entries), shown by the debug overlay and mirrored into the
+- Errors go to `LogHub` (ring buffer of 500 entries), shown by the F3 debug overlay in development
+  only (`import.meta.env.DEV`; player builds show the performance line only) and mirrored into the
   Studio console during a playtest.
 - A civilization that fails to load is unloaded (keeping its state) and the game shows an error
   screen.

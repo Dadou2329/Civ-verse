@@ -52,7 +52,8 @@ Keys are physical positions, so the same keys work on AZERTY and QWERTY keyboard
 | Pause | Échap or P | Esc or P |
 
 Civilizations add their own keys (Door: R for the permission map; Memory: C for the memory
-chamber), shown in their interface. Bindings can be changed in *Paramètres*.
+chamber), shown in their interface. The keys above can be changed in *Paramètres*; civilization
+keys cannot (they are set in each pack's `content/rules.json`).
 
 ## Commands
 
@@ -82,7 +83,7 @@ src/game            React game interface and GameController
 src/studio          Civilization Studio
 civilizations/*     civilization packs (manifest, content JSON, French texts, mechanics, UI)
 tools/              Vite dev plugin (Studio file API), CLI
-tests/              acceptance tests (headless) and browser tests (e2e)
+tests/              unit and acceptance tests (headless) and browser tests (e2e)
 docs/               architecture, formats, guides; docs/narrative holds the two scenarios
 ```
 

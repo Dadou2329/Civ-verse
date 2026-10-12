@@ -31,16 +31,16 @@ The save format and its migrations are described in detail in [SAVE_FORMAT.md](S
 | Identifier | Current value | Defined in | Form | Checked when loading |
 |---|---|---|---|---|
 | `ENGINE_VERSION` | `'0.1.0'` | `src/engine/core/version.ts` | semver | No. Written into saves as `engineVersion`; exported by `@sdk`. |
-| `version` | `"0.1.0"` | `package.json` | semver | No. Not read by the code. |
+| `version` | `"0.1.0"` | `package.json` | semver | No. Read only by acceptance test J, which checks that it equals `ENGINE_VERSION`. |
 | `ENGINE_API_VERSION` | `'1.0.0'` | `src/engine/core/version.ts` | semver | Yes, against each manifest's `engineApi`. |
 | `engineApi` | `"^1.0.0"` (core, door, memory) | `civilizations/<id>/manifest.json` | semver range (subset, section 2.3) | Yes. |
-| `packVersion` | `"0.1.0"` (core, door, memory) | `civilizations/<id>/manifest.json` | string starting with `x.y.z` | Syntax only. Copied into saves, never compared. |
+| `packVersion` | `"0.1.0"` (core, door, memory) | `civilizations/<id>/manifest.json` | `x.y.z`, optional pre-release suffix | Syntax only. Copied into saves, never compared. |
 | `stateVersion` | `1` (core, door, memory) | `civilizations/<id>/manifest.json` | integer ≥ 1, default 1 | Yes, against saved local states. |
 | `format` / `version` of the manifest | `"civverse.pack"` / `1` | `civilizations/<id>/manifest.json` | literals | Yes (`ManifestSchema`). |
 | `format` / `version` of content documents | 9 formats, all `1` | content JSON files | literals | Yes (schemas in `schemas.ts`). |
 | Voxel `encoding` | `'rle16-b64'` (`VOXEL_ENCODING`) | `src/engine/core/voxel/codec.ts` | string id | Yes. |
 | `SAVE_FORMAT` / `SAVE_FORMAT_VERSION` | `'civverse.save'` / `1` | `src/engine/core/save/saveFormat.ts` | literal / integer | Yes (`parseSave()`). |
-| `GLOBAL_SCHEMA_VERSION` | `1` | `src/engine/core/state/multiverse.ts` | integer | Older values migrated; newer values accepted without check. |
+| `GLOBAL_SCHEMA_VERSION` | `1` | `src/engine/core/state/multiverse.ts` | integer | Yes (`parseSave()`): older values migrated, newer values refused. |
 | `state.version` of mechanics and behaviors | `1` for every definition of the engine and the shipped packs | each `defineMechanic` / `defineBehavior` | integer | Yes (`migrateVersioned()`), with fallback to the initial state. |
 | Settings storage key | `civverse.settings.v1` | `src/engine/platform/settings.ts` | key suffix | No migration: stored values are merged over the defaults. |
 
@@ -57,8 +57,9 @@ export const ENGINE_VERSION = '0.1.0';
 - `GameSession.buildSaveGame()` writes it into `SaveGame.engineVersion`.
 - `src/sdk/index.ts` re-exports it, so packs can read it.
 - It is not displayed in the game and not compared with anything on load.
-- `package.json` has the same value (`"version": "0.1.0"`). Nothing reads it or keeps the two in
-  sync.
+- `package.json` has the same value (`"version": "0.1.0"`). The two are kept in step by hand;
+  acceptance test J (`tests/acceptance/J-regression.test.ts`) fails when they differ. Nothing else
+  reads the `package.json` version.
 
 ### 2.2 `ENGINE_API_VERSION` and the public API
 
@@ -79,9 +80,9 @@ What packs depend on:
   - `@sdk` → `src/sdk/index.ts`: `definePack`, the `define*` helpers, `prop`, the runtime context
     types of `src/engine/core/sim/api.ts`, the event map, `LocalCivState`, `ENGINE_VERSION`,
     `ENGINE_API_VERSION`, math and color utilities;
-  - `@sdk/ui` → `src/sdk/ui.tsx` (HUD elements and panels);
+  - `@sdk/ui` → `src/sdk/ui.tsx` (HUD elements and panels, and `keyLabel` for showing a key);
   - `@sdk/view` → `src/sdk/view.ts` (custom rendering);
-  - `@sdk/build` → `src/sdk/build.ts` (scene building for seeds and the Studio).
+  - `@sdk/build` → `src/sdk/build.ts` (scene building for seed scripts).
 - **Runtime contexts.** `src/engine/core/sim/api.ts` describes itself as the "public runtime API seen
   by civilization code": `CivContext`, `BehaviorContext`, `EntityApi`, `WorldApi`, and so on.
 - **Engine definitions referenced by content.** Pack JSON uses behaviors, actions, conditions and
@@ -119,16 +120,18 @@ The value is checked with `satisfies(ENGINE_API_VERSION, manifest.engineApi)`
 Not supported, and therefore never satisfied (the pack is rejected): partial versions (`^1.0`,
 `1`), wildcards inside a version (`1.x`), hyphen ranges, compound ranges (`>=1.0.0 <2.0.0`) and
 alternatives (`^1.0.0 || ^2.0.0`). Pre-release and build suffixes are ignored on both sides:
-`1.0.0-beta.1` satisfies `1.0.0`. `semver.ts` has no unit tests.
+`1.0.0-beta.1` satisfies `1.0.0`. `src/engine/core/util/semver.test.ts` tests the supported
+operators and the rejection of compound ranges and x-ranges.
 
 ### 2.4 `packVersion` (manifest)
 
 ```ts
 // src/engine/core/content/schemas.ts (ManifestSchema)
-packVersion: z.string().regex(/^\d+\.\d+\.\d+/),
+packVersion: z.string().regex(/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/, { error: 'Version x.y.z attendue (ex. 1.2.0)' }),
 ```
 
-- The regex has no end anchor: `1.0.0-beta` passes, and so does `1.0.0abc`.
+- The regex is anchored: `1.0.0` and `1.0.0-beta.1` pass; `1.0`, `1.0.0abc` and build metadata
+  (`1.0.0+build`) are refused with `Version x.y.z attendue (ex. 1.2.0)`.
 - `snapshotCivState()` copies it into each saved `LocalCivState.packVersion`. No code compares it,
   in saves or between packs.
 - Studio's manifest editor shows it as « Version du pack » (`src/studio/editors/ManifestEditor.tsx`).
@@ -156,16 +159,17 @@ export interface PackModule {
 - `snapshotCivState()` writes it into `LocalCivState.stateVersion`.
 - `loadCivilization()` calls `migrateCivState(saved, manifest.stateVersion, pack.module.migrations)`.
 - It only matters for `kind: "civilization"` packs: library packs have no local state.
-- Studio's manifest editor does not show it; it is edited in `manifest.json`.
+- Studio's manifest editor shows it as « Version de l’état » (an integer, at least 1).
 
 ### 2.6 Content document `format` and `version`
 
 The header of `src/engine/core/content/schemas.ts`:
 
 > Every content file carries `format` and `version` so that future engine updates can migrate
-> old files (see content/migrations.ts). The Studio reads and writes exactly these shapes.
+> old files. All formats are at version 1 and no content migration exists yet: a format change
+> must add one (see docs/VERSIONING.md). The Studio reads and writes exactly these shapes.
 
-`src/engine/core/content/migrations.ts` does not exist (section 5.2).
+How such a migration could be added is described in section 5.2.
 
 | `format` | Files | Schema |
 |---|---|---|
@@ -244,8 +248,8 @@ of each level.
 
 ### 3.1 Pack manifests: `GameSession.refreshManifests()`
 
-Runs when a session is created (`GameSession.create()`) and when Civilization Studio reloads a pack
-(`GameSession.reloadPack()`).
+Runs when a session is created (`GameSession.create()`) and when Civilization Studio opens a pack
+(`Studio.openPack()`) or reloads one (`GameSession.reloadPack()`).
 
 ```ts
 // src/engine/core/sim/session.ts (refreshManifests)
@@ -256,7 +260,7 @@ if (!manifest) {
   continue;
 }
 if (!satisfies(ENGINE_API_VERSION, manifest.engineApi)) {
-  const msg = `Le pack "${id}" requiert l'API ${manifest.engineApi} (moteur : ${ENGINE_API_VERSION}).`;
+  const msg = `Le pack "${id}" requiert l’API ${manifest.engineApi} (moteur : ${ENGINE_API_VERSION}).`;
   this.manifestIssues.set(id, [msg]);
   this.log.error(msg);
   continue;
@@ -289,7 +293,8 @@ cycle fails with `Dépendance circulaire entre packs : a → b → a`.
 - `loadPack()` (`src/engine/core/packs/pack.ts`) validates every content file with its schema
   (`parseWith()`). An invalid file, including one with an unexpected `format` or `version`, is
   skipped and reported as a `ContentIssue` of severity `error`. The pack still loads.
-  `ensurePack()` logs the issues; `npm run validate` and the Studio's diagnostics report them.
+  `GameSession.adoptPack()` (called by `ensurePack()` and `reloadPack()`) logs the issues;
+  `npm run validate` and the Studio's diagnostics report them.
 - Scenes are validated when they are entered: `loadSceneDoc()` throws
   `Scène <id> invalide :` followed by the first 8 issues.
 - Voxel data is decoded by `volumeFromDoc()` when a `SceneWorld` is created, which checks the
@@ -302,7 +307,7 @@ cycle fails with `Dépendance circulaire entre packs : a → b → a`.
 | `format === 'civverse.save'` | `parseSave()` | Load refused |
 | `formatVersion` integer, `1 ≤ formatVersion ≤ SAVE_FORMAT_VERSION` | `parseSave()` | Load refused |
 | Layout migrations from `formatVersion` | `parseSave()` | Load refused when a step is missing |
-| Multiverse migrations from `global.schemaVersion` | `parseSave()` | Load refused when a step is missing |
+| `global.schemaVersion ≤ GLOBAL_SCHEMA_VERSION`, then multiverse migrations from it | `parseSave()` | Load refused when newer or when a step is missing |
 | Structure (`SaveGameSchema`) | `parseSave()` | Load refused, first 5 issues in the message |
 | `stateVersion` vs manifest `stateVersion` | `migrateCivState()` in `loadCivilization()` | Load refused when newer or when a step is missing |
 | Mechanic and component `version` vs definition `state.version` | `migrateVersioned()` | Warning, initial state used |
@@ -313,10 +318,13 @@ Messages and details: [SAVE_FORMAT.md, section 9](SAVE_FORMAT.md#9-error-handlin
 
 - A save's `engineVersion` against `ENGINE_VERSION`.
 - A save's `packVersion` against the pack's `packVersion`.
-- A `global.schemaVersion` greater than `GLOBAL_SCHEMA_VERSION` (accepted).
-- `ENGINE_VERSION` against `package.json`.
+- `ENGINE_VERSION` against `package.json` (only acceptance test J compares them).
 - The versions of dependency packs.
-- `packVersion` beyond its `x.y.z` prefix.
+- The content of scene states (entity and component states included), quest states,
+  per-civilization progress (`global.civs`) and mechanic states (the `state` of each
+  `VersionedState`): `SaveGameSchema` declares them as `z.unknown()`.
+- Saved states of mechanics or abilities that the pack no longer defines: they are dropped
+  silently.
 
 ## 4. Bumping rules
 
@@ -361,11 +369,11 @@ newer API feature.
 
 ### 4.4 `packVersion`
 
-Code: no rule.
+Code: no bumping rule; `ManifestSchema` only requires the form `MAJOR.MINOR.PATCH`, with an
+optional pre-release suffix (section 2.4).
 
 **Policy:** semver of the pack's content and code. MAJOR when the release requires a `stateVersion`
 bump or removes playable content, MINOR when it adds content, PATCH for fixes and text changes.
-Always write the full `MAJOR.MINOR.PATCH`.
 
 ### 4.5 `stateVersion`
 
@@ -426,9 +434,9 @@ Where to put a step:
 Rules that follow from the code:
 
 - `n` converts version `n` into `n + 1`. The engine applies one step per version, in a loop.
-- The engine sets the version number after each step. A pack `migrations` function must not change
-  `stateVersion`: `migrateCivState()` increments `s.stateVersion` itself, and a function that also
-  increments it makes the loop skip the next step.
+- The engine sets the version number after each step. A pack `migrations` function does not need
+  to change `stateVersion`: `migrateCivState()` sets it to `n + 1` after `migrations[n]`, whatever
+  the function returned for it.
 - Layout, multiverse and pack steps receive a copy of the saved data (`structuredClone`).
 - A missing layout, multiverse or pack step refuses the load. A missing mechanic or component step
   resets that state to its initial value with a warning.
@@ -437,6 +445,9 @@ Rules that follow from the code:
 
 A tested mechanic-state step exists in the fixture `tests/acceptance/fixtures/lanterne/mechanics/lantern.ts`
 (`lanterne.oil`, version 1 → 2), checked by `tests/acceptance/G-mechanics-extensibility.test.ts`.
+`src/engine/core/save/saveFormat.test.ts` unit-tests `migrateCivState()` (chained pack steps, the
+version set by the engine, refusal of a missing step or a newer state) and `migrateVersioned()`
+(steps, fallback to the initial state with a warning).
 Example of a pack step (more examples in
 [SAVE_FORMAT.md, section 8.3](SAVE_FORMAT.md#83-adding-a-migration-step)):
 
@@ -477,8 +488,8 @@ export default definePack({
 
 No content migration mechanism exists:
 
-- `src/engine/core/content/migrations.ts`, referenced by the header of `schemas.ts`, does not
-  exist, and no code changes a document's `version`.
+- There is no `src/engine/core/content/migrations.ts` or equivalent (the header of `schemas.ts`
+  states that a format change must add one), and no code changes a document's `version`.
 - Every schema accepts only `version: 1`. The loaders pass the raw JSON straight to `safeParse`
   (`parseWith()` and `validateManifest()` in `pack.ts`, `loadSceneDoc()`).
 - Civilization Studio edits the raw JSON: `src/studio/core/project.ts` reads files with
@@ -583,6 +594,15 @@ No version number has changed since it was introduced, and the repository has no
   manifest (`0.1.0`, `^1.0.0`), settings key `civverse.settings.v1`.
 - `97da80a` Add the Door civilization: `door` manifest (`0.1.0`, `^1.0.0`).
 - `cfe2663` Add the Memory civilization: `memory` manifest (`0.1.0`, `^1.0.0`).
+- `9bcb5d5` Fix bugs found while documenting: no version number changed. `packVersion` must be a
+  full `x.y.z` (optional pre-release suffix); a newer `global.schemaVersion` is refused;
+  `migrateCivState()` sets `stateVersion` itself after each pack step; acceptance test J checks that
+  `ENGINE_VERSION` equals the `package.json` version.
+- `57d0393` Fix scenario gaps and smaller bugs: no version number changed. Unit tests for
+  `semver.ts` and the save state migrations; the Studio's manifest editor shows `stateVersion`.
+- `c26efa1` Objective markers, notification timing: no version number changed.
+- `0f92dd7` Validation reports a civilization's load problems; script scaffolding checks real
+  paths: no version number changed.
 
 ### Template for future entries (Policy)
 
@@ -597,29 +617,28 @@ No version number has changed since it was introduced, and the repository has no
 
 ## 8. Limitations and known gaps
 
-1. No content migration mechanism. `src/engine/core/content/migrations.ts` is referenced in
-   `schemas.ts` but does not exist, and every document schema accepts only `version: 1`.
-2. No save migration is registered in the engine or the shipped packs. The only migration step in
-   the repository is the mechanic-state step of the test fixture `lanterne.oil`, exercised by
-   `tests/acceptance/G-mechanics-extensibility.test.ts`; the layout, multiverse and
-   civilization-level migration loops are not exercised by any test, and `semver.ts` has no tests.
-3. `engineVersion` and `packVersion` are written into saves but never compared. A
-   `global.schemaVersion` newer than `GLOBAL_SCHEMA_VERSION` is accepted silently.
+1. No content migration mechanism (the header of `schemas.ts` says that a format change must add
+   one), and every document schema accepts only `version: 1`.
+2. No save migration is registered in the engine or the shipped packs. The only migration steps in
+   the repository are the mechanic-state step of the test fixture `lanterne.oil`, exercised by
+   `tests/acceptance/G-mechanics-extensibility.test.ts`, and the steps defined inside
+   `src/engine/core/save/saveFormat.test.ts`; the layout and multiverse migration loops
+   (`FORMAT_MIGRATIONS`, `GLOBAL_MIGRATIONS`) are not exercised by any test.
+3. `engineVersion` and `packVersion` are written into saves but never compared.
 4. `satisfies()` supports only part of npm's range syntax. Unsupported ranges reject the pack
    instead of raising a syntax error, `^0.0.x` is looser than in npm, and pre-release suffixes are
    ignored.
 5. Manifest `dependencies` cannot carry version constraints, and saves do not record the versions
    of library packs.
-6. The `packVersion` regex is not anchored at the end.
-7. `ENGINE_VERSION` and `package.json` are kept in sync by hand, and the engine version is not
-   shown anywhere in the game.
-8. The document version `1` is written as a literal at several creation sites (section 2.6) rather
+6. `ENGINE_VERSION` and `package.json` are kept in sync by hand (acceptance test J fails when they
+   differ), and the engine version is not shown anywhere in the game.
+7. The document version `1` is written as a literal at several creation sites (section 2.6) rather
    than taken from a shared constant.
-9. Civilization Studio's manifest editor exposes `packVersion` and `engineApi` but not
-   `stateVersion`.
-10. There is no deprecation mechanism (section 6).
-11. A pack `migrations` function that increments `stateVersion` itself makes `migrateCivState()`
-    skip the next step.
-12. A mechanic or component state that cannot be migrated is reset to its initial value with only a
-    log warning, which differs from the "failed migrations abort the load" statement in the header
-    of `saveFormat.ts`.
+8. There is no deprecation mechanism (section 6).
+9. A mechanic or component state that cannot be migrated (missing step or newer version) is reset
+   to its initial value with only a log warning, while a save layout, multiverse state or
+   civilization state that cannot be migrated refuses the load (the header of `saveFormat.ts`
+   states both behaviors).
+10. The contents of scene, quest and mechanic states inside a save are not schema-validated, and
+    saved states of mechanics or abilities that a pack no longer defines are dropped silently
+    (section 3.5).

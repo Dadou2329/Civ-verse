@@ -8,9 +8,9 @@ game on the files being edited (playtest).
 
 The Studio's interface is in French. This guide is in English and quotes the interface labels
 exactly, between « », so that they can be found on screen (group headers of the Explorer are
-displayed in capitals). "Ctrl" also means ⌘ on macOS: the Studio accepts either. Letter keys are
-physical key positions, named after a QWERTY layout; read
-[§12](#12-keyboard-and-mouse-reference) if you use an AZERTY keyboard.
+displayed in capitals). "Ctrl" also means ⌘ on macOS: the Studio accepts either. Letter shortcuts
+follow the letter printed on the key; the camera keys are physical key positions, named after a
+QWERTY layout; read [§12](#12-keyboard-and-mouse-reference) if you use an AZERTY keyboard.
 
 The code described here: `studio.html` → `src/studio/main.tsx` → `src/studio/StudioApp.tsx` and the
 rest of `src/studio/`, plus the development-server plugin `tools/vite/civDevPlugin.ts`. For the
@@ -58,13 +58,16 @@ page needs JavaScript and WebGL 2. The project requires Node.js 22.12 or later (
 **Choosing the pack.** Add `?pack=<id>` to the URL: `studio.html?pack=door`, `?pack=memory`, or
 `?pack=core` (the shared library pack). Without the parameter, the Studio opens the first pack, in
 alphabetical order, that is not `core` (today: `door`). Afterwards, the « Pack » selector of the top
-bar switches pack. An unknown id stops the start-up: the page only shows « Civilization Studio n'a
+bar switches pack. An unknown id stops the start-up: the page only shows « Civilization Studio n’a
 pas pu démarrer. » followed by the error, here « Pack introuvable ou invalide : "\<id>". ».
 
 **What opening a pack does.**
 
 - It reads every JSON document of the pack and of the packs it depends on (scripts are read only
-  when you open them).
+  when you open them or validate the pack).
+- It unloads the definitions (blocks, models, components, actions, conditions, texts…) of the
+  packs loaded before, except those of the new pack and its dependencies, so the palette and the
+  menus only offer what the pack can use.
 - It opens the manifest's entry scene (or, without one, the first scene of the pack) in a tab.
 - It empties the undo history.
 - It writes « Pack « \<id> » ouvert. » in the journal.
@@ -93,9 +96,8 @@ In read-only mode:
   « ＋ Créer à partir d’une zone de la scène… » is disabled;
 - only the content bundled in the build is listed: manifests, `content/**/*.json` and
   `locales/*.json`;
-- you can still edit in memory, validate and playtest, but nothing can be written. Ctrl+S is not
-  blocked: it attempts the save and logs, for each modified file, « Échec de l’enregistrement de
-  \<path> : Studio en lecture seule : le serveur de développement est nécessaire pour enregistrer. ».
+- you can still edit in memory, validate and playtest, but nothing can be written. Ctrl+S only
+  logs « Studio en lecture seule : lancez « npm run dev » pour enregistrer. ».
 
 ---
 
@@ -124,7 +126,7 @@ The left column is 270 px wide, the right column 340 px; the centre takes the re
 | Element | What it does |
 |---|---|
 | « Civilization Studio » | Title only. |
-| « Pack » (tooltip « Civilisation éditée ») | Lists every pack of `civilizations/` as « \<French name> (\<id>) ». Choosing one opens it. When files are modified, the Studio first asks « Des modifications ne sont pas enregistrées. Changer de pack quand même ? »; confirming does **not** discard them ([§11.2](#112-saving)). |
+| « Pack » (tooltip « Civilisation éditée ») | Lists every pack of `civilizations/` as « \<French name> (\<id>) ». Choosing one opens it. When files are modified, the Studio first asks « Des modifications ne sont pas encore enregistrées : elles restent en mémoire et seront écrites au prochain « Enregistrer ». Changer de pack ? »: confirming does **not** discard them ([§11.2](#112-saving)). A pack that cannot be opened is reported in the journal (« Ouverture de « \<id> » impossible : \<error> »). |
 | « ↶ » / « ↷ » | Undo / redo. The tooltips name the step: « Annuler : \<action> (Ctrl+Z) », « Rétablir : \<action> (Ctrl+Y) ». Disabled when there is nothing to undo or redo. |
 | « 💾 Enregistrer » | Writes every modified file; the number of modified files is shown in brackets, e.g. « 💾 Enregistrer (3) ». Tooltip « Enregistrer tous les fichiers modifiés (Ctrl+S) ». Disabled when nothing is modified and in read-only mode. |
 | « ✔ Valider » | Checks the pack ([§9](#9-validation)). Tooltip « Vérifier références, textes et schémas ». |
@@ -154,7 +156,7 @@ open pack the panel shows « Choisissez une civilisation. ».
 | « Règles des mécaniques » | `content/rules.json` | no |
 | « Textes » | `locales/<ll-CC>.json` | no — `locales/fr-FR.json` is created automatically when the first text needs it |
 | « Civilisation et interface » | `manifest.json` | no |
-| « Scripts » | every `.ts` / `.tsx` file of the pack, shown with its path inside the pack | « Nouveau script » ([§8](#8-scripts-and-hot-reload-development-server-only)); the whole group exists only under `npm run dev` |
+| « Scripts » | every `.ts` / `.tsx` file of the pack except those of `seed/` and `tests/` (tools, not pack code), shown with its path inside the pack | « Nouveau script » ([§8](#8-scripts-and-hot-reload-development-server-only)); the whole group exists only under `npm run dev` |
 
 The « ＋ » buttons are shown only when the Studio can save (development server).
 
@@ -167,10 +169,14 @@ scène », « Nouveau : dialogue »…):
 - « Titre » (« Nom du lieu » for a scene), placeholder « En français ». Left empty, the identifier
   is used.
 - For a scene only, « Taille (blocs) »: three numbers X, Y (height) and Z, each between 8 and 256,
-  default 64 × 32 × 64.
+  default 64 × 32 × 64 (otherwise « Taille : de 8 à 256 blocs dans chaque direction. »).
 
 « Créer » (or Enter in « Identifiant ») creates the document in memory and opens it; « Annuler » or
 Échap closes the dialog. As the dialog says: « Le fichier est créé à l’enregistrement (Ctrl+S). »
+The creation is one undo step, together with the texts and the manifest entry created with the
+document (« Nouveau : \<type> \<id> », or « Créer \<file> » for a cinematic or a logic file, which
+create nothing else): undoing it removes the document and closes its tab
+([§11.3](#113-undo-and-redo)).
 
 | New document | Initial content |
 |---|---|
@@ -186,8 +192,7 @@ The Hierarchy lists the entities of the scene being edited (« Aucune scène ouv
 none).
 
 - « Filtrer (identifiant, nom, composant)… » keeps the entities whose id, editor name or component
-  type contains the typed text. Case is ignored, except that a component type with capitals (such
-  as `door.ambientLoop`) only matches through its lower-case parts.
+  type contains the typed text. Case is ignored.
 - Entities are grouped by their « Dossier » value (« Sans dossier » when empty); groups are sorted
   alphabetically and fold with a click on their header. The value is used as is: `Quartier/Maisons`
   is one group, not two nested folders.
@@ -267,16 +272,17 @@ but their behavior is not executed.
 | Hold the middle button and drag | Pan sideways and vertically. |
 | F | Frame the selected entity (the first one of the selection). |
 
-The letters are physical positions: on an AZERTY keyboard the keys are Z / Q / S / D to move and
+These letters are physical positions: on an AZERTY keyboard the keys are Z / Q / S / D to move and
 A / E to go down / up, which is what the hint at the bottom of the view says with « ⬚ Sélection »
-(« Clic droit maintenu + ZQSD/WASD : se déplacer (A/E : descendre/monter, Maj : vite) »). While the
-right button is held, the letter keys move the camera and the other shortcuts of the view are
-suspended. Keys are ignored while the keyboard focus is in a form field; pressing a mouse button in
-the view takes the focus away from fields.
+(« Clic droit maintenu + ZQSD (WASD en QWERTY) : se déplacer, A/E (Q/E en QWERTY) :
+descendre/monter, Maj : vite »). While the right button is held, the letter keys move the camera
+and the other shortcuts of the view are suspended. Keys are ignored while the keyboard focus is in
+a form field; pressing a mouse button in the view takes the focus away from fields.
 
 **Where the camera starts.** Each time a scene opens in the view — including after a script hot
-reload ([§8.4](#84-hot-reload)) — the camera goes to the view saved with « Mémoriser la vue actuelle »
-([§4.5](#45-scene-settings-and-environment)) or, without one, to an overview above the scene.
+reload or a reload of its file from disk ([§8.4](#84-hot-reload)) — the camera goes to the view
+saved with « Mémoriser la vue actuelle » ([§4.5](#45-scene-settings-and-environment)) or, without
+one, to an overview above the scene.
 
 **Picking.** A click hits whichever is nearer under the cursor, an entity or a block (blocks are
 found up to 600 m away).
@@ -310,7 +316,7 @@ keyboard select them as well.
 | « ⌖ Pipette » | 6 | « Prendre le bloc visé (6) » | Makes the clicked block the current block (the tool stays active). |
 
 With a block tool, a yellow wire cube shows the targeted cell: the cell in front of the hovered face
-for « ▣ Poser » and « ▤ Boîte » (for « ▤ Boîte », the hovered block itself while the left Shift key
+for « ▣ Poser » and « ▤ Boîte » (for « ▤ Boîte », the hovered block itself while either Shift key
 is held), the hovered block itself for the others.
 
 Each press–drag–release of « ▣ Poser », « ⌫ Effacer » or « 🖌 Peindre » is one undo step (« Poser
@@ -341,8 +347,8 @@ While a block tool is active, the toolbar shows the current block (swatch and na
 - blocks are grouped by category; click one to make it current;
 - the palette closes when a block is chosen or when the mouse leaves it.
 
-The palette offers the blocks of every pack loaded in the Studio (see
-[§13](#13-limitations) about packs opened earlier).
+The palette offers the blocks of the active pack and of the packs it depends on
+([§1.1](#11-with-the-development-server-full-editor)).
 
 ### 4.4 Snapping and other toolbar groups
 
@@ -354,7 +360,7 @@ scene is open.
 ### 4.5 Scene settings and environment
 
 With a scene open and nothing selected, the Inspector shows the scene. To get there, click with
-« ⬚ Sélection » on a block or on the sky (without Ctrl or Shift).
+« ⬚ Sélection » on a block or on the sky (without Ctrl or Shift), or press Échap in the 3D view.
 
 Section « Scène » (followed by the scene id):
 
@@ -422,7 +428,7 @@ Section « Environnement » (changes appear in the view at once; each is undoabl
 
 - With « ⬚ Sélection »: click an entity to select it; Ctrl+click adds or removes it; Shift+click adds
   it. A click without modifier on anything that is not an entity (a block, the sky) clears the
-  selection.
+  selection, and so does Échap in the 3D view (unless it cancels a box corner, [§4.2](#42-box-tool)).
 - In the Hierarchy: the same clicks; double-click frames the view.
 - The « ◎ » button next to an entity reference ([§5.7](#57-property-fields)) selects that entity.
 
@@ -456,15 +462,15 @@ its mode:
 | « ⟳ Tourner » | E | « Tourner (E) » |
 | « ⤢ Échelle » | R | « Échelle (R) » |
 
-The keys are physical positions (on AZERTY: Z, E, R) and only work while « ⬚ Sélection » is active.
-A drag becomes one undo step when the mouse is released (« Déplacer « \<id> » », « Tourner « \<id> » »,
-« Redimensionner « \<id> » »). Values are rounded to 0.001; rotations are stored in degrees between 0
-and 360.
+The keys are the printed letters W, E and R, on AZERTY as on QWERTY, and only work while
+« ⬚ Sélection » is active. A drag becomes one undo step when the mouse is released (« Déplacer
+« \<id> » », « Tourner « \<id> » », « Redimensionner « \<id> » »). Values are rounded to 0.001;
+rotations are stored in degrees between 0 and 360.
 
 **Snapping** (« Aimantation » group of the toolbar):
 
-- the button « 🧲 0.5 m · 15° » (it shows the current steps; tooltip « Aimanter les déplacements et
-  rotations ») turns snapping on and off — it is on when the Studio starts;
+- the button « 🧲 0.5 m · 15° » (it shows the current steps; tooltip « Aimanter les déplacements,
+  rotations et échelles ») turns snapping on and off — it is on when the Studio starts;
 - « Pas de déplacement »: 0.125, 0.25, 0.5 (default), 1 or 2 m;
 - « Pas de rotation »: 5, 15 (default), 45 or 90°;
 - scaling snaps by 0.25 while snapping is on (this step cannot be changed).
@@ -501,14 +507,16 @@ ses données sont conservées. ».
 
 « ＋ Ajouter un composant… » (at the bottom of the Inspector) lists the components that the entity
 does not have yet, grouped by category (« Divers » when a component has none) and sorted
-alphabetically. Components that the chosen one requires are added at the same time.
+alphabetically; components declared `internal` are not offered. Components that the chosen one
+requires are added at the same time.
 
 Only the values that differ from a component's defaults are written to the scene file.
 
 ### 5.7 Property fields
 
 The fields of components, logic blocks, mechanic settings and several document editors are generated
-from the property declarations of the code. Fields marked as advanced are grouped under « Avancé ».
+from the property declarations of the code, in declaration order. Fields marked as advanced are
+grouped under « Avancé », hidden ones are not shown, and a declaration's `group` is not used.
 
 | Property kind | Field |
 |---|---|
@@ -550,9 +558,12 @@ shown as invalid. Placeholders give the expected form (« pack:objet », « pack
 - **Actions.** A list of blocks, run in order. Each block shows the action's label, « ▾ » / « ▸ »
   to unfold or fold it (actions with more than three parameters start folded and show a summary),
   « ↑ », « ↓ » and « ✕ » (« Retirer l’action »). « ＋ Ajouter une action… » adds an action chosen by
-  category. An unknown type shows « Action inconnue : \<type> ».
-- **Event** (quests and logic rules). A drop-down « Aucun événement » or « \<label> (\<id>) »; when the
-  event has fields, « Filtres (laisser vide pour tout accepter) » follows.
+  category. An unknown type shows « Action inconnue : \<type> ». An unfolded block ends with
+  « Note » (placeholder « Note de conception (jamais montrée aux joueurs) »), a designer note kept
+  with the action; a folded block shows it after its summary (« ✎ \<note> »).
+- **Event** (quests and logic rules). A drop-down « \<label> (\<id>) », with « Aucun événement » in
+  quests only (a logic rule always reacts to an event); when the event has fields, « Filtres
+  (laisser vide pour tout accepter) » follows.
 
 Actions and conditions added by scripts appear in these lists after their pack's code is reloaded
 ([§8.4](#84-hot-reload)).
@@ -563,7 +574,9 @@ Every text the player sees is a localization key; its French text lives in the p
 `locales/fr-FR.json`. A text field shows and edits the French text directly:
 
 - **Key of the active pack**: a text field (a multi-line area for multi-line texts or texts longer
-  than 48 characters). Typing changes the French text; successive keystrokes form one undo step.
+  than 48 characters when the field appears; a single-line field left with more than 48
+  characters becomes a multi-line area). Typing changes the French text; successive keystrokes
+  form one undo step.
 - **No key yet**: the button « ＋ Écrire un texte » creates a key and lets you type its text.
 - **Key of another pack** (for example `core`): the text is shown read-only, with « Copier ici »
   (tooltip « Créer une copie modifiable de ce texte dans ce pack »), which creates a key of the active
@@ -607,8 +620,8 @@ inside it (positions made relative to the minimal corner); each dimension must b
 blocks (« Chaque dimension doit être comprise entre 1 et 64 blocs. »), and an existing prefab file
 is refused (« Le fichier existe déjà : \<path> »). The prefab gets the category « Créés dans le
 Studio ». The journal says « Préfabriqué « \<name> » créé (\<X> × \<Y> × \<Z> blocs, \<n>
-entités). Enregistrez pour l’écrire sur le disque. »: the file is written on the next save. This
-creation is not an undo step.
+entités). Enregistrez pour l’écrire sur le disque. »: the file is written on the next save. The
+creation is one undo step (« Créer content/prefabs/\<id>.prefab.json »).
 
 **Placing a prefab.** « ❖ Préfabriqués » lists, under « Placer devant la caméra », the prefabs of the
 active pack (« Aucun préfabriqué dans ce pack. » when there are none). Choosing one pastes it with
@@ -643,7 +656,8 @@ every node to the automatic layout).
 **Graph.**
 
 - Nodes are laid out in columns by their distance from the start node, unless you dragged them:
-  drag a node to move it; its position is saved in the dialogue file.
+  drag a node to move it; its position is saved in the dialogue file (a click without dragging
+  changes nothing).
 - Arrows: grey for « then » links, blue for player choices, dashed purple for conditional branches.
 - A node shows its speaker (« Narration », « Joueur », a speaker declared by the dialogue, the name
   of an NPC entity, or « Sans locuteur »), the badges « début » and « fin », its id, its line and its
@@ -685,7 +699,9 @@ every node to the automatic layout).
 **« Suite »** (only for nodes without choices):
 
 - « Branches » (tooltip « La première condition vraie choisit la suite »): each branch is « Si… » a
-  condition, « alors » a node. « ＋ Branche » adds one with an always-true condition.
+  condition, « alors » a node. « ＋ Branche » adds one with an always-true condition (and removes the
+  node's « fin »). A branch always has a condition: its « ✕ » (« Retirer la condition ») sets it
+  back to « Toujours vrai ».
 - « Sinon / ensuite »: the next node, or « — fin du dialogue — », which marks the node as an end.
 
 ### 7.2 Quest editor
@@ -700,20 +716,25 @@ Heading « Quête — \<title> ».
   quand » (« Tous les objectifs obligatoires sont remplis » / « Un seul objectif suffit (solutions
   alternatives) »), its objectives, « ＋ Objectif » (text « Nouvel objectif ») and « À la fin de
   l’étape » (actions). « ＋ Étape » adds a stage (« Nouvelle étape. »). The last remaining stage
-  cannot be deleted.
+  cannot be deleted (its « ✕ » is disabled).
 - **Objective** (block « Objectif » with an id field and the list buttons): « Texte »; « Options »
   (« Facultatif », « Caché »); « Rempli quand » (a condition); « Ou à l’événement » (an event);
   « Progression » (tooltip « Affiche « valeur / total » à partir d’une variable »: a variable, then
-  the total); « Cible (repère) » (the entity the objective points at, and its scene).
+  the total); « Cible (repère) » (the entity the objective points at, and its scene). In the game,
+  the target of each open objective of the quest shown by the objective tracker gets an on-screen
+  marker with its distance while the player is in that scene (in any scene holding the entity when
+  no scene is set); the game setting « Afficher les repères d’objectif » turns markers off.
 - **« Fin et échec »**: « À la fin de la quête » (actions), « Échoue quand » (a condition) and,
   once a failure condition is set, « En cas d’échec » (actions).
 
 ### 7.3 Cinematic editor
 
 The 3D view stays visible above the editor and previews the camera at the playhead, computed with
-the same function as the game (an entity followed by the camera is taken from the edited scene).
-While the cinematic is the active tab, the view is moved back to that pose whenever the editor
-redraws.
+the same function as the game, keys in time order even when the file stores them in another order
+(an entity followed by the camera is taken from the edited scene).
+The view is moved to that pose, with its field of view, whenever the playhead or the cinematic
+changes; in between, the editor camera stays free. Leaving the cinematic's tab gives the view its
+own field of view (70°) back.
 
 **Toolbar.**
 
@@ -731,25 +752,28 @@ The subtitle under the playhead is shown above the timeline.
 
 **Timeline.** One lane per track: « Caméra », « Sous-titres », « Acteur : \<entity> », « Sons et
 musique », « Effets d’écran », « Actions »; « ✕ » on a track label (« Supprimer la piste ») deletes
-the track. Click the time ruler (the row labelled « Temps (s) ») or an empty part of a lane to move the
-playhead. Click a key to inspect it (the playhead jumps to it), or a subtitle bar to inspect it; drag
-either to change its time (rounded to 0.1 s; undo step « Déplacer une clé »).
+the track. Click the time ruler (the row labelled « Temps (s) ») or an empty part of a lane to move
+the playhead. Click a key to inspect it (the playhead jumps to it), or a subtitle bar to inspect it;
+drag either to change its time (rounded to 0.1 s; undo step « Déplacer une clé »). A click without
+dragging records nothing.
 
 **Right panel, no key selected: « Cinématique ».** « Titre (éditeur) », « Durée (s) » (0.5 to
-300), « Le joueur peut la passer », « Bandes noires », « Joueur immobilisé », « Interface masquée »,
-« Retour caméra » (« Fondu vers le joueur » / « Coupe franche »). The help text reminds that actions
-marked « essentielles » and the end actions run even if the player skips the cinematic.
+300), « Le joueur peut la passer », « Bandes noires », « Joueur immobilisé », « Interface masquée »
+(the HUD is hidden while it plays, notifications and place titles included; notifications raised
+meanwhile are shown after it), « Retour caméra » (« Fondu vers le joueur » / « Coupe franche »). The
+help text reminds that actions marked « essentielles » and the end actions run even if the player
+skips the cinematic.
 
 **Right panel, key selected** (header: track name and « Supprimer »):
 
 | Track | Fields |
 |---|---|
-| Caméra | « Temps (s) », « Position », « Regarde », « Ou suit l’entité », « Champ (°) » (10–120), « Courbe » (easing), « Coupe franche (pas d’interpolation) », « Prendre la vue actuelle » |
+| Caméra | « Temps (s) », « Position », « Regarde », « Ou suit l’entité », « Champ (°) » (10–120; a key without a value — such as those added by « ＋ Clé caméra (vue actuelle) » — keeps the last field of view set before it in time, or 70°: the field shows that value, with the tooltip « Hérité de la clé précédente (70° pour la première). » on its label), « Courbe » (easing), « Coupe franche (pas d’interpolation) », « Prendre la vue actuelle » |
 | Sous-titres | « Temps (s) », « Durée (s) », « Locuteur » (tooltip « Clé du nom (ex. memory.npc.oriane) ou entité ; vide : narration »), « Texte » |
 | Acteur | « Entité », « Temps (s) », « Animation », « Expression », « Regarde », « Va vers », « Dit (bulle) », « ＋ Clé d’acteur » (a key 1 s after the last one) |
 | Sons et musique | « Temps (s) », « Son », « Musique », « Source (entité) » |
 | Effets d’écran | « Temps (s) », « Effet » (« Fondu », « Éclair », « Secousse », « Teinte »), « Couleur », « Opacité de / vers » (fade), « Durée (s) », « Intensité » (shake) |
-| Actions | « Temps (s) », « Essentielle (s’exécute même si la cinématique est passée) », the actions |
+| Actions | « Temps (s) », « Essentielle (s’exécute même si la cinématique est passée) » (ticked unless the item is marked `essential: false`: items are essential by default), the actions |
 
 Below the timeline, « À la fin (même si le joueur passe la cinématique) » holds the end actions.
 
@@ -791,7 +815,8 @@ Heading « Personnages »: the list of character appearances, their fields, and 
   « Enfant », « Âgé »; « Taille »), « Peau », « Yeux », « Cheveux » (« Coiffure », « Couleur »),
   « Visage » (« Sourcils », « Taches de rousseur », « Joues rosées », « Cicatrice », « Rides »),
   « Vêtements » (« Tenue », « Haut », « Bas », « Chaussures », « Accent »), « Accessoires »,
-  « Attitude » (« Calme », « Nerveux », « Fier », « Fatigué », « Enjoué »), « Hauteur de voix (bips) ».
+  « Attitude » (« Calme », « Nerveux », « Fier », « Fatigué », « Enjoué »), « Hauteur de voix » (stored
+  but unused: dialogues have no voice, only French subtitles, as its help text says).
 - « Supprimer le personnage ». Without characters: « Aucun personnage. ».
 
 ### 7.7 Mechanic rules editor
@@ -809,17 +834,20 @@ Heading « Textes français — \<pack> », with the number of texts.
   autres textes : affinez la recherche. »).
 - A key field (placeholder `<pack>.nouvelle.cle`) and « ＋ Clé » add an empty key (letters, digits,
   `.`, `_`, `-`; the button stays disabled for an invalid or existing key).
-- The table « Clé » / « Texte »: edit the text in place (empty texts are flagged; texts longer than
-  60 characters get a multi-line area). « ✕ » (tooltip « Supprimer la clé (vérifiez d’abord qu’elle
-  n’est plus utilisée : « Valider ») ») deletes a key.
+- The table « Clé » / « Texte »: edit the text in place, in a multi-line area whose height follows
+  the text (up to six lines; empty texts are flagged). « ✕ » (tooltip « Supprimer la clé (vérifiez
+  d’abord qu’elle n’est plus utilisée : « Valider ») ») deletes a key.
 
 ### 7.9 Civilization and interface (manifest)
 
 Heading « Civilisation « \<id> » ». Left column:
 
-- **« Identité »**: « Nom », « Accroche », « Description » (texts), « Version du pack », « API du
-  moteur » (tooltip « Plage semver de l’API du moteur pour laquelle le pack est écrit »), « Ordre dans
-  la sélection ».
+- **« Identité »**: « Nom », « Accroche », « Description » (texts), « Version du pack » (`x.y.z`,
+  optionally followed by a pre-release suffix such as `-beta.1`; another form makes the manifest
+  invalid), « API du moteur » (tooltip « Plage semver de l’API du moteur pour laquelle le pack est
+  écrit »), « Version de l’état » (`stateVersion`, an integer from 1: the version of the
+  civilization's saved state, to raise with a matching migration in `pack.ts`, as its tooltip
+  says), « Ordre dans la sélection ».
 - **« Point d’entrée »**: « Scène » and « Apparition » (a spawn point) where a new game starts.
 - **« Multivers »**: « Écritures globales autorisées » (paths such as `fragments.mon_fragment`) and
   « Fragments du registre multiversel » (each: « Identifiant », « Nom », « Indice », « Icône »).
@@ -841,7 +869,7 @@ Right column:
 Heading « Préfabriqué — \<name> »: « Nom », « Catégorie », « Contenu » (size in blocks or « sans
 blocs », and the entity ids), and « Placer dans la scène ouverte » (disabled without an open scene),
 which pastes the prefab in front of the editor camera as described in [§6](#6-prefabs) and then shows
-a scene tab.
+the tab of that scene.
 
 ---
 
@@ -878,7 +906,7 @@ condition lists, « Règles des mécaniques »).
 
 | Template | What it defines |
 |---|---|
-| « Comportement (composant d’entité) » | A component the player can interact with: an interaction prompt, a message and a list of actions run on interaction. |
+| « Comportement (composant d’entité) » | A component the player can interact with: an interaction prompt, a message and a list of actions run on interaction, and an aim zone (« Zone de visée (m) ») so that it can be used without a model. |
 | « Action de logique » | An action with a « Message » property that shows a notification. |
 | « Condition de logique » | A condition « Variable » ≥ « Valeur minimale ». |
 | « Mécanique (règle du monde) » | A mechanic with a saved, versioned state counting the interactions. |
@@ -889,7 +917,10 @@ Scripts open in a Monaco editor (dark theme). Its bar shows:
 
 - the file path, followed by ● while the file is modified;
 - « Vérifier les types » (« Vérification… » while it runs);
-- « Enregistrer et recharger (Ctrl+S) », enabled while the file is modified.
+- « Enregistrer et recharger (Ctrl+S) », enabled while the file is modified — or, for a file the
+  Studio may not save, the badge « Lecture seule » (tooltip « Ce fichier n’est pas dans un dossier
+  modifiable par le Studio (mechanics, ui, view, assets, models) : modifiez-le dans votre éditeur de
+  code. »); such a file opens read-only.
 
 Under the code, the type-check results: « Vérification des types en cours… », « Aucune erreur de type
 dans la version enregistrée. », or one line per problem (« \<line>:\<column> \<message> »); click a line
@@ -905,10 +936,10 @@ to jump to it. Problems are also underlined in the code.
 - **Undo** inside the code editor is the editor's own (Ctrl+Z with the focus in the code). Script
   edits are not part of the Studio's history, and a script stays modified until saved, even if you
   undo back to its saved text.
-- **Which scripts can be saved**: files under `mechanics/` and `ui/` (the dev API also accepts
-  `scripts/`). Other script files of the pack (`pack.ts`, `assets/`, `view/`, `core`'s `models/`,
-  `seed/`, `tests/`) are listed and can be edited, but saving them fails with « Écriture interdite
-  hors de : content, mechanics, ui, locales, scripts. ».
+- **Which scripts can be saved**: files under `mechanics/`, `ui/`, `view/`, `assets/` and `models/`
+  — the code folders that `pack.ts` loads. The Studio and the dev server share these rules
+  (`src/engine/platform/devApiRules.ts`): any other script of the pack, such as `pack.ts`, opens
+  read-only.
 
 ### 8.4 Hot reload
 
@@ -925,14 +956,16 @@ except files under `seed/`, under `tests/` and `*.test.ts` files:
    ([§3](#3-navigating-the-3d-view)).
 
 If the new code cannot be loaded (for example a syntax error), the journal shows « Rechargement du
-code impossible : \<error> ». The pack's definitions and texts are then unloaded in the Studio —
-components show as unknown and texts as keys — until a later save loads correctly. Type errors alone
-do not prevent loading.
+code impossible : \<error> » and the Studio keeps the pack's previous definitions and texts until a
+later save loads correctly. Type errors alone do not prevent loading.
 
-JSON files of `content/` and `locales/` changed by another program are handled too:
+JSON files of `content/` and `locales/`, and `manifest.json`, changed by another program are handled
+too:
 
 - a document already read by the Studio (all JSON documents of the opened pack and its
   dependencies are) and without unsaved changes is reloaded (« Rechargé depuis le disque : \<path> »);
+  when it is the edited scene, the 3D view is rebuilt from it, blocks included (the selection is
+  cleared and the camera returns to the scene's memorized view);
 - a document with unsaved changes is kept, with the warning « Modifié sur le disque pendant que vous
   l’éditiez : \<path> » (the next save of that file will be refused, [§11.5](#115-conflicts-and-changes-made-outside-the-studio));
 - created or deleted files appear in or disappear from the Explorer (a deleted file that holds
@@ -946,11 +979,16 @@ JSON files of `content/` and `locales/` changed by another program are handled t
 
 - The pack and its dependencies are loaded in a separate, headless game session from the Studio's
   working copies — unsaved changes included. The pack's code is the version last saved and compiled.
-- The checks are those of `npm run validate`: content schemas; references (dialogues, quests,
-  cinematics, scenes, spawn points, entities, items, character appearances, models, blocks, sounds,
-  music, panels, abilities, component, action and condition types, events); variables written
-  outside the civilization's namespace; every player-visible text key exists in French, including
-  keys written literally in the pack's scripts (`t('…')`).
+- The checks are those of `npm run validate`: the schema of every content file (a file other than
+  a scene that fails it is left out of the pack, so the references to what it defines are reported
+  as unknown too); document ids that differ from their file name (warnings), definition ids of the
+  wrong form in the pack's scripts and a missing French table; references
+  (dialogues, quests, cinematics, scenes, spawn points, entities, items, character appearances,
+  models, blocks, sounds, music, panels, abilities, component, action and condition types, events);
+  variables written outside the civilization's namespace; mechanics that fail to start, and the
+  settings of `content/rules.json` against those each mechanic declares; every player-visible text
+  key exists in French, including those of `rules.json` and keys written literally in the pack's
+  scripts (`t('…')`).
 - The window shows « Validation de la civilisation… »; then the journal logs « Validation : \<n>
   erreur(s), \<m> avertissement(s). » and the console switches to « Problèmes ».
 
@@ -974,7 +1012,9 @@ The playtest runs the real game — the same controller, renderer, camera, audio
 | « ▶ Depuis le début » | A new run from the manifest's entry scene and spawn point, as a new game. |
 
 **What is tested.** The Studio's working copies of the pack and its dependencies — unsaved changes
-included. Scripts: the version last saved and compiled; unsaved script edits are not tested.
+included. Scripts: the version last saved and compiled; unsaved script edits are not tested, and
+starting a test with modified scripts logs « Scripts non enregistrés (\<files>) : le test utilise
+leur dernière version enregistrée. ».
 
 **During the test.**
 
@@ -986,11 +1026,16 @@ included. Scripts: the version last saved and compiled; unsaved script edits are
 - « ↺ Recommencer » starts a new run with a new game session.
 - Leaving the game for its menus — for example « Quitter vers le menu » in its pause menu — also
   ends the test.
-- Errors and warnings of the game session appear in the Studio's journal, prefixed with « [test] ».
-- The Studio's shortcuts are disabled and its 3D view is paused.
+- Errors and warnings of the game session appear in the Studio's journal, prefixed with « [test] »
+  (logic actions and conditions that fail included).
+- F3 shows the game's development overlay (under `npm run dev`): position, target, quests,
+  mechanics, variables, missing texts and the latest logic executions (« Logique récente »).
+- The Studio's shortcuts are disabled, except Ctrl+S, which saves the Studio's modified files; its
+  3D view is paused.
 
 **Saves and settings.** Saves made during a test (pause menu « Sauvegarder », quick save) are kept in
-memory and discarded when the test stops or restarts; the game's own saves are not touched. Settings
+memory and discarded when the test stops or restarts; the game's own saves are neither read nor
+touched, so a test starts with an empty multiverse. The test uses the game's settings: those
 changed in the pause menu « Paramètres » are stored in the browser like the game's settings.
 
 The journal shows « Test de « \<scene> » depuis la caméra de l’éditeur. » or « Test de « \<pack> »
@@ -1021,11 +1066,13 @@ makes the browser ask for confirmation.
 - the live blocks of the edited scene are written into its document first;
 - JSON files are written with two-space indentation and a final newline;
 - new documents (« Nouveau : … », prefabs, the French table created for a first text) are written on
-  their first save.
+  their first save;
+- a document whose creation was undone is not written; if it had already been saved, its file is
+  deleted (the dev server keeps it in `.civ-backups/`, [§11.6](#116-backups)).
 
 Every modified document held in memory is saved, including those whose tab is closed and those of a
-pack you switched away from: changing pack does not discard working copies, it only empties the undo
-history.
+pack you switched away from: changing pack does not discard working copies (it empties the undo
+history and unloads the previous pack's definitions, [§1.1](#11-with-the-development-server-full-editor)).
 
 ### 11.3 Undo and redo
 
@@ -1036,11 +1083,11 @@ history.
   status bar name the step.
 - Continuous edits form one step: typing in a field, moving a slider or a colour picker (changes of
   the same field less than 1.2 s apart are merged), a gizmo drag, a block stroke. Compound operations
-  (adding an entity with its texts, a new dialogue choice with its text, placing a prefab…) are one
-  step as well.
+  (adding an entity with its texts, a new dialogue choice with its text, creating a document with its
+  texts and manifest entry, placing a prefab…) are one step as well; creating a prefab is one step
+  too.
 - The history keeps 300 steps and is emptied when a pack is opened.
-- Not in the history: script edits ([§8.3](#83-code-editor)), the creation of documents and prefabs
-  (only the texts and manifest entry created with a document are undoable), « Nouveau script ».
+- Not in the history: script edits ([§8.3](#83-code-editor)) and « Nouveau script ».
 
 ### 11.4 Where files are written
 
@@ -1051,13 +1098,13 @@ history.
 | Items, characters, mechanic settings | `content/items.json`, `content/characters.json`, `content/rules.json` |
 | French texts (always those of the active pack) | `locales/fr-FR.json` |
 | Pack settings, HUD, theme | `manifest.json` |
-| Scripts | `mechanics/`, `ui/` |
+| Scripts | `mechanics/`, `ui/`, `view/`, `assets/`, `models/` |
 
 All paths are relative to `civilizations/<pack>/`. The dev file API writes only the pack's
-`manifest.json` and files under `content/`, `mechanics/`, `ui/`, `locales/` and `scripts/`, with the
-extensions `.json`, `.ts` and `.tsx`. It refuses to write invalid JSON (« JSON invalide, fichier non
-écrit : … »). Each write goes to a temporary file that is then renamed over the target, so a file is
-never left half-written.
+`manifest.json` and files under `content/`, `locales/`, `mechanics/`, `ui/`, `view/`, `assets/` and
+`models/`, with the extensions `.json`, `.ts` and `.tsx` (never `pack.ts`, `seed/` or `tests/`). It
+refuses to write invalid JSON (« JSON invalide, fichier non écrit : … »). Each write goes to a
+temporary file that is then renamed over the target, so a file is never left half-written.
 
 ### 11.5 Conflicts and changes made outside the Studio
 
@@ -1080,28 +1127,30 @@ of the repository, under the same path with a timestamp:
 .civ-backups/civilizations/door/content/scenes/verrou.scene.json.2026-10-12T05-32-02-397Z.write.bak
 ```
 
-A file deleted through the API is moved there as `….delete.bak` (the Studio has no command that
-deletes files). `.civ-backups/` is ignored by git and never cleaned automatically. To restore a
-version, copy the backup over the file. « Nouveau script » creates no backup: it refuses to replace an
-existing file.
+A file deleted through the API is moved there as `….delete.bak` (the Studio deletes a file only
+when the creation of an already saved document is undone, [§11.2](#112-saving)).
+`npm run civ -- seed <pack> --force` keeps the files it replaces there too, as `….seed.bak`.
+`.civ-backups/` is ignored by git and never cleaned automatically. To restore a version, copy the
+backup over the file. « Nouveau script » creates no backup: it refuses to replace an existing file.
 
 ---
 
 ## 12. Keyboard and mouse reference
 
-Shortcuts are matched by **physical key position** (`KeyboardEvent.code`), named after a QWERTY
-layout. On an AZERTY keyboard:
+Letter shortcuts — Ctrl+S, Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z, Ctrl+D and the gizmo keys W, E, R — follow
+the **letter printed on the key** (`KeyboardEvent.key`): they are the same on AZERTY and QWERTY
+keyboards. Camera flight and the tool keys follow the **physical key position**
+(`KeyboardEvent.code`), named after a QWERTY layout. On an AZERTY keyboard:
 
-| Shortcut (QWERTY name) | Key to press on AZERTY |
+| Camera key (QWERTY position) | Key to press on AZERTY |
 |---|---|
-| W (gizmo « Déplacer »; camera forward) | Z |
-| A (camera left) | Q |
-| Q (camera down) | A |
-| Ctrl+Z (undo) | Ctrl + the key printed W — which browsers use to close the tab: on AZERTY, use « ↶ » to undo |
-| Ctrl+Shift+Z (redo) | use Ctrl+Y instead |
+| W (forward) | Z |
+| A (left) | Q |
+| Q (down) | A |
 
-E, R, S, D, F, Y and the digit row are in the same place on both layouts. Tool keys are the 1–6 keys
-of the main keyboard's top row, with or without Shift; the numeric keypad does not select tools.
+S, D, E and the arrows are in the same place on both layouts, and so are F (frame), Delete,
+Backspace and Échap, also matched by position. Tool keys are the 1–6 keys of the main keyboard's
+top row, with or without Shift; the numeric keypad does not select tools.
 
 When a shortcut applies:
 
@@ -1109,11 +1158,11 @@ When a shortcut applies:
   checkbox, slider — or in the code editor (except Ctrl+S). Click the 3D view to give it the focus back.
 - **"View" shortcuts** need, in addition, the 3D view to be displayed (a scene or cinematic tab is
   active, or no tab), and the right mouse button not to be held.
-- **All Studio shortcuts are disabled during a playtest.**
+- **During a playtest**, Ctrl+S is the only Studio shortcut that works (F8 stops the test).
 
 | Keys | Condition | Action |
 |---|---|---|
-| Ctrl+S | anywhere (also in fields) | Save all modified files. In the code editor: save that script only. |
+| Ctrl+S | anywhere (also in fields and during a playtest) | Save all modified files. In the code editor: save that script only (nothing for a read-only script). In read-only mode: only the warning « Studio en lecture seule : lancez « npm run dev » pour enregistrer. » |
 | Ctrl+Z | not in a field | Undo |
 | Ctrl+Y, Ctrl+Shift+Z | not in a field | Redo |
 | Ctrl+D | view | Duplicate the selected entities |
@@ -1121,7 +1170,7 @@ When a shortcut applies:
 | 1 … 6 | view | « ⬚ Sélection », « ▣ Poser », « ⌫ Effacer », « 🖌 Peindre », « ▤ Boîte », « ⌖ Pipette » |
 | W, E, R | view, « ⬚ Sélection » active | Gizmo « ✥ Déplacer », « ⟳ Tourner », « ⤢ Échelle » |
 | F | view | Frame the selected entity |
-| Échap | view | Cancel the first corner of a box |
+| Échap | view | Cancel the first corner of a box; otherwise clear the selection |
 | Right button held + mouse | 3D view | Look around |
 | Right button held + W A S D / arrows, Q / E, Shift | 3D view | Fly; down / up; faster |
 | Wheel (Shift: bigger steps) | 3D view | Forward / back |
@@ -1145,17 +1194,9 @@ When a shortcut applies:
 
 - One scene is edited at a time. The size of a scene is chosen at creation and cannot be changed.
 - The 3D view renders with a fixed quality preset; it has no settings.
-- Échap does not clear the selection: it only cancels a pending box corner. To deselect, click a block
-  or the sky with « ⬚ Sélection ».
 - The gizmo works on one entity at a time; a multiple selection is moved with « Décaler de ».
 - Snapping applies to gizmo drags only; new entities are rounded to 0.5 m and prefabs to whole blocks
   regardless of it. The scale step (0.25) cannot be changed.
-- When the edited scene's file is changed on disk by another program and reloaded, its entities and
-  environment are refreshed in the view, but its blocks are not. A later block edit, once saved,
-  writes the Studio's blocks back over the outside change (the overwritten version is in
-  `.civ-backups/`). Reload the page after editing an open scene file outside the Studio.
-- After previewing a cinematic whose camera keys use another field of view than 70° (keys created
-  with a new cinematic use 60°), the 3D view keeps that field of view until the page is reloaded.
 - « ▤ Boîte » is limited to 200 000 blocks per box; prefabs to 64 blocks per axis.
 - The block palette and the « ＋ Ajouter » and « ❖ Préfabriqués » menus close as soon as the mouse
   leaves them.
@@ -1163,44 +1204,25 @@ When a shortcut applies:
 **Documents**
 
 - There is no command to delete, rename or move a document, nor to discard the unsaved changes of one
-  file. A document created by mistake is written by the next save unless the page is reloaded without
-  saving (which loses every other unsaved change too).
-- Creating a document is not undoable. For a scene, a dialogue or a quest, undo removes only the texts
-  (and, for a scene, the manifest entry) created with it; a new cinematic or logic file records no
-  undo step at all, so Ctrl+Z right after creating one undoes the previous, unrelated change.
+  file. A document created by mistake can be removed by undoing its creation while that step is
+  still in the history ([§11.3](#113-undo-and-redo)); otherwise it is written by the next save unless
+  the page is reloaded without saving (which loses every other unsaved change too).
 - `items.json`, `characters.json` and `rules.json` cannot be created from the Studio.
+- The dialogue editor has no field for a dialogue's title or its declared speakers (`speakers`): edit
+  them in the JSON file.
 - Renaming an entity, an item, a character, a quest stage or objective, or a dialogue choice does not
   update the references to it. Renaming a dialogue node updates the links of that dialogue only. Run
-  « ✔ Valider » after renaming.
+  « ✔ Valider » after renaming: it reports unknown entities, items and appearances, but it does not
+  check the stage, objective, node or choice ids that conditions and actions name, nor the paths of
+  « Écritures globales autorisées ».
 - Deleting an entity, a node or an item leaves its text keys in the French table; the « Textes »
   editor deletes keys one by one.
 - Copies of entities share the text keys of their originals ([§5.8](#58-texts-and-localization-keys)).
-- Clicking a dialogue node, or a key of the cinematic timeline, records a move (an undo step, and the
-  document becomes modified) even when it is not dragged. In a dialogue, it also fixes the node's
-  position, which « Réorganiser » releases.
-- Inside a dialogue branch, the « ✕ » of the branch's condition does nothing (a branch always has a
-  condition); delete the branch with its own « ✕ ». In a logic rule, choosing « Aucun événement » in
-  « Quand » is ignored. The « ✕ » of the last stage of a quest does nothing.
 - Clicking a problem of the « Problèmes » list opens its file, not the entity or field named in its
   location.
-- « Placer dans la scène ouverte » (prefab editor) places the prefab in the edited scene, then shows
-  the first scene tab, which can be another scene when several are open.
-
-**Text fields**
-
-- In a single-line text field, the field becomes a multi-line area when the text passes 48 characters
-  (60 in the « Textes » table) and the cursor leaves it: click the field again to continue typing.
-- « Étiquettes » removes a comma or a space as soon as it is typed at the end of the field, so tags
-  cannot be typed one after the other: paste the whole list (`garde, ronde`), or type the comma
-  between two letters already typed.
-- In « Taille (blocs) » (new scene), each keystroke is immediately limited to 8–256, so a value such
-  as 128 cannot be typed digit by digit from an empty field: use the field's arrows or edit the
-  existing digits.
 
 **Keyboard**
 
-- Shortcuts follow QWERTY key positions ([§12](#12-keyboard-and-mouse-reference)): on AZERTY, Ctrl+Z
-  does not undo (use « ↶ »), and the tooltips « (W) » and « Ctrl+Z » name QWERTY keys.
 - Shortcuts are ignored while the focus is in any form control, including checkboxes, sliders and
   drop-down lists: Ctrl+Z right after ticking a checkbox does nothing. Click the 3D view (or outside
   the form controls) first, or use « ↶ ».
@@ -1209,34 +1231,29 @@ When a shortcut applies:
 **Packs**
 
 - Switching pack keeps the previous pack's working copies in memory (they are saved by the next
-  « 💾 Enregistrer ») and does not unload the previous pack's definitions: its blocks, components,
-  actions and conditions stay offered in the palette and menus until the page is reloaded. Validation
-  reports the ones the active pack cannot use.
+  « 💾 Enregistrer »).
 - The Studio cannot create a pack: use `npm run civ -- new-pack <id> [--name "<nom>"]`, then reload
   the Studio.
 - « ✔ Valider » and « ▶ Depuis le début » only apply to civilization packs; `core` is a library.
 - `npm run civ -- seed <pack> --force` regenerates a pack's content from its `seed/` scripts and
-  overwrites the files edited in the Studio, without backup.
-- Changes to `manifest.json` made outside the Studio are not among the changes the Studio reloads
-  automatically ([§8.4](#84-hot-reload) covers `content/`, `locales/` and scripts).
+  overwrites the files edited in the Studio (each replaced file is kept in `.civ-backups/`,
+  [§11.6](#116-backups)).
 
 **Scripts**
 
 - The code editor and type checking exist only under `npm run dev`. Type checking reads the saved file
   on disk.
-- The « Scripts » group also lists the files of `seed/` and `tests/`, although they are not part of
-  the pack's code. They cannot be saved, and type checking a `seed/` file fails (« Vérification
-  impossible : … »; the panel then stays on « Vérification des types en cours… »).
-- Only scripts under `mechanics/` and `ui/` (and `scripts/`) can be saved; `pack.ts`, `assets/`,
-  `view/` and `models/` files can be edited but not saved. A file whose save failed stays modified
+- Only scripts under `mechanics/`, `ui/`, `view/`, `assets/` and `models/` can be saved; `pack.ts`
+  opens read-only. A file whose save failed (after a change on disk, for example) stays modified
   until the page is reloaded.
 - CSS and Markdown files of a pack are not listed and cannot be edited.
 - A script changed by another program is not refreshed in the code editor (its pack's code is
   reloaded, but the editor keeps the old text, and saving from it is then refused as a conflict).
-- After a failed code reload, the pack's definitions and texts stay unloaded in the Studio until a
-  correct version is saved ([§8.4](#84-hot-reload)).
+- After a failed code reload, the Studio keeps running the pack's previous code until a version that
+  loads is saved ([§8.4](#84-hot-reload)).
 
 **Read-only mode and playtest**
 
 - In read-only mode nothing can be saved, and scripts are not available.
-- Playtest saves are discarded; settings changed during a test are kept by the browser.
+- Playtest saves are discarded and a test starts with an empty multiverse; settings changed during a
+  test are kept by the browser.

@@ -15,7 +15,7 @@ Main sources:
 | `src/engine/core/sim/behaviorSystem.ts` | Per-entity component state capture and restore |
 | `src/engine/core/state/multiverse.ts`, `src/engine/core/state/variables.ts` | Global state, story variables |
 | `src/engine/core/story/quests.ts`, `src/engine/core/story/dialogue.ts` | Quest and dialogue snapshots |
-| `src/game/controller.ts`, `src/game/hud/Pause.tsx`, `src/game/hud/Hud.tsx`, `src/game/screens/Menus.tsx` | Slots, autosave, save/load UI |
+| `src/game/controller.ts`, `src/game/hud/Pause.tsx`, `src/game/hud/Hud.tsx`, `src/game/screens/Menus.tsx` | Slots, autosave, autosave preloaded at startup, save/load UI |
 
 Versioning rules for the whole project (engine, API, packs, documents) are in
 [VERSIONING.md](VERSIONING.md).
@@ -57,6 +57,12 @@ load:  GameController.loadSlot(slot)
          → parseSave(raw)                             format checks, engine migrations, Zod validation
          → GameSession.applySaveGame(save)            replaces the multiverse and the civilization states in memory
          → GameSession.loadCivilization(currentCiv)   pack migration, restore, scene entry
+
+start: GameController.create()                        the game only, not a Studio playtest (section 3.1)
+         → GameController.preloadAutosave()
+         → SaveStorage.load('auto')
+         → parseSave(raw)
+         → GameSession.applySaveGame(save)            no civilization is started
 ```
 
 ## 2. Storage backends
@@ -83,7 +89,8 @@ export interface SaveStorage {
 
 `load()` returns the parsed JSON as `unknown`: storages never validate content. Validation is done
 by `parseSave()` (section 7.1). Both implementations store the save as a JSON string produced by
-`JSON.stringify` and read it back with `JSON.parse`.
+`JSON.stringify` and read it back with `JSON.parse`; `BrowserSaveStorage` reports a stored text
+that is not valid JSON (section 2.2).
 
 `slotInfo(save)` builds the summary shown in menus. Its `playTime` is the sum of
 `civs[*].playTime` (local play time of every civilization in the save, in seconds).
@@ -106,13 +113,20 @@ Fallback rules:
 
 - If `indexedDB` is undefined when the storage is constructed (or `createStore` throws), the
   instance uses localStorage from the start.
-- Every operation goes through `useFallback(fn, fb)`. If the IndexedDB variant throws, the storage
-  logs `[sauvegarde] IndexedDB indisponible, repli sur localStorage` with `console.warn`, sets
-  `fallback = true` for the lifetime of the instance, and runs the localStorage variant.
+- Every operation goes through `useFallback(fn, fb)`, where `fn` is only the IndexedDB call
+  (`entries`, `get`, `set` or `del`). If that call throws, the storage logs
+  `[sauvegarde] IndexedDB indisponible, repli sur localStorage` with `console.warn`, sets
+  `fallback = true` for the lifetime of the instance, and runs the localStorage variant. Stored
+  texts are parsed outside `useFallback`, so a damaged entry never switches the storage.
 - `idb-keyval` opens the database lazily, on the first operation, so an IndexedDB that exists but
   cannot be opened is detected by the first `list`, `load`, `save` or `delete`.
 - The two stores are never merged or copied into each other.
-- `list()` parses every stored entry and returns the summaries sorted by `savedAt`, newest first.
+- `list()` parses every stored entry (`summaries()`) and returns the summaries sorted by `savedAt`,
+  newest first. An entry that cannot be summarized (not valid JSON, or without `civs`) is left
+  out, with the console warning `[sauvegarde] emplacement « <slot> » illisible`.
+- `load()` returns `null` for an empty slot. When the stored text is not valid JSON
+  (`parseStored()`), it throws the `SaveLoadError`
+  `La sauvegarde « <slot> » est endommagée (données illisibles).`
 
 ### 2.3 In memory: `MemorySaveStorage`
 
@@ -149,7 +163,7 @@ const AUTOSAVE_SECONDS = 120;
 
 | Slot | Written by | Shown in |
 |---|---|---|
-| `auto` | Autosave (section 3.2) | Load menu, main-menu « Continuer » button |
+| `auto` | Autosave (section 3.2) | Load menu, main-menu « Continuer » button; read at startup (below) |
 | `slot1` | Save menu, and the `quicksave` key (default `F5`) | Save and load menus |
 | `slot2`, `slot3` | Save menu | Save and load menus |
 
@@ -160,6 +174,14 @@ const AUTOSAVE_SECONDS = 120;
   open and no dialogue or cinematic is running. There is no quick-load.
 - The main menu shows « Continuer » only when `listSaves()` returns an `auto` entry; it calls
   `continueGame('auto')`, which is `loadSlot('auto')`.
+- At startup the game preloads the `auto` slot: `GameController.create()` calls
+  `preloadAutosave()`, which reads it with `parseSave()` and applies it with `applySaveGame()`
+  without starting a civilization. The civilization selection therefore shows the saved progress
+  (« Reprendre » on a civilization with a saved local state), and entering a civilization there
+  resumes that state instead of overwriting `auto` with a fresh one. If the autosave cannot be
+  read, the error is logged (`Sauvegarde automatique illisible au démarrage`) and the game starts
+  with a new multiverse. The preload runs only in `play` mode with the default storage, so never
+  in a Studio playtest.
 - « Nouvelle partie » (`newGame()`) resets the session (`resetAll()`) and deletes the `auto` slot.
   Manual slots are never deleted by the game, and there is no delete action in the UI.
 - Menus display each filled slot as `label · date · play time` (`formatDate(info.savedAt)`,
@@ -179,20 +201,28 @@ loads therefore does not save).
 | A scene is entered (portals, `core.changeScene`) | `session.bus.on('scene.entered', ...)` |
 | A civilization was started from the selection screen | `startCiv()`, after `loadCivilization()` |
 | Quitting to the main menu | `quitToMenu()`, before unloading |
-| A civilization ends (`civ.finished`) | `finishCiv()`, before unloading |
+| A civilization ends (`civ.finished`) | `finishCiv()`, before unloading, and again after unloading with `save('auto')` |
+
+`save(slot)` writes nothing and returns `false` when no civilization is active, except for `auto`:
+`save('auto')` then saves the multiverse and the known local states with `currentCiv: null`
+(label in section 3.3). `finishCiv()` relies on it, so after an ending « Continuer » leads to the
+civilization selection with the completed civilization recorded.
 
 After each successful write `GameController.save()` emits the bus event `save.completed`
-(`{ slot }`, typed in `src/engine/core/events/eventMap.ts`). A manual save also shows the
-notification `ui.save.done`. Any failure, manual or automatic, is logged (`Sauvegarde impossible`)
-and shows `ui.save.failed`.
+(`{ slot }`, typed in `src/engine/core/events/eventMap.ts` and documented in
+`src/engine/core/logic/coreEvents.ts`). A manual save also shows the notification `ui.save.done`.
+Any failure, manual or automatic, is logged (`Sauvegarde impossible`) and shows `ui.save.failed`.
 
 ### 3.3 Label
 
 `GameController.save()` builds the label from the localized civilization and scene names at save
-time:
+time, or uses `ui.registry.title` (« Registre des éveils ») when no civilization is active:
 
 ```ts
-const label = `${this.session.t(this.session.civ.manifest.name)} — ${this.session.world ? this.session.t(this.session.world.doc.name) : ''}`;
+const civ = this.session.civ;
+const label = civ
+  ? `${this.session.t(civ.manifest.name)} — ${this.session.world ? this.session.t(this.session.world.doc.name) : ''}`
+  : this.session.t('ui.registry.title');
 ```
 
 ## 4. JSON structure
@@ -228,12 +258,13 @@ export interface SaveGame {
 | `slot` | argument | Storage key the save was written to. `list()` reports this field. |
 | `label` | argument | Human-readable summary, localized at save time (section 3.3). |
 | `global` | `this.multiverse.snapshot()` | Multiverse state (section 4.2). |
-| `currentCiv` | `this.civ?.id ?? null` | Civilization running at save time; started again on load. |
+| `currentCiv` | `this.civ?.id ?? null` | Civilization running at save time; started again on load. `null` when none runs (the autosave written after an ending, section 3.2): the load then shows the civilization selection. |
 | `civs` | `Object.fromEntries(this.civStates)` | Local state of every civilization known to the session (section 4.3). |
 
 `GameSession.civStates` holds the local state of every civilization unloaded during the session or
-restored from a loaded save; `buildSaveGame()` first refreshes the entry of the running
-civilization. A civilization that was never entered has no entry.
+restored from a loaded save (including the autosave preloaded at startup); `buildSaveGame()` first
+refreshes the entry of the running civilization. A civilization that was never entered has no
+entry.
 
 ### 4.2 `GlobalState` (multiverse)
 
@@ -468,7 +499,7 @@ Packs read the global state through `ctx.multiverse` or through `global.*` varia
 
 ## 6. Capturing a save
 
-`GameSession.buildSaveGame(slot, label)` refreshes the running civilization with
+`GameSession.buildSaveGame(slot, label)` refreshes the running civilization, if there is one, with
 `snapshotCivState()`, then assembles the `SaveGame` (section 4.1). `snapshotCivState()`:
 
 1. Runs the civilization's `beforeSave` lifecycle callbacks (`ctx.lifecycle.on('beforeSave', cb)`).
@@ -533,9 +564,12 @@ export function parseSave(raw: unknown): { save: SaveGame; warnings: string[] } 
   const global = data.global as Record<string, unknown> | undefined;
   if (global) {
     let gv = Number(global.schemaVersion);
+    if (gv > GLOBAL_SCHEMA_VERSION) {
+      throw new SaveLoadError(`État multivers créé par une version plus récente du jeu (version ${gv}). Mettez le jeu à jour.`);
+    }
     while (gv < GLOBAL_SCHEMA_VERSION) {
       const m = GLOBAL_MIGRATIONS[gv];
-      if (!m) throw new SaveLoadError(`Aucune migration de l'état multivers depuis la version ${gv}.`);
+      if (!m) throw new SaveLoadError(`Aucune migration de l’état multivers depuis la version ${gv}.`);
       data.global = m(data.global as Record<string, unknown>);
       gv++;
       (data.global as Record<string, unknown>).schemaVersion = gv;
@@ -553,9 +587,12 @@ export function parseSave(raw: unknown): { save: SaveGame; warnings: string[] } 
 Notes:
 
 - The input is cloned first; `parseSave()` never modifies its argument.
+- A `global.schemaVersion` above `GLOBAL_SCHEMA_VERSION` is refused, like a newer
+  `formatVersion`.
 - Validation (`SaveGameSchema`) runs after the engine migrations, against the current layout.
-- What the schema checks: the top level is a strict `z.object` (unknown top-level keys are
-  removed); `global`, each `civs.<id>` and `player` are `z.looseObject` (unknown keys are kept);
+- What the schema checks: the top level, `global`, `global.protagonist`, each `civs.<id>` and
+  `player` are `z.looseObject` (unknown keys are kept); `quests`, `dialogue`, inventory entries,
+  fragment entries and mechanic entries are `z.object` (unknown keys are removed);
   `quests.states`, `scenes` and `global.civs` values are `z.unknown()` (not checked);
   `mechanics` values must be `{ version: integer, state: unknown }`.
 - `engineVersion` and `packVersion` must be strings; their values are not compared with anything.
@@ -577,7 +614,7 @@ async applySaveGame(save: SaveGame): Promise<void> {
 It does not validate: callers pass the result of `parseSave()`. The running civilization is
 unloaded without keeping its unsaved state. Then `GameController.loadSlot()` starts
 `save.currentCiv` with `loadCivilization()`, or shows the civilization selection screen when it is
-`null`.
+`null`. `GameController.preloadAutosave()` stops after `applySaveGame()` (section 3.1).
 
 ### 7.3 `loadCivilization()` restore order
 
@@ -637,12 +674,19 @@ the restored state):
   `lanterne.oil` survives a round trip, and a state saved at version 1 is migrated to version 2
   (section 8.3).
 
-In a browser, `tests/e2e/game.spec.ts` (Playwright, `npm run test:e2e`) saves from the pause menu,
-reloads the page and loads the slot.
+Unit tests of the migration helpers, `src/engine/core/save/saveFormat.test.ts`: `migrateCivState()`
+chains pack migrations up to the pack's version (setting `stateVersion` itself), leaves a state
+already at that version unchanged, and refuses a missing step and a state from a newer pack;
+`migrateVersioned()` applies each step, and falls back to the initial state with a warning for a
+newer version or a missing step (silently when nothing was saved).
 
-Not exercised by any test: the layout, multiverse and civilization-level migration loops, the
-newer-version and missing-step fallbacks of `migrateVersioned()`, the `global.schemaVersion`
-handling, and the localStorage fallback of `BrowserSaveStorage`.
+In a browser, `tests/e2e/game.spec.ts` (Playwright, `npm run test:e2e`) saves from the pause menu
+into `slot1` (IndexedDB), reloads the page, continues with « Continuer », then loads the slot.
+
+Not exercised by any test: the layout and multiverse migration loops (no step is registered), the
+`global.schemaVersion` checks, the damaged-entry handling and the localStorage fallback of
+`BrowserSaveStorage`, and the startup preload of the autosave (the browser test runs it without
+checking its effect).
 
 ## 8. Versions and migrations
 
@@ -652,15 +696,17 @@ The header of `saveFormat.ts`:
 
 > Every level is versioned: `formatVersion` (this file), `global.schemaVersion`, each civ's
 > `stateVersion` (pack-defined, migrated by the pack), and each mechanic/behavior state version.
-> Loading never silently drops data: unknown entries are kept or reported, failed migrations
-> abort the load with an explicit error.
+> A save layout, multiverse state or civilization state that cannot be migrated (or comes from a
+> newer version) aborts the load with an explicit French error. A mechanic or component state
+> without a migration falls back to its initial value, with a warning in the log. Unknown keys of
+> the save's top level, of the multiverse state and of each civilization state are kept.
 
 What the code does at each level:
 
 | Level | Field in the save | Target version | Migrations | Applied by | Saved version newer than target | Missing step |
 |---|---|---|---|---|---|---|
 | Save layout | `formatVersion` | `SAVE_FORMAT_VERSION` = 1 | `FORMAT_MIGRATIONS` (private to `saveFormat.ts`) | `parseSave()` | Load refused | Load refused |
-| Multiverse | `global.schemaVersion` | `GLOBAL_SCHEMA_VERSION` = 1 | `GLOBAL_MIGRATIONS` (private to `saveFormat.ts`) | `parseSave()`, after the layout migrations | Accepted, no warning | Load refused |
+| Multiverse | `global.schemaVersion` | `GLOBAL_SCHEMA_VERSION` = 1 | `GLOBAL_MIGRATIONS` (private to `saveFormat.ts`) | `parseSave()`, after the layout migrations | Load refused | Load refused |
 | Civilization | `civs.<id>.stateVersion` | `stateVersion` of the pack manifest | `definePack({ migrations })` → `PackModule.migrations` | `loadCivilization()`, for that civilization only | Load refused | Load refused |
 | Mechanic state | `civs.<id>.mechanics.<mechanicId>.version` | `state.version` of the mechanic | `state.migrate` of the mechanic | `loadCivilization()` | Warning, `initial()` used | Warning, `initial()` used |
 | Component state | `...scenes.<sceneId>.entities.<entityId>.states.<type>.version` | `state.version` of the behavior | `state.migrate` of the behavior | `BehaviorSystem.instantiate()`, when the scene is entered | Warning, `initial(props)` used | Warning, `initial(props)` used |
@@ -678,7 +724,8 @@ storage.load(slot)
        1. format === 'civverse.save'
        2. formatVersion is an integer, 1 ≤ formatVersion ≤ SAVE_FORMAT_VERSION
        3. FORMAT_MIGRATIONS[n] for n = formatVersion … SAVE_FORMAT_VERSION - 1
-       4. GLOBAL_MIGRATIONS[n] for n = global.schemaVersion … GLOBAL_SCHEMA_VERSION - 1
+       4. global.schemaVersion ≤ GLOBAL_SCHEMA_VERSION, then
+          GLOBAL_MIGRATIONS[n] for n = global.schemaVersion … GLOBAL_SCHEMA_VERSION - 1
        5. SaveGameSchema (current layout)
   └─ applySaveGame(save)
   └─ loadCivilization(currentCiv)
@@ -752,7 +799,8 @@ the engine applies the steps in a loop, one version at a time.
 
 #### Civilization local state (`stateVersion`, pack-owned)
 
-1. Increase `"stateVersion"` in the pack's `manifest.json`.
+1. Increase `"stateVersion"` in the pack's `manifest.json` (in Civilization Studio:
+   « Version de l’état » in « Civilisation et interface », an integer ≥ 1).
 2. Add the step to `migrations` in the pack's `pack.ts`. `definePack` and the `LocalCivState` type
    are exported by `@sdk`.
 
@@ -760,7 +808,7 @@ the engine applies the steps in a loop, one version at a time.
    import { definePack, type LocalCivState } from '@sdk';
 
    export default definePack({
-     modules: import.meta.glob(['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', '!./**/*.test.ts'], { eager: true }),
+     modules: import.meta.glob(['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', './view/**/*.ts', '!./**/*.test.ts'], { eager: true }),
      migrations: {
        // 1 → 2 (hypothetical example): variable "mypack.rank" renamed to "mypack.accessRank",
        // quest "OLD_Q" renamed to "NEW_Q".
@@ -780,9 +828,10 @@ the engine applies the steps in a loop, one version at a time.
    });
    ```
 
-Do not change `stateVersion` inside a migration function. `migrateCivState()` increments
-`s.stateVersion` itself after each step; a function that also increments it makes the loop skip the
-next step.
+A migration function does not need to change `stateVersion`: after step `n`, `migrateCivState()`
+sets it to `n + 1` itself (`{ ...m(s), stateVersion: from + 1 }`), whatever the function returned,
+and adds the message `État de « <id> » migré vers la version N.`, which `loadCivilization()` logs
+at info level.
 
 #### Mechanic or component state (`state.version`)
 
@@ -839,26 +888,31 @@ happens on load:
 
 ## 9. Error handling
 
-Every `SaveLoadError` and every error thrown by `loadCivilization()` reaches
-`GameController.fail()`, which logs it and shows the error screen (title `ui.error.title`, the
-message, and a button back to the main menu).
+When a slot is loaded (`GameController.loadSlot()`), every `SaveLoadError` and every error thrown
+by `loadCivilization()` reaches `GameController.fail()`, which logs it and shows the error screen
+(title `ui.error.title`, the message, and a button back to the main menu). The startup preload of
+the autosave only logs them (section 3.1).
 
 | Situation | Detected in | Result | Message |
 |---|---|---|---|
 | Listing slots fails | `GameController.listSaves()` | Empty list, error logged | Log: `Lecture des sauvegardes impossible` |
 | An IndexedDB operation throws | `BrowserSaveStorage.useFallback()` | localStorage used until the page is reloaded | Console: `[sauvegarde] IndexedDB indisponible, repli sur localStorage` |
+| A stored entry cannot be summarized | `BrowserSaveStorage.list()` (`summaries()`) | Entry left out of the menus | Console: `[sauvegarde] emplacement « <slot> » illisible` |
+| A stored entry is not valid JSON | `BrowserSaveStorage.load()` (`parseStored()`) | Error screen when loaded with `loadSlot()` (the menus do not offer such a slot, previous row) | `La sauvegarde « <slot> » est endommagée (données illisibles).` |
+| The autosave cannot be read at startup | `GameController.preloadAutosave()` | Warning logged, the game starts without it | Log: `Sauvegarde automatique illisible au démarrage` |
 | Empty slot | `GameController.loadSlot()` | Error screen | `ui.save.empty` |
 | Data is not an object | `parseSave()` | Error screen | `Sauvegarde illisible (données absentes).` |
 | `format` is not `civverse.save` | `parseSave()` | Error screen | `Ce fichier n’est pas une sauvegarde CIVILIZATIONVERSE.` |
 | `formatVersion` is not an integer ≥ 1 | `parseSave()` | Error screen | `Version de sauvegarde invalide.` |
 | `formatVersion` newer than the engine | `parseSave()` | Error screen | `Sauvegarde créée par une version plus récente du jeu (format N). Mettez le jeu à jour.` |
 | No layout migration from version N | `parseSave()` | Error screen | `Aucune migration de sauvegarde depuis le format N.` |
-| No multiverse migration from version N | `parseSave()` | Error screen | `Aucune migration de l'état multivers depuis la version N.` |
+| `global.schemaVersion` newer than the engine | `parseSave()` | Error screen | `État multivers créé par une version plus récente du jeu (version N). Mettez le jeu à jour.` |
+| No multiverse migration from version N | `parseSave()` | Error screen | `Aucune migration de l’état multivers depuis la version N.` |
 | Structure does not match the schema | `parseSave()` | Error screen, first 5 issues | `Sauvegarde corrompue ou incompatible : <path> : <message> ; ...` |
 | `currentCiv` is unknown | `loadCivilization()` | Error screen | `core.error.civNotFound` |
 | `currentCiv` is a library pack | `loadCivilization()` | Error screen | `"<id>" est une bibliothèque, pas une civilisation jouable.` |
-| Local state newer than the pack | `migrateCivState()` | Error screen | `La sauvegarde de « <id> » provient d'une version plus récente de la civilisation (état N > M).` |
-| No pack migration from version N | `migrateCivState()` | Error screen | `Aucune migration d'état pour « <id> » depuis la version N.` |
+| Local state newer than the pack | `migrateCivState()` | Error screen | `La sauvegarde de « <id> » provient d’une version plus récente de la civilisation (état N > M).` |
+| No pack migration from version N | `migrateCivState()` | Error screen | `Aucune migration d’état pour « <id> » depuis la version N.` |
 | Saved scene unknown | `loadSceneDoc()` | Error screen | `Scène inconnue dans "<pack>" : <id>` |
 | Mechanic/component state newer than its definition | `migrateVersioned()` | Warning, initial state | `<label> : état sauvegardé plus récent (vN > vM), valeurs par défaut utilisées.` |
 | No mechanic/component migration from vN | `migrateVersioned()` | Warning, initial state | `<label> : pas de migration depuis vN, valeurs par défaut utilisées.` |
@@ -1000,47 +1054,35 @@ Observed in the current code:
 1. Partial validation. `parseSave()` does not check the content of `quests.states`, `scenes` and
    `global.civs` (`z.unknown()`). A malformed entry passes and fails later during restore, with a
    generic error.
-2. Unknown keys are handled differently by level. They are removed at the top level and inside
-   `quests`, `dialogue`, inventory entries, fragment entries and mechanic entries (`z.object`),
-   and kept inside `global`, `civs.<id>` and `player` (`z.looseObject`). This does not fully
-   match the header comment "unknown entries are kept or reported".
-3. A `global.schemaVersion` newer than `GLOBAL_SCHEMA_VERSION` is accepted without warning, unlike
-   `formatVersion` and `stateVersion`.
-4. `engineVersion` and `packVersion` are recorded but never compared with the running engine or
+2. Unknown keys are handled differently by level. They are kept at the top level and inside
+   `global`, `global.protagonist`, `civs.<id>` and `player` (`z.looseObject`), and removed inside
+   `quests`, `dialogue`, inventory entries, fragment entries and mechanic entries (`z.object`).
+3. `engineVersion` and `packVersion` are recorded but never compared with the running engine or
    pack.
-5. Pack local-state migrations run only when the civilization is entered, not when the file is
+4. Pack local-state migrations run only when the civilization is entered, not when the file is
    read. When one fails, the save's global and local states are already applied in memory.
-6. Mechanic and component states that are newer than their definition, or have no migration step,
-   are reset to their initial value with only a log warning. The header comment says failed
-   migrations abort the load; that is true only for the layout, multiverse and civilization
-   levels.
-7. Some data is dropped without warning at the next save: states of mechanics that no longer exist,
+5. Mechanic and component states that are newer than their definition, or have no migration step,
+   are reset to their initial value with only a log warning.
+6. Some data is dropped without warning at the next save: states of mechanics that no longer exist,
    abilities that are no longer defined, and scene entries for entities or components that no
    longer exist. Unknown quests are dropped with a warning.
-8. `BrowserSaveStorage` treats any exception in an IndexedDB operation as "IndexedDB unavailable",
-   including a `JSON.parse` error on a corrupted entry or a `slotInfo()` error on an entry without
-   `civs`. One corrupted entry switches the instance to localStorage for the rest of the page
-   session: IndexedDB saves are hidden and new saves go to localStorage. Loading the corrupted slot
-   reads the localStorage entry of the same slot instead; when there is none, the player sees
-   `ui.save.empty` rather than a corruption error. The two stores are never reconciled.
-9. `GameController.finishCiv()` calls `save('auto')` after `unloadCivilization()`, but `save()`
-   returns `false` when no civilization is active. That second save never happens: the autosave
-   written just before the unload still has `currentCiv` set to the finished civilization, so
-   « Continuer » reloads it.
-10. Nothing loads the `auto` save at startup. Choosing a civilization through the main menu's
-    « Civilisations » entry, without « Continuer », starts from the in-memory state (a new
-    multiverse after a page load), and `startCiv()` then autosaves over `auto`. Manual slots are
-    not affected.
-11. Dialogues and cinematics in progress, timers, cooldowns and the other items of section 6.2 are
-    not saved. Autosave can run in the middle of a dialogue or cinematic (on `quest.stageChanged`),
-    and the pause menu can be opened during a cinematic when the pointer lock is released, so a
-    save can be taken at such a moment.
-12. No integrity check (checksum), no backup or rotation of earlier saves, no compression, no
-    export/import of save files, and no way to delete a manual slot. Every save rewrites the whole
-    document, including the states of all visited scenes of all known civilizations.
-13. `global.protagonist.title` is never written.
-14. Quest `startedAt` and `finishedAt` use the simulation clock of the session that wrote them; the
+7. Once an IndexedDB call has failed, `BrowserSaveStorage` uses localStorage for the rest of the
+   page session: saves stored in IndexedDB are hidden, new saves go to localStorage, and the two
+   stores are never reconciled. A damaged entry is only reported in the console when the slots are
+   listed (it is left out), so a damaged `auto` slot simply removes « Continuer » from the main
+   menu.
+8. Dialogues and cinematics in progress, timers, cooldowns and the other items of section 6.2 are
+   not saved. Autosave can run in the middle of a dialogue or cinematic (on `quest.stageChanged`),
+   and the pause menu can be opened during a cinematic when the pointer lock is released, so a
+   save can be taken at such a moment.
+9. No integrity check (checksum), no backup or rotation of earlier saves, no compression, no
+   export/import of save files, and no way to delete a manual slot. Every save rewrites the whole
+   document, including the states of all visited scenes of all known civilizations.
+10. `global.protagonist.title` is never written.
+11. Quest `startedAt` and `finishedAt` use the simulation clock of the session that wrote them; the
     clock is not saved, so values written in different sessions are not comparable.
-15. Test coverage of the versioning code is partial (section 7.5): only one mechanic-state
-    migration and four `parseSave()` rejections are tested. The layout, multiverse and
-    civilization-level migration loops and the storage fallback are not.
+12. Test coverage of the versioning code is partial (section 7.5): `migrateCivState()` and
+    `migrateVersioned()` have unit tests, one mechanic-state migration goes through a full save
+    and load, and four `parseSave()` rejections are tested. The layout and multiverse migration
+    loops, the `global.schemaVersion` checks and the storage's damaged-entry and fallback paths
+    are not.

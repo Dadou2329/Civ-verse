@@ -7,7 +7,7 @@ completeness must be validated. Code, identifiers and developer documentation st
 editor (Civilization Studio) is a development tool: its own interface is French but hard-coded,
 see [section 10](#10-the-studio-editor).
 
-This page describes the repository on 2026-10-12, after commit `7b2aa0a`. Counts were measured on
+This page describes the repository on 2026-10-12, at commit `0f92dd7`. Counts were measured on
 the JSON files.
 
 ## 1. Principles
@@ -24,12 +24,12 @@ the JSON files.
 
 | File | Registered as | Keys | Content |
 | --- | --- | --- | --- |
-| `src/engine/locales/fr-FR.json` | namespace `engine` | 159 | Game shell and engine texts: 138 `ui.*` keys (menus, settings, pause, journal, inventory, saves, debug overlay, tips) and 21 `core.*` keys (quest and item notifications, interaction prompts, player speaker « Vous ») |
+| `src/engine/locales/fr-FR.json` | namespace `engine` | 165 | Game shell and engine texts: 144 `ui.*` keys (menus, settings, pause, journal, inventory, saves, objective markers, debug overlay, tips) and 21 `core.*` keys (quest and item notifications, interaction prompts, player speaker « Vous ») |
 | `civilizations/core/locales/fr-FR.json` | namespace `core` | 5 | Library pack name and description, names of the shared characters (`core.char.citizen`, `core.char.child`, `core.char.guard`) |
-| `civilizations/door/locales/fr-FR.json` | namespace `door` | 438 | Everything shown by the Door civilization |
-| `civilizations/memory/locales/fr-FR.json` | namespace `memory` | 486 | Everything shown by the Memory civilization |
+| `civilizations/door/locales/fr-FR.json` | namespace `door` | 437 | Everything shown by the Door civilization |
+| `civilizations/memory/locales/fr-FR.json` | namespace `memory` | 485 | Everything shown by the Memory civilization |
 
-1,088 keys in total. No key is defined in two files, every pack key starts with its pack id, and
+1,092 keys in total. No key is defined in two files, every pack key starts with its pack id, and
 every engine key starts with `ui.` or `core.`.
 
 How tables are loaded:
@@ -71,9 +71,10 @@ How tables are loaded:
 
 Notes:
 
-- The header comment says missing keys are recorded « so that tests, the debug overlay and the
-  Studio can report it ». Only `localizer.test.ts` reads `missing()`; neither the F3 overlay
-  (`src/game/hud/Debug.tsx`) nor the Studio displays it.
+- Missing keys are recorded for the F3 overlay (`src/game/hud/Debug.tsx`): in development builds
+  (dev server, Studio playtest) it shows their count (`ui.debug.missingTexts`) and the first six
+  keys; player builds do not show them. Besides the overlay, only `localizer.test.ts` reads
+  `missing()`; the Studio's editor does not display it.
 - An empty string is a valid value: `has()` returns true and `t()` returns `''`, not `⟦key⟧`. The
   validator therefore accepts empty texts; the acceptance test rejects them in the tables.
 - Tests: `src/engine/core/i18n/localizer.test.ts` — « interpolates and applies French plural
@@ -87,7 +88,7 @@ A subset of ICU MessageFormat, implemented in `formatMessage`.
 | Syntax | Example from the tables | Notes |
 | --- | --- | --- |
 | `{name}` | `core.prompt.talk`: « Parler à {name} » | A parameter not passed stays as the literal `{name}` |
-| `{n, plural, one {…} other {…}}` | `core.item.acquired`: « {count, plural, one {Obtenu : {name}} other {Obtenu : {name} ×{count}}} » | French rule: `one` when \|n\| < 2 (0 and 1 are singular), else `other`. Any other locale: `one` only for exactly 1 |
+| `{n, plural, one {…} other {…}}` | `core.item.acquired`: « {count, plural, one {Obtenu : {name}} other {Obtenu : {name} ×{count}}} » | French rule: `one` when \|n\| < 2 (0 and 1 are singular), else `other`. Any other locale: `one` only for exactly 1 |
 | `=N` exact case | `ui.registry.intro`: « {awakenings, plural, =0 {Vous ne vous êtes encore éveillé nulle part.} one {…} other {…}} » | Tested before the category |
 | `#` | `{n, plural, one {# éclat} other {# éclats}}` (test) | Replaced by the formatted number everywhere in the chosen branch |
 | `{g, select, f {…} other {…}}` | (test only; no table uses `select`) | Falls back to `other`, then to `''` |
@@ -112,7 +113,8 @@ A subset of ICU MessageFormat, implemented in `formatMessage`.
   (« Espace », « Maj », « Échap », « Entrée », « Retour », arrows), otherwise the letter given by
   the keyboard layout map (`navigator.keyboard.getLayoutMap()`, Chromium), otherwise the code.
 - Keys built at run time: `ui.settings.tab.${k}`, `ui.action.${a}`, `ui.settings.quality.${q}`,
-  `ui.settings.volume.${k}`, `ui.settings.subtitles.${k}` (`src/game/screens/Settings.tsx`).
+  `ui.settings.volume.${k}`, `ui.settings.subtitles.${k}` (`src/game/screens/Settings.tsx`),
+  `ui.debug.trace.${e.kind}` (`src/game/hud/Debug.tsx`).
 
 ### Packs (`civilizations/<pack>/mechanics`, `ui`, `view`, `assets`)
 
@@ -121,6 +123,9 @@ A subset of ICU MessageFormat, implemented in `formatMessage`.
 - Pack UI components call `useT()` from `@sdk/ui` (`src/sdk/ui.tsx`), which returns `ctx.t`. Its
   comment says it re-renders on locale change, but the hook does not subscribe to `i18n.onChange`
   itself; with a single locale this has no effect.
+- `@sdk/ui` also exports `keyLabel()` (the function of the game's key caps): the Door rank plaque
+  and the Memory chamber HUD show the key their mechanic binds (`permissionsKey`, `chamberKey` in
+  `content/rules.json`) with it, instead of a letter written in a text.
 - Keys built at run time: `door.rank.${n}` (`mechanics/access.ts`, `ui/RankPlaque.tsx`),
   `door.dial.${symbol}` (`ui/ImprintPanel.tsx`), `memory.state.${state}` (`ui/ChamberPanel.tsx`).
 
@@ -150,6 +155,7 @@ The fields below must hold keys. They are the fields checked by `validateCiviliz
 | `content/logic/*.logic.json` | text properties of the actions of each rule (e.g. `core.notify.text`) |
 | `content/items.json` | `name`, `description`, `actions[].label` |
 | `content/characters.json` | `name` |
+| `content/rules.json` | the `prop.text` settings of each mechanic, checked against the settings it declares (e.g. the Memory shards' `name`, `origin`, `sense`, `fact`, `touch`, `revealedOrigin`, the echoes' `title` and `lines`) |
 | code | literal `t('key')` / `t("key")` calls |
 
 - Dialogue and cinematic `title` fields are editor labels: they are counted but not required to be
@@ -157,11 +163,12 @@ The fields below must hold keys. They are the fields checked by `validateCiviliz
   form, or the id).
 - `manifest.json` `credits` and `tags` are plain French strings; the game does not display them
   (only the Studio's manifest editor does).
-- `content/rules.json` (mechanic settings) is not covered by the validator. It holds texts too: the
-  Memory shard texts (`memory.shard.*`) and echo texts (`memory.echo.*`), 33 key values, all
-  present in the Memory table at the time of writing, but no automated test checks them.
+- In `content/rules.json`, only Memory holds texts: the shard texts (`memory.shard.*`) and echo
+  texts (`memory.echo.*`), 33 key values.
 - Keys referenced in code without a `t()` call (panel `title`, input binding `label`, e.g.
-  `door.input.permissions`) are not checked either; the game does not display them today.
+  `door.input.permissions`) are not checked. The game does not display them: a panel's title only
+  names the panel for assistive technologies (`aria-label` of the panel host,
+  `src/game/hud/CivUi.tsx`), and binding labels are not used.
 
 ## 7. Validation and tests
 
@@ -174,7 +181,7 @@ section 6 and on the code keys passed by the caller. For each non-empty value it
 - if `i18n.has(key, 'fr-FR')`, the text is fine;
 - else, for an editor-only field, nothing is reported;
 - else, if the value contains whitespace or characters outside `[A-Za-z0-9_.-]`: error « Texte brut
-  au lieu d'une clé de traduction : « … » »;
+  au lieu d’une clé de traduction : « … » »;
 - else: error « Clé de traduction manquante en français : <key> ».
 
 `keysChecked` counts references, not distinct keys: a key used twice is counted twice, and
@@ -183,18 +190,26 @@ editor-only titles are counted.
 Code keys come from `extractCodeKeys`, a regular expression matching literal `t('…')` calls.
 Keys built with template literals are not extracted.
 
+The report also lists the problems found while loading the civilization's pack, including those of
+its tables: a table that cannot be read or does not match `LocaleSchema`, and
+« Table de traduction française obligatoire manquante. » for a civilization without
+`locales/fr-FR.json`.
+
 Where it runs:
 
 - `npm run validate` (`tools/cli/civ.ts` → `tools/cli/validateRunner.ts`) validates every
   civilization; code keys come from `civilizations/<pack>/**/*.ts(x)` except `seed/`, `tests/`,
-  `content/` and test files. It prints one line per civilization ending with « N textes vérifiés ».
-  The runner has a comment for engine and game-shell keys but no code: those are covered by the
-  acceptance test below. `npm run check` runs it together with typecheck, lint and the test suite.
+  `content/` and test files. It prints one line per civilization ending with « N textes vérifiés »
+  and the time taken, then one line per library pack with its load issues
+  (« ✓ core — bibliothèque, 0 problème(s) »). Engine and game-shell keys are not checked by the
+  runner (its comment points to the acceptance test below). `npm run check` runs it together with
+  typecheck, lint and the test suite.
 - The Studio's « Valider » (`validateInStudio` in `src/studio/core/validation.ts`, shown in the
   « Problèmes » tab of `src/studio/panels/Console.tsx`): same checks on the working copies, unsaved
   changes included; success reads « Aucun problème : … N textes vérifiés. ».
-- `tests/acceptance/J-regression.test.ts` runs it inside `vitest` for `door` and `memory` and
-  requires zero errors and zero warnings, and `keysChecked` at least 504 (door) and 535 (memory).
+- `tests/acceptance/J-regression.test.ts` runs it inside `vitest` for every bundled civilization
+  and requires zero errors and zero warnings, and `keysChecked` at least 503 (door) and 567
+  (memory).
 
 ### `tests/acceptance/localization.test.ts`
 
@@ -221,13 +236,13 @@ part of the player-facing game »).
 
 ### What nothing checks
 
-- Texts in `content/rules.json` (section 6).
 - Each value of a key built at run time (only the prefix is checked).
 - Which no-break space is used (U+00A0 or U+202F) and whether a required space is missing
   altogether (`Bonjour!` passes).
 - Visible strings in code outside JSX text and those attributes: template literals, text next to an
   expression (section 9).
-- `missing()` at run time.
+- `missing()` at run time: the F3 overlay lists the keys in development builds, but no test fails
+  on them.
 
 ## 8. Key naming conventions
 
@@ -276,7 +291,7 @@ tables:
 | Narrow no-break space U+202F before `?` | 2 | 43 | 54 |
 | U+202F before `!` | 0 | 20 | 11 |
 | U+202F before `;` | 0 | 0 | 1 |
-| No-break space U+00A0 before `:` | 20 | 58 | 50 |
+| No-break space U+00A0 before `:` | 22 | 58 | 50 |
 | U+00A0 after `«` and before `»` (pairs) | 0 | 17 | 31 |
 | Typographic apostrophe U+2019 | 13 | 239 | 369 |
 | Ellipsis character U+2026 | 2 | 28 | 26 |
@@ -296,19 +311,19 @@ Enforcement and tooling:
   themselves. The locale editor states they are kept (« Les espaces insécables de la typographie
   française sont conservées »).
 - The tests compare texts after replacing U+00A0 and U+202F with spaces (`norm` in
-  `civilizations/memory/tests/memory.playthrough.test.ts` and `tests/acceptance/helpers.ts`).
+  `civilizations/memory/tests/memory.playthrough.test.ts`, `tests/acceptance/helpers.ts` and
+  `tests/e2e/support.ts`).
 
 Conventions not applied or not checked: the space after « n° » (`door.doc.order.title`) and the
 spaces around « — » are ordinary spaces.
 
 Typography produced by code, outside the tables:
 
-- `src/game/hud/Cinematic.tsx` prints the subtitle speaker as `{speaker} : ` with an ordinary space
-  before the colon.
-- `civilizations/memory/ui/ChamberHud.tsx` (`TouchCaption`) wraps the touch text in
-  `« {text} »` with ordinary spaces. All four `memory.shard.*.touch` values already contain
-  guillemets, so the screen shows two pairs: « « Ne me laisse pas me vendre une deuxième fois. » ».
-  The playthrough asserts the stored text, not the rendered caption.
+- `src/game/hud/Cinematic.tsx` prints the subtitle speaker as `` `${speaker}\u00a0: ` ``: a
+  no-break space before the colon, as in the tables.
+- `civilizations/memory/ui/ChamberHud.tsx` (`TouchCaption`) shows the touch text as it is stored:
+  the four `memory.shard.*.touch` values carry their own guillemets (e.g. `memory.shard.ambre.touch`
+  is `"«\u00a0Ne me laisse pas me vendre une deuxième fois.\u00a0»"`, U+00A0 written as escapes).
 - `src/game/screens/Settings.tsx` formats the volume sliders as `${Math.round(v * 100)} %` (ordinary
   space) and the field of view as `${v}°`.
 
@@ -322,7 +337,8 @@ components, actions, conditions, mechanics and properties shown in the Studio ar
 written in their definitions (e.g. `label: 'Afficher une notification'` in `coreActions.ts`),
 content schema errors are French (`z.config(z.locales.fr())` in `schemas.ts`), and so are the
 validator's messages. Some technical English remains in placeholders (« talk, wave, nod, point… »,
-« happy, sad, worried… », animation and expression ids) and in the product name « Civilization
+« happy, sad, worried… », animation and expression ids), in a few drop-down lists that show
+identifiers (camera easings, icon shapes, accessory types) and in the product name « Civilization
 Studio ». This matches the requirement, which allows technical English in the editor and prefers a
 French interface.
 
@@ -333,18 +349,20 @@ Editing game texts in the Studio:
   - empty field: « ＋ Écrire un texte » creates a key with `newTextKey` (section 8) and an empty
     text;
   - key owned by the open pack: inline input, or a text area when the property is multiline or
-    the text is longer than 48 characters, writing through `setText`;
+    the text is longer than 48 characters, writing through `setText`; the shape is chosen when the
+    field appears (an input left with more than 48 characters becomes a text area), so typing never
+    replaces the field;
   - key from another table (engine, core, another pack): read-only text, or « Clé introuvable dans
     les textes » in red, with « Copier ici » to create an editable copy in the open pack;
   - the key itself can be changed in a collapsible field, with suggestions from the pack's table
     (first 800 keys).
 - **Locale editor** (`LocaleEditor` in `src/studio/editors/DataEditors.tsx`, the « Textes
   français » view of `locales/fr-FR.json`): filter on key or text; shows at most 400 rows (the Door
-  and Memory tables are larger, so some keys are reachable only through the filter); text area
-  above 60 characters; empty values highlighted. « ＋ Clé » adds any key matching
-  `^[A-Za-z0-9_.-]+$` that does not exist yet, with an empty value; the pack prefix is suggested by
-  the placeholder but not enforced. « ✕ » deletes a key without checking whether it is used; its
-  tooltip asks to run « Valider » first.
+  and Memory tables are larger, so some keys are reachable only through the filter); every value is
+  a text area whose height follows the text (one to six rows); empty values highlighted. « ＋ Clé »
+  adds any key matching `^[A-Za-z0-9_.-]+$` that does not exist yet, with an empty value; the pack
+  prefix is suggested by the placeholder but not enforced. « ✕ » deletes a key without checking
+  whether it is used; its tooltip asks to run « Valider » first.
 - **`Studio.newTextKey` and `Studio.setText`** (`src/studio/core/studio.ts`) write into
   `civilizations/<pack>/locales/fr-FR.json` (created if missing) as undoable edits — successive
   keystrokes on one key merge into one undo step (« edits texts in place and merges keystrokes into
@@ -362,31 +380,34 @@ Strings a player can see that do not come from a table:
 
 | Where | Text | Note |
 | --- | --- | --- |
-| `src/engine/input/inputManager.ts` `FR_KEY_NAMES` | « Espace », « Maj », « Ctrl droite », « Échap », « Entrée », « Retour »… | Key names for key caps |
+| `src/engine/input/inputManager.ts` `FR_KEY_NAMES` | « Espace », « Maj », « Ctrl droite », « Échap », « Entrée », « Retour »… | Key names for key caps and for the keys shown by the pack HUDs (`keyLabel`) |
 | `src/game/ui/common.tsx` | `formatDuration` (« h », « min »); `formatDate` hard-codes `Intl.DateTimeFormat('fr-FR', …)` | Play time and save dates |
 | `src/game/hud/Hud.tsx` | « {fps} i/s » | FPS counter (setting « Afficher les images par seconde ») |
-| `src/game/main.tsx` | « CIVILIZATIONVERSE n'a pas pu démarrer. » | Boot failure, shown when the controller cannot be created; straight apostrophe |
+| `src/game/main.tsx` | « CIVILIZATIONVERSE n’a pas pu démarrer. » | Boot failure, shown when the controller cannot be created |
 | Engine errors (`src/engine/core/sim/session.ts`, `src/engine/core/save/saveFormat.ts`) | e.g. « Un chargement est déjà en cours. », « Version de sauvegarde invalide. » | French messages written in code; only `core.error.civNotFound` uses a key. They reach the player through the error screen (`ui.error.title` followed by the raw message) |
 | `src/game/screens/Menus.tsx` | `CIVILIZATIONVERSE` | Brand name, allowed by the test |
 | `src/game/screens/Menus.tsx` `Registry` | the fragment id | Fallback when a fragment name key is missing; unreachable with validated packs |
-| `src/game/hud/Debug.tsx` (F3) | variable names and values, quest, entity and mechanic ids, log messages | Labels are translated (`ui.debug.*`); the content is raw. Available in player builds |
-| Save files | `label` = translated civilization and scene names | Built at save time (`controller.ts`), so it stays in the language active when saving |
+| `src/game/hud/Debug.tsx` (F3) | variable names and values, quest, entity and mechanic ids, missing keys, logic traces, log messages | Development builds only (dev server, Studio playtest): labels are translated (`ui.debug.*`), the content is raw. Player builds show only the performance line and the key hints |
+| Save files | `label` = translated civilization and scene names (`ui.registry.title` for an automatic save made without a civilization in progress) | Built at save time (`controller.ts`), so it stays in the language active when saving |
 | `index.html`, `studio.html` | `lang="fr"` | |
 
 Key letters inside French texts. Bindings are physical `KeyboardEvent.code` values
-(`DEFAULT_BINDINGS` in `src/engine/platform/settings.ts`; `KeyR` and `KeyM` in the packs'
-`content/rules.json`), but several texts name keys as fixed letters: `door.tuto.move` and
-`memory.tuto.move` (« ZQSD », « E », « F »), `door.tuto.interact` (« E », « F », « J »),
-`door.hud.permissionsHint` (« R »), `memory.tuto.chamber`, `memory.tuto.anchor`,
-`memory.quest.MEM_Q00_EVEIL.eveil.examiner` and `memory.hud.key` (« M »). They do not follow
-rebinding or the keyboard layout. « ZQSD » is right for the AZERTY positions of `KeyW`, `KeyA`,
-`KeyS`, `KeyD` and wrong on QWERTY. `KeyM` is the key labelled « , » on an AZERTY keyboard (the « M »
-key there is `Semicolon`), so « Appuyez sur M » is wrong on French keyboards. Pack bindings are not
+(`DEFAULT_BINDINGS` in `src/engine/platform/settings.ts`; `permissionsKey` `KeyR` and
+`chamberKey` `KeyC` in the Door and Memory `content/rules.json`, also the defaults of their
+mechanics). The pack HUDs do not write their key in a text: the Door rank plaque and the Memory
+chamber HUD show the configured key with `keyLabel()` (section 5), which follows the keyboard
+layout, and both panels close with that key. Several texts still name keys as fixed letters:
+`door.tuto.move` and `memory.tuto.move` (« ZQSD (WASD en clavier QWERTY) », and « E », « F » for
+Memory), `door.tuto.interact` (« E », « F », « J »), `memory.tuto.chamber`, `memory.tuto.anchor`
+and `memory.quest.MEM_Q00_EVEIL.eveil.examiner` (« C »). They do not follow rebinding. With the
+default bindings they are right on both layouts: the movement texts name both, and E, F, J and C
+are at the same place, with the same label, on AZERTY and QWERTY keyboards. Pack bindings are not
 listed in the settings screen, which only shows the engine actions, so they cannot be rebound in
 game.
 
 The game has no voice audio: dialogue and cinematic lines are text only. The character field
-`voicePitch` (« Hauteur de voix (bips) » in the Studio) is not used at run time.
+`voicePitch` (« Hauteur de voix » in the Studio, whose help says it is kept for future voice
+sounds) is not used at run time.
 
 ## 12. Adding another language
 
@@ -420,6 +441,6 @@ What would have to be built:
    the boot message, `lang="fr"`, and the key letters written in the tutorial texts.
 8. **Re-rendering.** The SDK's `useT()` should subscribe to `i18n.onChange` like the game shell's
    hook. Save labels keep the language they were saved in.
-9. **Missing keys.** Surface `missing()` somewhere (the F3 overlay, the Studio) so untranslated
-   keys are visible during testing; today a missing key only shows as `⟦key⟧` and a console
-   warning.
+9. **Missing keys.** `missing()` (listed by the F3 overlay in development builds) only records keys
+   that French lacks too: a key missing from another locale silently falls back to French, so
+   untranslated texts would need their own report.

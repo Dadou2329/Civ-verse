@@ -32,7 +32,7 @@ Contents
 | Import | Source | Contents |
 |---|---|---|
 | `@sdk` | `src/sdk/index.ts` | `definePack`; `defineMechanic`, `defineBehavior`, `defineAction`, `defineCondition`, `defineEvent`, `defineItem`, `defineAbility`, `defineBlock`, `defineModel`, `defineSound`, `defineMusic` and their definition types; `StateSpec`; `prop`, `defaultsOf`, `PropSchema`, `InferProps`, `PropDef`; every type of `src/engine/core/sim/api.ts` (`CivContext`, `BehaviorContext`, `EntityApi`, `InteractionOffer`...); `ActionData`, `ConditionData`, `EventMatch`; `CivEventMap`, `EventPayload`; `MovementParams`, `DEFAULT_MOVEMENT`; `AABB`; block, model, sound and icon types; `Disposable`; `JsonValue`; `LocalCivState`; `vec` (namespace of `src/engine/core/util/math.ts`) and `Vec3`; `ease`; `hexToRgb`, `rgbToHex`, `mixRgb`, `shade`; `Rng`, `hashString`; `ENGINE_API_VERSION`, `ENGINE_VERSION`; `DoorApi` |
-| `@sdk/ui` | `src/sdk/ui.tsx` | `defineHud`, `definePanel`, `PanelProps`, `CivUiContext`, hooks `useCiv`, `useT`, `useVar`, `useUiStore`, `useEventRefresh` |
+| `@sdk/ui` | `src/sdk/ui.tsx` | `defineHud`, `definePanel`, `PanelProps`, `CivUiContext`, hooks `useCiv`, `useT`, `useVar`, `useUiStore`, `useEventRefresh`; `keyLabel` (French label of a key code) |
 | `@sdk/view` | `src/sdk/view.ts` | `defineVisual`, `defineViewEffect`, `VisualInstance`, types `ViewContext` and `VisualEntity`, Babylon.js re-exports `Vector3`, `Color3`, `Color4`, `Mesh`, `MeshBuilder`, `StandardMaterial`, `TransformNode` and types `AbstractMesh`, `Scene` |
 | `@sdk/build` | `src/sdk/build.ts`, `src/sdk/buildKit.ts` | World-building helpers (`SceneBuilder`, voxel construction, `house`, `doorSpot`, `light`, `sign`, `zone`, `npc`...) for the seed scripts in `civilizations/<id>/seed/` (`npm run civ -- seed <id>`). Mechanics do not use it. |
 
@@ -42,7 +42,8 @@ The aliases are declared in `tools/vite/aliases.ts` (Vite, Vitest, tsx) and mirr
 `eslint.config.js` applies `no-restricted-imports` to `civilizations/**/*.{ts,tsx}` (except
 `civilizations/*/seed/**` and `civilizations/**/*.test.ts`): imports of `@engine/*`,
 `../../src/*`, `../../../src/*`, `@studio/*` and `@game/*` are errors ("Les packs utilisent
-uniquement @sdk (API publique)."). Pack modules may import each other with relative paths
+uniquement @sdk (API publique).", and "Les packs ne dépendent pas du Studio ni du jeu." for
+`@studio/*` and `@game/*`). Pack modules may import each other with relative paths
 (`civilizations/door/mechanics/locks.ts` imports `./access`) and UI modules import `react` and CSS
 files (`civilizations/door/ui/RankPlaque.tsx`).
 
@@ -77,12 +78,13 @@ under a globbed folder is therefore enough to register its definitions; there is
 Only the folders matched by the glob are discovered. Door and Memory glob `mechanics/`, `assets/`,
 `ui/` (`.tsx`) and `view/`; the `core` library (`civilizations/core/pack.ts`) globs `mechanics/` and
 `models/`. The `pack.ts` written by `npm run civ -- new-pack <id>` (`tools/cli/newPack.ts`) globs
-`mechanics/`, `assets/` and `ui/`, not `view/`.
+the same four folders as Door and Memory.
 
 ### Registration
 
 `GameSession.ensurePack` (`src/engine/core/sim/session.ts`) loads the pack's manifest dependencies
-first, then calls `registerPack`, which registers the definitions with the pack id as owner:
+first, then loads the pack (`loadPack`, which also checks the definition ids, see [§3](#3-identifiers))
+and calls `registerPack`, which registers the definitions with the pack id as owner:
 
 | Kind | Registry | Same id already registered by another pack |
 |---|---|---|
@@ -107,13 +109,20 @@ mechanics (`pack.defs.mechanics`), HUD elements, panels and abilities.
 
 | What | Form | Examples |
 |---|---|---|
-| Registered types: mechanics, behaviors, actions, conditions, events, HUD elements, panels, visuals | `<pack>.<name>` | `door.access`, `door.lock`, `door.setRank`, `memory.chamber`, `memory.playEcho` |
+| Registered types: mechanics, behaviors, actions, conditions, events, abilities, HUD elements, panels, visuals, view effects | `<pack>.<name>` | `door.access`, `door.lock`, `door.setRank`, `memory.chamber`, `memory.playEcho` |
 | Assets: blocks, models, sounds, music, items | `<pack>:<name>` | `door:access_denied`, `memory:shard_amber`, `door:plaque_r1` |
 | Story variables | `<namespace>.<name>` | `door.rank`, `memory.shardsOwned`, `global.fragments.threshold` |
 | Entities | local to a scene | `cell_door`, `stele_lea` |
 
-Only block and model ids are checked at registration (`ASSET_ID_RE`). The `<pack>.<name>` form of
-type ids (`TYPE_ID_RE`) is a convention that nothing enforces. Writing variables outside
+When a pack loads, `checkDefinitionIds` (`src/engine/core/packs/pack.ts`) checks the ids of the
+definitions exported by its code: a type id must match `TYPE_ID_RE` and start with `<pack id>.`, an
+asset id (block, model, sound, music, item defined with `defineItem`) must match `ASSET_ID_RE` and
+start with `<pack id>:`. Any other id is an error-level issue of the pack (file `pack.ts`, message
+`Identifiant « <id> » : « <pack>.<nom> » attendu.` or `Identifiant « <id> » : « <pack>:<nom> » attendu.`),
+logged when the pack loads and listed by `npm run validate` and the Studio's « ✔ Valider »
+([PACK_FORMAT.md §12](PACK_FORMAT.md#12-validation)). The definition is still registered, except a
+block or model whose id does not match `ASSET_ID_RE` at all: their registries refuse it. Ids of
+items in `content/items.json` and of characters are not checked. Writing variables outside
 `<civId>.*` is refused at runtime (see [§7.1](#71-variables-ctxvars)).
 
 Mechanics, actions, conditions, events, behaviors, panels and HUD elements live in separate
@@ -152,7 +161,8 @@ Lifecycle, from `GameSession.loadCivilization`:
 3. For each mechanic: the state is restored from the save and migrated (`migrateVersioned` in
    `src/engine/core/save/saveFormat.ts`), or created with `state.initial()`; then `setup` runs. If
    `setup` throws, the error is logged, the other mechanics still run, and
-   `ctx.mechanics.get(id)` returns `undefined` for that mechanic.
+   `ctx.mechanics.get(id)` returns `undefined` for that mechanic (`npm run validate` reports the
+   failure as an error: `La mécanique <id> a échoué à l’initialisation : <message>`).
 4. The entry scene is entered (behaviors are instantiated), then the `start` lifecycle phase runs.
 
 There is no `dispose` and no per-frame hook on a mechanic. Per-frame work goes through
@@ -211,7 +221,7 @@ Mechanics of the two packs:
 |---|---|---|
 | `door.access` | `civilizations/door/mechanics/access.ts` | Rank kept in declared variables `door.rank`, `door.rankTemporary`; binds the permissions key from its settings. |
 | `door.keyImprint` | `civilizations/door/mechanics/imprint.ts` | Dial puzzle; solution in settings; API used by the `door.imprint` panel. |
-| `memory.chamber` | `civilizations/memory/mechanics/chamber.ts` | Shards defined in settings; state mirrored into variables and `ctx.ui.store`. |
+| `memory.chamber` | `civilizations/memory/mechanics/chamber.ts` | Shards defined in settings; state mirrored into variables and `ctx.ui.store`; binds the chamber key (`chamberKey`, `KeyC` by default) from its settings. |
 | `memory.echoes` | `civilizations/memory/mechanics/echo.ts` | `dependsOn: ['memory.chamber']`; echoes defined in settings; ends on `sceneExit`. |
 | `memory.offering` | `civilizations/memory/mechanics/garden.ts` | `dependsOn: ['memory.chamber']`; pedestals and solution in settings. |
 
@@ -229,7 +239,7 @@ each entity that has it.
 | `props` | `PropSchema` | Component properties; edited in the inspector (see [§6](#6-property-schemas-prop)). |
 | `state?` | `{ version: number; initial: (props) => S; migrate?: Record<number, (old: unknown) => unknown> }` | Persistent per-entity state, saved with the scene state. `initial` receives the normalized props. |
 | `requires?` | `string[]` | Components the Studio adds (with empty props) when this one is added from the inspector. Not enforced at runtime or by validation. |
-| `internal?` | `boolean` | Declared as "hidden from the « Ajouter un composant » menu", but no code reads it (see [§15](#15-limitations)). |
+| `internal?` | `boolean` | Hidden from the « Ajouter un composant » menu (`AddComponent` in `src/studio/panels/Inspector.tsx`); an entity that already has the component still shows its section. No engine or pack behavior sets it. |
 | `create(ctx)` | `(ctx: BehaviorContext<InferProps<Props>, S>) => BehaviorInstance \| void` | Called when the entity is instantiated. Returns the hooks described in [§5](#5-behaviors-instance-hooks-and-the-interaction-pipeline). |
 
 Engine behaviors (`src/engine/core/behaviors/*.ts`, registered by
@@ -279,7 +289,10 @@ Execution (`LogicInterpreter.run`, `src/engine/core/logic/interpreter.ts`):
   the field of the triggering event's payload. Nested values (inside lists or objects) are not
   resolved.
 - Actions of a list run in order. An unknown `type` or an exception stops the list; the failure is
-  logged with its origin and recorded in the trace buffer (`session.interpreter.traces()`).
+  logged with its origin and recorded in the trace buffer (`session.interpreter.traces()`: the last
+  300 actions run, rules triggered and conditions that could not be evaluated, shown in development
+  by the F3 overlay under « Logique récente »). The optional `note` of an action (a designer note)
+  is ignored.
 - `ctx` is always the civilization context, also when the list is run by a behavior. Timers and
   listeners an action registers belong to the civilization scope.
 
@@ -326,7 +339,8 @@ export const playEcho = defineAction({
 | `test(ctx, props, scope)` | `(ctx: CivContext, props: InferProps<Props>, scope: LogicScope) => boolean` | Synchronous. |
 
 `LogicInterpreter.test` returns `true` for a `null` condition (an empty `prop.condition()` means
-"always"), `false` for an unknown type or when `test` throws (the error is logged).
+"always"), `false` for an unknown type or when `test` throws (the error is logged and recorded in
+the trace buffer).
 
 From `civilizations/door/mechanics/access.ts`:
 
@@ -365,9 +379,9 @@ export const imprintedEvent = defineEvent({ id: 'door.imprinted', label: 'Plaque
 ```
 
 TypeScript payload types: `EventPayload<K>` (`src/engine/core/events/eventMap.ts`) is typed for the
-names declared in `CivEventMap` and is `Record<string, unknown>` for any other name. The header of
-`eventMap.ts` shows how a pack could add typed events by declaration merging; neither Door nor
-Memory does so.
+names declared in `CivEventMap` and is `Record<string, unknown>` for any other name. As the header of
+`eventMap.ts` says, packs only import `@sdk` and do not augment `CivEventMap`: the payloads of pack
+events are `Record<string, unknown>` in TypeScript.
 
 ### 4.6 Other definition kinds of `@sdk`
 
@@ -605,7 +619,7 @@ bound to the component's own scope plus `entity`, `props`, `state` and `componen
 | `lifecycle` | `LifecycleApi` | `on(phase, cb)` ([§7.11](#711-lifecycle-ctxlifecycle)). |
 | `settings` | `SettingsApi` | `of<T>(mechanicId)`: normalized settings of a mechanic of the running civilization. |
 | `scope` | `DisposableScope` | Owner of the context's registrations: `add`, `addFn`, `remove`, `child`, `size`, `isDisposed`. |
-| `view` | `ViewBridge \| null` | Declared escape hatch to the renderer; currently always `null` ([§15](#15-limitations)). |
+| `view` | `ViewBridge \| null` | Escape hatch to the renderer: `{ kind: 'babylon', native: { engine, scene } }` (`native` is typed `unknown`) while a `GameView` renders the session (game, Studio playtest); `null` headless. Prefer `@sdk/view` ([§11](#11-custom-rendering-sdkview)). |
 
 Scopes:
 
@@ -701,12 +715,15 @@ Quests evaluate their conditions and event matchers on every event except `ui.*`
 ### 7.6 Interface (`ctx.ui`)
 
 `notify(text, { kind?, icon?, duration? })` (`text` is already localized; kinds `info`, `success`,
-`warning`, `denied`, `quest`, `item`, `memory`, `discovery`; 3.5 s by default);
+`warning`, `denied`, `quest`, `item`, `memory`, `discovery`; 3.5 s by default, counted in the game
+from the moment the notification is on screen: one raised while a cinematic hides the HUD is shown
+after it; the game keeps the last 6);
 `showLocation(title, subtitle?)`; `showDocument({ title, body, style?, footer? })` (locks movement
 until closed); `openPanel<R>(id, props?)` (resolves with the panel's result or `null`, see
 [§10.2](#102-definepanel)); `closePanel(id, result?)`; `isPanelOpen(id)`;
-`setHudVisible(element, visible)` (elements `crosshair`, `prompt`, `objectives`, `notifications`,
-`inventory`, `abilities`, `location`; restored at unload); `showEndScreen({ title, subtitle?, lines? })`;
+`setHudVisible(element, visible)` (elements `crosshair`, `prompt`, `objectives` (the objective
+tracker and the on-screen objective markers), `notifications`, `inventory`, `abilities`,
+`location`; restored at unload); `showEndScreen({ title, subtitle?, lines? })`;
 `confirm({ title, message, confirm, cancel })`; `store`.
 
 `ctx.ui.store` is a key/value store shared with the civilization's React components (`get`, `set`,
@@ -772,7 +789,7 @@ run. Simulated time makes waits deterministic in headless tests (`src/engine/cor
 | `start` | Each time the civilization is loaded (new game or save), after the entry scene is entered, before the `civ.started` event. |
 | `sceneEnter` | End of `enterScene`: entities instantiated, player placed; before `scene.entered`. |
 | `sceneExit` | Start of `exitScene`: before `scene.exiting`, before the scene state is captured and behaviors destroyed. Also runs during unload. |
-| `pause` / `resume` | When the paused state changes (`setPaused`; the game pauses for its menu overlays). |
+| `pause` / `resume` | When the paused state changes (`setPaused`: the game pauses for its menu overlays, and the session while a panel is open unless the panel sets `pausesGame: false`). |
 | `beforeSave` | Start of `snapshotCivState` (save, and unload when the state is kept). |
 | `unload` | Start of `unloadCivilization`, after the snapshot, before `civ.unloading`. |
 
@@ -809,8 +826,8 @@ Engine events (`CivEventMap`): `civ.started`, `civ.unloading`, `civ.finished`, `
 `dialogue.ended`, `quest.started`, `quest.stageChanged`, `quest.objectiveCompleted`,
 `quest.completed`, `quest.failed`, `cinematic.started`, `cinematic.ended`, `npc.arrived`,
 `player.jumped`, `player.landed`, `ability.used`, `multiverse.fragmentAcquired`, `save.completed`,
-`ui.panelOpened`, `ui.panelClosed`. Those documented for the Studio are listed in
-`src/engine/core/logic/coreEvents.ts`.
+`ui.panelOpened`, `ui.panelClosed`. All of them are documented for the Studio, with their payload
+fields, in `src/engine/core/logic/coreEvents.ts`.
 
 ### 7.14 `BehaviorContext` additions
 
@@ -851,6 +868,10 @@ From `civilizations/door/content/rules.json`:
   civilization is loaded.
 - Settings can be data sets: `memory.chamber` defines its shards, `memory.echoes` its echoes and
   `memory.offering` its pedestals and solution (`civilizations/memory/content/rules.json`).
+- `npm run validate` checks the values of declared fields like prop values in content
+  ([§6.4](#64-validation-of-prop-values)): text keys, references and nested logic. Unknown fields
+  and wrong plain values are only reported by the load-time normalization (warnings of the `règles`
+  logger).
 - In Civilization Studio, « Règles des mécaniques » (`RulesEditor` in
   `src/studio/editors/DataEditors.tsx`) shows a form for every mechanic of the open pack whose
   `settings` schema is not empty.
@@ -990,6 +1011,7 @@ From `civilizations/door/ui/RankPlaque.tsx`:
 ```tsx
 function RankPlaque() {
   const t = useT();
+  const permissionsKey = useCiv().settings.of<{ permissionsKey: string }>('door.access').permissionsKey;
   const rank = useVar<number>('door.rank') ?? -1;
   const temporary = useVar<boolean>('door.rankTemporary') === true;
   const flash = useUiStore<number>('door.rankFlash') ?? 0;
@@ -1007,11 +1029,14 @@ export const rankPlaqueHud = defineHud({ id: 'door.rankPlaque', slot: 'top-left'
 - `ctx.ui.openPanel(id, props)` returns a promise resolved with the value given to `close`, or `null`
   (panel closed without result, replaced by a new opening of the same id, or civilization unloaded).
   It emits `ui.panelOpened`; closing emits `ui.panelClosed`.
-- `pausesGame` (default `true`) locks the player's movement while the panel is open
-  (`GameSession.openPanel`). It does not pause the simulation clock.
+- `pausesGame` (default `true`) pauses the session while the panel is open
+  (`setPaused('panneau:<id>')` in `GameSession.openPanel`: the clock, timers, behaviors, NPCs and
+  cinematics wait; see the `pause` lifecycle phase in [§7.11](#711-lifecycle-ctxlifecycle)) and
+  locks the player's movement. With `pausesGame: false` the world keeps running.
 - While a panel is open the game view stops reading gameplay input (`GameController.setModal`).
 - A panel that throws is closed with a `null` result and the error is logged.
-- `title` is declared as the localization key of the panel title; the game UI does not read it.
+- `title` is the localization key of the panel title: the game UI gives its text to the panel host
+  as `aria-label` (`CivPanels` in `src/game/hud/CivUi.tsx`).
 
 An action that opens a panel and waits for its result, from
 `civilizations/door/mechanics/imprint.ts`:
@@ -1043,6 +1068,12 @@ export const imprintPanel = definePanel({ id: 'door.imprint', component: Imprint
 | `useUiStore<T>(key)` | Current value of `ctx.ui.store` for the key; re-renders on `set`. |
 | `useEventRefresh(events)` | A counter that changes when one of the events fires. |
 
+`keyLabel(code)` (not a hook) returns the French label of a `KeyboardEvent.code`, following the
+player's keyboard layout when the browser exposes it (`KeyQ` gives « A » on AZERTY, `Space` gives
+« Espace »). Use it to show a key that settings can change instead of writing the letter in a text:
+Door's `RankPlaque` displays `keyLabel(permissionsKey)` (the setting is read with
+`useCiv().settings.of(...)`), Memory's `ChamberHud` the label of `chamberKey`.
+
 `CivUiContext` is the React context the game provides around civilization components. Components
 are rendered with the civilization's theme as CSS variables set by `src/game/GameApp.tsx` from the
 manifest `theme`: `--civ-accent`, `--civ-accent-soft`, `--civ-panel`, `--civ-panel-border`,
@@ -1055,7 +1086,8 @@ The usual data flow: the mechanic writes `ctx.ui.store` or a variable, the HUD r
 
 Headless sessions use `HeadlessUi` (`src/engine/core/sim/uiBridge.ts`): HUD definitions are
 recorded in `ui.huds`, open panels in `ui.openPanels` (id → props) and they stay open until
-`session.closePanel(id, result)` is called; notifications, documents, locations and end screens are
+`session.closePanel(id, result)` is called (meanwhile the session stays paused, unless the panel
+sets `pausesGame: false`); notifications, documents, locations and end screens are
 recorded; `confirm` answers `ui.confirmAnswer` (default `true`).
 
 ### 10.4 Localization in code
@@ -1064,15 +1096,16 @@ All player-visible text goes through keys of `locales/fr-FR.json` (flat JSON obj
 text; `LocaleSchema`). `ctx.t` and `useT` use the merged tables of the engine
 (`src/engine/locales/fr-FR.json`) and every loaded pack. Messages support `{name}` interpolation,
 `{n, plural, one {…} other {…}}` (French rule: 0 and 1 are singular) and
-`{g, select, … other {…}}` (`src/engine/core/i18n/localizer.ts`). A missing key renders as `⟦key⟧`
-and is reported once on the console.
+`{g, select, … other {…}}` (`src/engine/core/i18n/localizer.ts`). A missing key renders as `⟦key⟧`,
+is reported once on the console and is listed by the F3 overlay in development
+(`ui.debug.missingTexts`).
 
 ---
 
 ## 11. Custom rendering: `@sdk/view`
 
 Visual code is presentation only; the simulation does not depend on it. View modules are
-registered with the pack (glob `./view/**/*.ts` in Door and Memory).
+registered with the pack (glob `./view/**/*.ts` in Door's, Memory's and the scaffold's `pack.ts`).
 
 ### 11.1 `defineVisual`
 
@@ -1135,7 +1168,7 @@ has elapsed.
 | Persistent spawned entities, removed scene entities, voxel edits | `scenes[sceneId].spawned`, `removed`, `voxelEdits` | — |
 | Variables of the civilization | `vars` | — |
 | Inventory, quests, dialogue history, fired `once` rules, player state | `inventory`, `quests`, `dialogue`, `rulesFired`, `player` | — |
-| Whole local state | `stateVersion` (manifest) | `definePack({ migrations })`; a missing step aborts the load with an error. |
+| Whole local state | `stateVersion` (manifest) | `definePack({ migrations })`; after each step the engine sets `stateVersion` to n + 1 itself; a missing step, or a save from a newer `stateVersion`, aborts the load with an error. |
 
 Not saved: `ctx.ui.store`, closures and local variables of `setup`/`create`, non-persistent spawned
 entities.
@@ -1194,9 +1227,10 @@ already released scope is refused and disposed immediately (`DisposableScope.add
   `@sdk`.
 - Every manifest declares `engineApi`, a semver range; Door, Memory and core declare `"^1.0.0"`.
 - `GameSession.refreshManifests` rejects a pack when `satisfies(ENGINE_API_VERSION, manifest.engineApi)`
-  is false (`src/engine/core/util/semver.ts` supports `^`, `~`, `>=`, `<=`, `>`, `<`, `=` and exact
-  versions): the pack is logged as an error ("Le pack "x" requiert l'API … (moteur : …).") and is not
-  offered, and `npm run validate` reports it.
+  is false (`src/engine/core/util/semver.ts` supports a single range: `^`, `~`, `>=`, `<=`, `>`, `<`,
+  `=`, exact versions and `*`; compound ranges such as `>=1.0.0 <2.0.0` and x-ranges such as `1.x`
+  are never satisfied): the pack is logged as an error ("Le pack "x" requiert l’API … (moteur : …).")
+  and is not offered, and `npm run validate` reports it.
 - `npm run civ -- new-pack <id>` writes `engineApi: "^<major>.0.0"` from the current
   `ENGINE_API_VERSION`.
 - The comment in `version.ts` asks to bump the major version on breaking API changes and to document
@@ -1216,35 +1250,33 @@ Verified against the current code:
   effects and texts only.
 - **`dependsOn` resolves within the pack.** A missing or circular dependency prevents the
   civilization from loading.
-- **A mechanic whose `setup` throws** is only logged; `ctx.mechanics.get(id)` then returns
-  `undefined`. `npm run validate` does not report it (see below).
+- **A mechanic whose `setup` throws** is only logged at run time; `ctx.mechanics.get(id)` then
+  returns `undefined`. `npm run validate` reports it as an error.
 - **Settings are read when the civilization loads**, not while it runs.
-- **`npm run validate` does not check `content/rules.json`** (unknown fields, references and text
-  keys inside settings), does not report errors logged while the civilization boots (mechanic
-  `setup` failures, behavior faults; headless sessions do not echo logs to the console), only
-  instantiates the entry scene's behaviors, and only checks localization keys written literally as
-  `t('key')` in code (keys built at run time, such as `` t(`door.rank.${Math.min(2, rank)}`) `` in
-  `civilizations/door/ui/RankPlaque.tsx`, are not checked).
+- **`npm run validate` checks `content/rules.json` only through the `settings` schemas**
+  (references, text keys and nested logic of declared fields; not unknown fields nor plain values
+  such as numbers), reports mechanic `setup` failures and the pack's load issues but no other error
+  logged while the civilization boots (behavior faults; headless sessions do not echo logs to the
+  console), only instantiates the entry scene's behaviors, and only checks localization keys
+  written literally as `t('key')` in code (keys built at run time, such as
+  `` t(`door.rank.${Math.min(2, rank)}`) `` in `civilizations/door/ui/RankPlaque.tsx`, are not
+  checked).
   The playthrough tests assert `session.logHub.errors()` is empty to catch runtime errors.
-- **`BehaviorDefinition.internal` is not implemented**: the « Ajouter un composant » menu lists every
-  behavior.
 - **The prop option `group` is not used** by the Studio's forms (Door's `door.lock` sets it).
 - **`requires` is a Studio convenience**: it is not enforced at runtime or by validation.
-- **`definePanel({ pausesGame })` does not pause the simulation**: it only locks player movement;
-  timers, behaviors and NPCs keep running while a panel is open. `PanelDefinition.title` is not
-  read by the game UI.
 - **`defineHud({ visibleWhen })`** is tested when the HUD slot renders; the slot does not subscribe
   to variable changes. Door and Memory do not use it; their components return `null` from
   `useVar`/`useUiStore` values instead.
 - **`useT()`** does not subscribe to locale changes (its comment says it re-renders on locale
   change). French is the only locale shipped.
-- **`ctx.view` is always `null`**: `GameSession.view` is never assigned.
 - **`VisualEntity.flags`** has no writer in the SDK: no context API sets an entity's view flags.
 - **Input labels** given to `ctx.input.bind` are stored but not displayed, and civilization keys
   cannot be rebound in the game settings.
 - **Event payload types**: typed only for `CivEventMap` names; packs emit untyped payloads.
-- **Type id format** (`<pack>.<name>`) is not enforced; sounds, music, visuals and view effects are
-  silently replaced on id collision.
+- **Id formats are reported, not enforced**: a definition whose id does not have the
+  `<pack>.<name>` or `<pack>:<name>` form with its own pack id is still registered (the pack load
+  reports an error, [§3](#3-identifiers); only malformed block and model ids are refused by their
+  registries); sounds, music, visuals and view effects are silently replaced on id collision.
 - **The Studio's variable picker** (`knownVariables` in `src/studio/ui/catalog.ts`) lists names
   found in the pack's content under the keys `var`, `variable`, `consent`, `examineVar` and `flag`;
   variables declared in code with `ctx.vars.declare` appear only if content references them.
