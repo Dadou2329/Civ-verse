@@ -200,7 +200,16 @@ async function actThree(game: HeadlessGame, answer: 'listen' | 'open'): Promise<
   expect(session.vars.get('door.absentDoorShown')).toBe(true);
   expect(session.entityApi('porte_absente')!.behavior<{ isOpen: boolean }>('core.door')!.isOpen).toBe(true);
 
-  expect(await interact(session, 'fragment_seuil', 'take')).toBe(true);
+  // Taken like a player does: from the threshold, aiming through the open absent door at the
+  // fragment (the open door's frame must not hide it).
+  await walkTo(session, 'fragment_seuil');
+  const frag = session.world!.entities.get('fragment_seuil')!.position;
+  const eye = session.player.eye;
+  session.player.setLook(Math.atan2(frag.x - eye.x, frag.z - eye.z), -Math.atan2(frag.y - 0.35 - eye.y, Math.hypot(frag.x - eye.x, frag.z - eye.z)));
+  session.interaction.refresh();
+  expect(session.interaction.target?.entityId).toBe('fragment_seuil');
+  expect(await session.interaction.interact('primary')).toBe(true);
+  await flush();
   await advance(session, 1.5);
   expect(session.multiverse.hasFragment('threshold')).toBe(true);
   expect(session.cinematics.current?.id).toBe('C04c_coupe');

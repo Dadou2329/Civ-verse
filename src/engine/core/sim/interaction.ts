@@ -51,7 +51,14 @@ export class InteractionSystem {
     const dir = s.player.forward;
     const vox = raycastVoxels(world.volume, world.paletteInfo(), eye, dir, INTERACT_DISTANCE);
     const max = vox ? vox.distance : INTERACT_DISTANCE;
-    const hit = world.colliders.raycast(eye, dir, max, (c) => c.pickable && c.owner !== 'player');
+    // A see-through volume that offers nothing (an open door's frame, a non-interactive prop's
+    // aim box) does not hide what is behind it; solid things still do.
+    const hit = world.colliders.raycast(eye, dir, max, (c) => {
+      if (!c.pickable || c.owner === 'player') return false;
+      if (c.solid) return true;
+      const e = world.entities.get(c.owner);
+      return !!e && s.behaviors.offers(e).length > 0;
+    });
     if (!hit) return this.set(null);
     const e = world.entities.get(hit.entry.owner);
     if (!e) return this.set(null);
