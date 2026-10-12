@@ -27,6 +27,9 @@ export default defineConfig(({ command }) => {
     },
     preview: { host: '127.0.0.1', port: 4173 },
     worker: { format: 'es' },
+    // Pre-bundled at startup: otherwise opening the first script in the Studio would make Vite
+    // discover the dependency, re-optimize and reload the page (losing unsaved edits).
+    optimizeDeps: { include: ['monaco-editor'] },
     build: {
       target: 'es2022',
       sourcemap: true,

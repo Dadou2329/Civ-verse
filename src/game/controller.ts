@@ -5,6 +5,10 @@
 import { GameSession } from '@engine/core/sim/session';
 import { GlobContentProvider } from '@engine/platform/globContent';
 import { BrowserSaveStorage } from '@engine/platform/idbSaveStorage';
+import type { ContentProvider } from '@engine/core/packs/pack';
+import type { RunMode } from '@engine/core/sim/api';
+import type { SaveStorage } from '@engine/core/save/storage';
+import type { Vec3 } from '@engine/core/util/math';
 import { loadSettings, saveSettings, type GameSettings } from '@engine/platform/settings';
 import { GameView } from '@engine/view/gameView';
 import { parseSave, SaveLoadError } from '@engine/core/save/saveFormat';
@@ -18,14 +22,25 @@ export type SaveSlot = (typeof SAVE_SLOTS)[number];
 
 const AUTOSAVE_SECONDS = 120;
 
+export interface ControllerOptions {
+  provider?: ContentProvider;
+  mode?: RunMode;
+  /** Civilization Studio's playtest passes an in-memory storage: real saves are never touched. */
+  storage?: SaveStorage;
+}
+
 export class GameController {
-  readonly storage = new BrowserSaveStorage();
+  readonly storage: SaveStorage;
   view: GameView | null = null;
   settings: GameSettings;
   private autosaveTimer: ReturnType<typeof setInterval> | null = null;
   private listeners = new Set<() => void>();
 
-  private constructor(readonly session: GameSession) {
+  private constructor(
+    readonly session: GameSession,
+    storage: SaveStorage,
+  ) {
+    this.storage = storage;
     this.settings = loadSettings();
     session.presentation.subscribe(handlePresentationForUi);
     // Autosave at meaningful moments.
@@ -35,12 +50,37 @@ export class GameController {
     session.bus.on('civ.finished', () => void this.finishCiv());
   }
 
-  static async create(): Promise<GameController> {
+  static async create(opts: ControllerOptions = {}): Promise<GameController> {
     void loadKeyboardLayout();
-    const session = await GameSession.create({ mode: 'play', provider: new GlobContentProvider(), ui: new ReactUiBridge(), locale: 'fr-FR' });
-    const c = new GameController(session);
+    const session = await GameSession.create({ mode: opts.mode ?? 'play', provider: opts.provider ?? new GlobContentProvider(), ui: new ReactUiBridge(), locale: 'fr-FR' });
+    const c = new GameController(session, opts.storage ?? new BrowserSaveStorage());
     if (import.meta.env.DEV) (window as unknown as { __civ: unknown }).__civ = { controller: c, session };
     return c;
+  }
+
+  /**
+   * Civilization Studio's PLAY: starts a fresh run of a civilization, either from its beginning
+   * or « ici » (a scene and a position, without the opening events).
+   */
+  async startPlaytest(civId: string, opts: { scene?: string; place?: { position: Vec3; yaw?: number; pitch?: number }; quietStart?: boolean } = {}): Promise<void> {
+    const ui = useUi.getState();
+    const manifest = this.session.manifests.get(civId);
+    ui.set({ screen: 'loading', overlay: null, loadingLabel: manifest ? this.session.t(manifest.name) : civId, error: null, endScreen: null, document: null, panels: [] });
+    try {
+      await this.session.loadCivilization(civId, { fresh: true, ...opts });
+      this.enterPlaying();
+    } catch (err) {
+      this.fail(err);
+    }
+  }
+
+  /** Releases the 3D view and the session (end of a Studio playtest). */
+  dispose(): void {
+    this.stopAutosave();
+    this.view?.dispose();
+    this.view = null;
+    this.session.dispose();
+    this.listeners.clear();
   }
 
   onChange(cb: () => void): () => void {

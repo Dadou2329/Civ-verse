@@ -7,7 +7,7 @@ import { SettingsPanel } from './screens/Settings';
 import { Hud } from './hud/Hud';
 import { ConfirmDialog } from './hud/Modals';
 
-function ThemedRoot({ controller, children }: { controller: GameController; children: React.ReactNode }) {
+export function ThemedRoot({ controller, children }: { controller: GameController; children: React.ReactNode }) {
   useSessionTick();
   const theme = controller.session.civ?.manifest.theme;
   const style = {

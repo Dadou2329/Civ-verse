@@ -79,6 +79,28 @@ export class BehaviorSystem {
     }
   }
 
+  /**
+   * Studio editing: component records with normalized props and their initial state (a door is
+   * shown closed, a sign shows its text) — without creating any behavior instance.
+   */
+  prepareForEditing(e: RuntimeEntity): void {
+    e.components.clear();
+    for (const [type, raw] of Object.entries(e.doc.components)) {
+      const def = this.session.behaviorDefs.get(type)?.def ?? null;
+      let props: Record<string, unknown> = { ...raw };
+      let state: unknown = undefined;
+      if (def) {
+        props = normalizeProps(def.props, raw).value as Record<string, unknown>;
+        try {
+          state = def.state ? def.state.initial(props as never) : undefined;
+        } catch {
+          state = undefined;
+        }
+      }
+      e.components.set(type, { type, def, baseProps: raw, overrides: {}, props, state, instance: null, ctx: null, faulted: null });
+    }
+  }
+
   private fault(e: RuntimeEntity, record: ComponentRecord, err: unknown, phase: string): void {
     const error = toError(err);
     record.faulted = `${phase} : ${error.message}`;

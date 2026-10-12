@@ -227,34 +227,11 @@ export class CinematicSystem {
   }
 
   private evaluateCamera(doc: CinematicDoc, time: number): CameraPose | null {
-    const track = doc.tracks.find((t) => t.type === 'camera');
-    if (!track || track.type !== 'camera' || track.keys.length === 0) return null;
-    const keys = track.keys;
-    let i = 0;
-    while (i + 1 < keys.length && keys[i + 1]!.t <= time) i++;
-    const k0 = keys[i]!;
-    const k1 = keys[i + 1];
-    const targetOf = (k: typeof k0): Vec3 => {
-      if (k.lookAt) {
-        if (k.lookAt === 'player') return this.host.playerEye();
-        const p = this.host.actors.position(k.lookAt);
-        if (p) return { x: p.x, y: p.y + 1.5, z: p.z };
-      }
-      if (k.target) return fromTuple(k.target);
-      const pos = fromTuple(k.position);
-      return { x: pos.x, y: pos.y, z: pos.z + 1 };
-    };
-    if (!k1 || k1.cut || time <= k0.t) {
-      return { position: fromTuple(k0.position), target: targetOf(k0), fov: k0.fov ?? DEFAULT_FOV, roll: k0.roll ?? 0 };
-    }
-    const span = Math.max(1e-6, k1.t - k0.t);
-    const a = ease((k1.ease ?? 'inOutSine') as EasingName, (time - k0.t) / span);
-    return {
-      position: lerpVec(fromTuple(k0.position), fromTuple(k1.position), a),
-      target: lerpVec(targetOf(k0), targetOf(k1), a),
-      fov: lerp(k0.fov ?? DEFAULT_FOV, k1.fov ?? k0.fov ?? DEFAULT_FOV, a),
-      roll: lerp(k0.roll ?? 0, k1.roll ?? 0, a),
-    };
+    return evaluateCameraTrack(doc, time, (lookAt) => {
+      if (lookAt === 'player') return this.host.playerEye();
+      const p = this.host.actors.position(lookAt);
+      return p ? { x: p.x, y: p.y + 1.5, z: p.z } : null;
+    });
   }
 
   private finish(skipped: boolean): void {
@@ -293,4 +270,38 @@ export class CinematicSystem {
   private changed(): void {
     for (const l of this.listeners) l();
   }
+}
+
+/**
+ * Camera pose of a cinematic at a given time (keys interpolated with their easing; `cut` keys
+ * jump). Shared by the player and by Civilization Studio's timeline preview.
+ */
+export function evaluateCameraTrack(doc: CinematicDoc, time: number, lookAtTarget: (lookAt: string) => Vec3 | null): CameraPose | null {
+  const track = doc.tracks.find((t) => t.type === 'camera');
+  if (!track || track.type !== 'camera' || track.keys.length === 0) return null;
+  const keys = track.keys;
+  let i = 0;
+  while (i + 1 < keys.length && keys[i + 1]!.t <= time) i++;
+  const k0 = keys[i]!;
+  const k1 = keys[i + 1];
+  const targetOf = (k: typeof k0): Vec3 => {
+    if (k.lookAt) {
+      const p = lookAtTarget(k.lookAt);
+      if (p) return p;
+    }
+    if (k.target) return fromTuple(k.target);
+    const pos = fromTuple(k.position);
+    return { x: pos.x, y: pos.y, z: pos.z + 1 };
+  };
+  if (!k1 || k1.cut || time <= k0.t) {
+    return { position: fromTuple(k0.position), target: targetOf(k0), fov: k0.fov ?? DEFAULT_FOV, roll: k0.roll ?? 0 };
+  }
+  const span = Math.max(1e-6, k1.t - k0.t);
+  const a = ease((k1.ease ?? 'inOutSine') as EasingName, (time - k0.t) / span);
+  return {
+    position: lerpVec(fromTuple(k0.position), fromTuple(k1.position), a),
+    target: lerpVec(targetOf(k0), targetOf(k1), a),
+    fov: lerp(k0.fov ?? DEFAULT_FOV, k1.fov ?? k0.fov ?? DEFAULT_FOV, a),
+    roll: lerp(k0.roll ?? 0, k1.roll ?? 0, a),
+  };
 }

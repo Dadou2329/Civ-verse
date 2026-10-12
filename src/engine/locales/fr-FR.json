@@ -68,6 +68,7 @@
   "ui.document.close": "Refermer",
   "ui.end.continue": "Continuer",
   "ui.clickToPlay": "Cliquez pour reprendre",
+  "ui.dev.codeChanged": "Le code d’un pack a changé : il sera pris en compte au prochain chargement.",
 
   "ui.debug.performance": "Performances",
   "ui.debug.stats": "{fps} i/s · {ms} ms · {calls} appels de rendu · {vertices} sommets · {chunks} tronçons ({pending} en attente) · {entities} entités",

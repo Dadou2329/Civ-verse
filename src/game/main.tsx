@@ -24,6 +24,11 @@ async function boot() {
       import.meta.hot.on('civ:content-changed', () => {
         if (!controller.session.civ) location.reload();
       });
+      // A pack script changed: outside of a game, reload to run the new code.
+      import.meta.hot.on('civ:code-changed', () => {
+        if (!controller.session.civ) location.reload();
+        else controller.session.notify(controller.session.t('ui.dev.codeChanged'), 'info', 6);
+      });
     }
   } catch (err) {
     console.error(err);

@@ -474,7 +474,9 @@ export class EntityViewManager {
       const m = MeshBuilder.CreateLineSystem(`${e.id}_aide`, { lines }, this.scene) as LinesMesh;
       m.color = color(hex);
       m.parent = v.root;
-      m.isPickable = false;
+      // Invisible entities (triggers, zones) are selected by clicking their outline.
+      m.isPickable = true;
+      m.intersectionThreshold = 0.12;
       meshes.push(m);
     };
     for (const [type, record] of e.components) {

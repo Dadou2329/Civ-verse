@@ -381,6 +381,28 @@ export class GameSession {
   }
 
   /** Loads (once) and registers a library or civilization pack's definitions and content. */
+  /** Studio: registers a pack's definitions (and its dependencies) without starting it. */
+  async loadPackDefinitions(id: string): Promise<LoadedPack> {
+    return this.ensurePack(id);
+  }
+
+  /**
+   * Studio: forgets a pack (and every loaded pack that depends on it) and loads it again from
+   * the content provider — after its scripts or content changed on disk.
+   */
+  async reloadPack(id: string): Promise<LoadedPack> {
+    if (this.civ && (this.civ.id === id || this.civ.pack.manifest.dependencies.includes(id))) {
+      throw new Error(`Impossible de recharger « ${id} » pendant qu'une partie l'utilise.`);
+    }
+    const dependents = (packId: string): string[] =>
+      [...this.loadedPacks.values()].filter((p) => p.manifest.dependencies.includes(packId)).flatMap((p) => [...dependents(p.manifest.id), p.manifest.id]);
+    for (const dep of new Set(dependents(id))) this.unregisterPack(dep);
+    this.unregisterPack(id);
+    this.contentIssues.splice(0, this.contentIssues.length, ...this.contentIssues.filter((i) => i.pack !== id));
+    await this.refreshManifests();
+    return this.ensurePack(id);
+  }
+
   private async ensurePack(id: string, chain: string[] = []): Promise<LoadedPack> {
     const existing = this.loadedPacks.get(id);
     if (existing) return existing;
@@ -452,7 +474,18 @@ export class GameSession {
    * Loads and starts a civilization. With `fresh`, its local state is reset (the multiverse is
    * kept); otherwise the saved local state (if any) is restored.
    */
-  async loadCivilization(civId: string, opts: { fresh?: boolean; scene?: string; spawn?: string } = {}): Promise<void> {
+  async loadCivilization(
+    civId: string,
+    opts: {
+      fresh?: boolean;
+      scene?: string;
+      spawn?: string;
+      /** Studio playtest « Jouer ici »: exact player placement. */
+      place?: { position: Vec3; yaw?: number; pitch?: number };
+      /** Studio playtest « Jouer ici »: do not emit `civ.started` (no opening cinematic). */
+      quietStart?: boolean;
+    } = {},
+  ): Promise<void> {
     if (this.disposed) throw new Error('Session libérée.');
     if (this.loading) throw new Error('Un chargement est déjà en cours.');
     this.loading = true;
@@ -544,13 +577,17 @@ export class GameSession {
       const sceneId = opts.scene ?? saved?.scene ?? entry?.scene;
       if (!sceneId) throw new Error(`Aucune scène d'entrée pour "${civId}".`);
       const restorePos = saved && !opts.scene && !opts.spawn ? saved.player : null;
-      await this.enterScene(sceneId, opts.spawn ?? (restorePos ? undefined : entry?.spawn), {
-        position: restorePos ? { x: restorePos.position[0], y: restorePos.position[1], z: restorePos.position[2] } : undefined,
-        yaw: restorePos?.yaw,
-        pitch: restorePos?.pitch,
-      });
+      await this.enterScene(
+        sceneId,
+        opts.spawn ?? (restorePos || opts.place ? undefined : entry?.spawn),
+        opts.place ?? {
+          position: restorePos ? { x: restorePos.position[0], y: restorePos.position[1], z: restorePos.position[2] } : undefined,
+          yaw: restorePos?.yaw,
+          pitch: restorePos?.pitch,
+        },
+      );
       this.runLifecycle('start');
-      this.bus.emit('civ.started', { civId });
+      if (!opts.quietStart) this.bus.emit('civ.started', { civId });
       this.quests.evaluate();
     } catch (err) {
       this.log.error('Chargement de la civilisation impossible', err);
@@ -706,6 +743,42 @@ export class GameSession {
     const w = this.world;
     if (!w) return;
     w.colliders.set({ id: 'player#body', owner: 'player', box: this.player.body.box(), solid: true, pickable: false, enabled: true });
+  }
+
+  /**
+   * Studio: shows a scene document for editing. Entities get their component props (normalized,
+   * with initial state for visuals) but no behavior runs and there is no player.
+   */
+  openEditorWorld(doc: SceneDoc): SceneWorld {
+    if (this.civ) throw new Error("Le Studio édite les scènes sans civilisation en cours d'exécution.");
+    const world = new SceneWorld(doc, this.blocks);
+    for (const ed of doc.entities) {
+      const e = new RuntimeEntity(ed);
+      this.behaviors.prepareForEditing(e);
+      world.addEntity(e);
+    }
+    world.computeLight();
+    this.world = world;
+    this.changed();
+    return world;
+  }
+
+  /** Studio: rebuilds one entity of the editor world from its (edited) document. */
+  refreshEditorEntity(doc: EntityDoc): RuntimeEntity | null {
+    const world = this.world;
+    if (!world || this.civ) return null;
+    world.removeEntity(doc.id);
+    const e = new RuntimeEntity(doc);
+    this.behaviors.prepareForEditing(e);
+    world.addEntity(e);
+    world.markLightSourcesDirty();
+    return e;
+  }
+
+  closeEditorWorld(): void {
+    if (this.civ) return;
+    this.world = null;
+    this.changed();
   }
 
   /** Captures the live scene state into the civilization's scene states and disposes the scene. */

@@ -14,7 +14,7 @@
  * - writes are atomic (temp file + rename) and the previous version is copied to `.civ-backups/`;
  * - deletes move the file to `.civ-backups/` instead of destroying it.
  */
-import type { Plugin, ViteDevServer } from 'vite';
+import type { Plugin } from 'vite';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
@@ -178,7 +178,6 @@ async function listPackFiles(): Promise<PackListing[]> {
 const recentStudioWrites = new Map<string, number>();
 
 export function civDevPlugin(): Plugin {
-  let server: ViteDevServer | null = null;
   let typecheck: TypecheckService | null = null;
 
   const handle = async (req: IncomingMessage, res: ServerResponse, route: string, query: URLSearchParams) => {
@@ -274,7 +273,6 @@ export function civDevPlugin(): Plugin {
     name: 'civ-dev-api',
     apply: 'serve',
     configureServer(s) {
-      server = s;
       s.middlewares.use((req, res, next) => {
         const url = req.url ?? '';
         if (!url.startsWith(API_PREFIX)) {
@@ -291,18 +289,33 @@ export function civDevPlugin(): Plugin {
         });
       });
     },
-    handleHotUpdate(ctx) {
-      // Content files (scenes, dialogues, quests, locales...) are loaded by the Studio through this
-      // API and by the game through lazy imports. A change must never force-reload the Studio, so we
-      // replace Vite's default propagation by a custom event that each app handles itself.
-      const rel = path.relative(repoRoot, ctx.file).split(path.sep).join('/');
-      if (/^civilizations\/[^/]+\/(content|locales)\//.test(rel) && rel.endsWith('.json')) {
-        const writtenAt = recentStudioWrites.get(ctx.file);
-        const fromStudio = writtenAt !== undefined && Date.now() - writtenAt < 5000;
-        server?.ws.send({ type: 'custom', event: 'civ:content-changed', data: { path: rel, fromStudio } });
+    // `hotUpdate` (not the legacy `handleHotUpdate`, which Vite only calls for edits) so that
+    // created and deleted files are covered too: a new script matches the `import.meta.glob` of its
+    // pack, and Vite's default answer to that would be a full page reload. Ordered last, after
+    // Vite's own glob plugin has added the modules whose globs match the file.
+    hotUpdate: {
+      order: 'post',
+      handler(options) {
+        const rel = path.relative(repoRoot, options.file).split(path.sep).join('/');
+        // Content files (scenes, dialogues, quests, locales...) are loaded by the Studio through
+        // this API and by the game through lazy imports. Pack scripts (mechanics, UI, views,
+        // assets) are re-imported by the Studio. Neither may force-reload the Studio: Vite's
+        // default propagation is replaced by a custom event that each page handles itself.
+        const content = /^civilizations\/[^/]+\/(content|locales)\//.test(rel) && rel.endsWith('.json');
+        const script = /^civilizations\/([^/]+)\/(?!seed\/|tests\/).+\.tsx?$/.exec(rel);
+        if (!content && !(script && !rel.endsWith('.test.ts'))) return undefined;
+        // The concerned modules are invalidated with an HMR timestamp so that the next import
+        // (re-import of the pack, next load of a civilization) gets the new code or content.
+        for (const mod of options.modules) this.environment.moduleGraph.invalidateModule(mod, new Set(), options.timestamp, true);
+        if (this.environment.name === 'client') {
+          const writtenAt = recentStudioWrites.get(options.file);
+          const fromStudio = writtenAt !== undefined && Date.now() - writtenAt < 5000;
+          const change = options.type === 'create' ? 'created' : options.type === 'delete' ? 'deleted' : 'changed';
+          if (content) this.environment.hot.send({ type: 'custom', event: 'civ:content-changed', data: { path: rel, fromStudio, change } });
+          else this.environment.hot.send({ type: 'custom', event: 'civ:code-changed', data: { path: rel, pack: script![1], fromStudio, change } });
+        }
         return [];
-      }
-      return undefined;
+      },
     },
   };
 }
