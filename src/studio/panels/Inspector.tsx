@@ -102,11 +102,11 @@ function EntityInspector({ studio, entity }: { studio: Studio; entity: EntityDoc
       <Section title="Transformation">
         <div className="st-field">
           <div className="st-field__label">Position</div>
-          <Vec3Input value={entity.position} step={0.5} onChange={(v, m) => edit(`Déplacer « ${id} »`, (d) => void (d.position = v), m ? `pos|${m}` : 'pos')} />
+          <Vec3Input testId="st-position" value={entity.position} step={0.5} onChange={(v, m) => edit(`Déplacer « ${id} »`, (d) => void (d.position = v), m ? `pos|${m}` : 'pos')} />
         </div>
         <div className="st-field">
           <div className="st-field__label">Rotation (°)</div>
-          <Vec3Input value={entity.rotation ?? [0, 0, 0]} step={15} onChange={(v, m) => edit(`Tourner « ${id} »`, (d) => void (d.rotation = v), m ? `rot|${m}` : 'rot')} />
+          <Vec3Input testId="st-rotation" value={entity.rotation ?? [0, 0, 0]} step={15} onChange={(v, m) => edit(`Tourner « ${id} »`, (d) => void (d.rotation = v), m ? `rot|${m}` : 'rot')} />
         </div>
         <div className="st-field">
           <div className="st-field__label">Échelle</div>
@@ -185,6 +185,7 @@ function AddComponent({ studio, entity }: { studio: Studio; entity: EntityDoc })
       <select
         className="st-select"
         value=""
+        data-testid="st-add-component"
         onChange={(e) => {
           const type = e.target.value;
           if (!type) return;

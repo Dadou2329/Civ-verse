@@ -8,7 +8,6 @@
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
-import { repoRoot } from './aliases.ts';
 
 export type ScaffoldKind = 'behavior' | 'action' | 'condition' | 'mechanic';
 
@@ -54,20 +53,28 @@ export function renderTemplate(kind: ScaffoldKind, pack: string, camel: string, 
 /**
  * ${label} — comportement créé avec Civilization Studio.
  *
- * Attachez-le à une entité dans l'Inspecteur (« Ajouter un composant »). Les propriétés déclarées
- * dans \`props\` apparaissent automatiquement dans l'Inspecteur et sont enregistrées dans la scène.
+ * Attachez-le à une entité dans l’Inspecteur (« Ajouter un composant »). Les propriétés déclarées
+ * dans \`props\` apparaissent automatiquement dans l’Inspecteur et sont enregistrées dans la scène.
  */
 export const ${camel} = defineBehavior({
   id: '${id}',
   label: '${safeLabel}',
   description: 'Décrivez ici ce que fait ce comportement.',
   props: {
-    prompt: prop.text({ label: "Texte de l'invite", default: 'core.verb.use' }),
+    prompt: prop.text({ label: 'Texte de l’invite', default: 'core.verb.use' }),
     message: prop.text({ label: 'Message affiché', default: '' }),
-    actions: prop.actions({ label: "Actions à l'interaction" }),
+    actions: prop.actions({ label: 'Actions à l’interaction' }),
+    size: prop.vec3({ label: 'Zone de visée (m)', default: [0.8, 1.2, 0.8] }),
   },
   create(ctx) {
+    // A box the player can aim at: the entity can be used without a model.
+    const aim = () => {
+      const [sx, sy, sz] = ctx.props.size;
+      ctx.entity.setCollider('aim', { minX: -sx / 2, minY: 0, minZ: -sz / 2, maxX: sx / 2, maxY: sy, maxZ: sz / 2 }, { solid: false, pickable: true });
+    };
+    aim();
     return {
+      onPropsChanged: aim,
       interaction: () => ({ label: ctx.t(ctx.props.prompt) }),
       onInteract: async () => {
         if (ctx.props.message) ctx.ui.notify(ctx.t(ctx.props.message));
@@ -82,7 +89,7 @@ export const ${camel} = defineBehavior({
 
 /**
  * ${label} — action de logique créée avec Civilization Studio.
- * Elle devient disponible dans l'éditeur de logique, les dialogues, les quêtes et les cinématiques.
+ * Elle devient disponible dans l’éditeur de logique, les dialogues, les quêtes et les cinématiques.
  */
 export const ${camel} = defineAction({
   id: '${id}',
@@ -125,7 +132,7 @@ interface ${camel[0]!.toUpperCase() + camel.slice(1)}State {
 /**
  * ${label} — mécanique créée avec Civilization Studio.
  *
- * Une mécanique vit pendant toute la durée de la civilisation. Tout ce qu'elle enregistre via
+ * Une mécanique vit pendant toute la durée de la civilisation. Tout ce qu’elle enregistre via
  * \`ctx\` (écouteurs, minuteries, interface, entrées) est libéré automatiquement au déchargement.
  */
 export const ${camel} = defineMechanic({
@@ -158,11 +165,12 @@ export async function scaffoldScript(
   if (!['behavior', 'action', 'condition', 'mechanic'].includes(req.kind)) throw new Error('Type de script invalide.');
   const label = String(req.name ?? '').trim();
   const camel = toCamelIdentifier(label);
-  if (!fs.existsSync(path.join(repoRoot, 'civilizations', req.pack, 'pack.ts'))) {
-    throw new Error(`Le pack "${req.pack}" n'existe pas.`);
-  }
   const rel = `civilizations/${req.pack}/mechanics/${camel}.ts`;
   const abs = resolveWritable(rel);
+  // civilizations/<pack>/mechanics/<file> → civilizations/<pack>/pack.ts
+  if (!fs.existsSync(path.join(path.dirname(path.dirname(abs)), 'pack.ts'))) {
+    throw new Error(`Le pack « ${req.pack} » n’existe pas.`);
+  }
   if (fs.existsSync(abs)) throw new Error(`Le fichier existe déjà : ${rel}`);
   await fsp.mkdir(path.dirname(abs), { recursive: true });
   await fsp.writeFile(abs, renderTemplate(req.kind, req.pack, camel, label), { encoding: 'utf8', flag: 'wx' });

@@ -6,6 +6,8 @@
  *   seed <pack> [--force]      génère le contenu initial depuis civilizations/<pack>/seed/index.ts
  *                              (n'écrase jamais un fichier existant sans --force)
  *   new-pack <id> [--name "…"] crée le squelette d'une nouvelle civilisation
+ *   bench [pack…]              mesure les coûts CPU : chargement, lumière, maillage, simulation
+ *                              (aussi : npm run bench)
  *
  * Validation loads packs through Vite's module runner so that `import.meta.glob` in pack.ts and
  * JSON/TSX modules behave exactly as in the game.
@@ -15,6 +17,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { repoRoot } from '../vite/aliases.ts';
 import type * as ValidateRunner from './validateRunner.ts';
+import type * as BenchRunner from './benchRunner.ts';
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -48,8 +51,10 @@ async function main(): Promise<number> {
       return seed(positional()[0], flag('force'));
     case 'new-pack':
       return newPack(positional()[0], option('name'));
+    case 'bench':
+      return bench(positional());
     default:
-      console.log(`Commandes : validate [pack…] | seed <pack> [--force] | new-pack <id> [--name "Nom"]`);
+      console.log(`Commandes : validate [pack…] | seed <pack> [--force] | new-pack <id> [--name "Nom"] | bench [pack…]`);
       return command ? 1 : 0;
   }
 }
@@ -58,7 +63,8 @@ async function main(): Promise<number> {
 // validate
 // -------------------------------------------------------------------------------------------------
 
-async function validate(packs: string[]): Promise<number> {
+/** Runs a module inside Vite's module runner, so that packs load exactly as in the game. */
+async function withViteRunner<M, R>(modulePath: string, fn: (mod: M) => Promise<R>): Promise<R> {
   const { createServer } = await import('vite');
   const server = await createServer({
     configFile: path.join(repoRoot, 'vite.config.ts'),
@@ -69,12 +75,24 @@ async function validate(packs: string[]): Promise<number> {
     optimizeDeps: { noDiscovery: true, include: [] },
   });
   try {
-    const runner = (await server.ssrLoadModule('/tools/cli/validateRunner.ts')) as typeof ValidateRunner;
-    const result = await runner.runValidation(packs);
-    return result.errors > 0 ? 1 : 0;
+    return await fn((await server.ssrLoadModule(modulePath)) as M);
   } finally {
     await server.close();
   }
+}
+
+async function validate(packs: string[]): Promise<number> {
+  return withViteRunner<typeof ValidateRunner, number>('/tools/cli/validateRunner.ts', async (runner) => {
+    const result = await runner.runValidation(packs);
+    return result.errors > 0 ? 1 : 0;
+  });
+}
+
+async function bench(packs: string[]): Promise<number> {
+  return withViteRunner<typeof BenchRunner, number>('/tools/cli/benchRunner.ts', async (runner) => {
+    await runner.runBench(packs);
+    return 0;
+  });
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -132,6 +150,19 @@ async function seed(pack: string | undefined, force: boolean): Promise<number> {
     }
     fs.mkdirSync(path.dirname(abs), { recursive: true });
     const json = JSON.stringify(doc, null, 2) + '\n';
+    if (fs.existsSync(abs) && fs.readFileSync(abs, 'utf8') === json) {
+      skipped++;
+      console.log(`· ${rel} inchangé`);
+      continue;
+    }
+    // --force replaces a file that may hold edits made in the Studio: keep the previous version.
+    if (fs.existsSync(abs)) {
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const backup = path.join(repoRoot, '.civ-backups', 'civilizations', pack, `${rel}.${stamp}.seed.bak`);
+      fs.mkdirSync(path.dirname(backup), { recursive: true });
+      fs.copyFileSync(abs, backup);
+      console.log(`  ancienne version conservée : ${path.relative(repoRoot, backup)}`);
+    }
     fs.writeFileSync(abs, json, 'utf8');
     written++;
     console.log(`✓ ${rel} (${(json.length / 1024).toFixed(1)} Ko)`);

@@ -12,7 +12,7 @@ import { ENGINE_API_VERSION } from '../../src/engine/core/version.ts';
 
 export function scaffoldPack(id: string, displayName: string): string[] {
   const dir = path.join(repoRoot, 'civilizations', id);
-  if (fs.existsSync(dir)) throw new Error(`Le dossier civilizations/${id} existe déjà : rien n'a été modifié.`);
+  if (fs.existsSync(dir)) throw new Error(`Le dossier civilizations/${id} existe déjà : rien n’a été modifié.`);
   const major = ENGINE_API_VERSION.split('.')[0];
   const files: Record<string, string> = {};
   files['manifest.json'] = json({
@@ -40,11 +40,11 @@ export function scaffoldPack(id: string, displayName: string): string[] {
   files['pack.ts'] = `import { definePack } from '@sdk';
 
 /**
- * Code de la civilisation « ${displayName} ». Chaque module de mechanics/, assets/ et ui/ est
- * découvert automatiquement : ajouter un fichier suffit pour enregistrer ses définitions.
+ * Code de la civilisation « ${displayName} ». Chaque module de mechanics/, assets/, ui/ et view/
+ * est découvert automatiquement : ajouter un fichier suffit pour enregistrer ses définitions.
  */
 export default definePack({
-  modules: import.meta.glob(['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', '!./**/*.test.ts'], { eager: true }),
+  modules: import.meta.glob(['./mechanics/**/*.ts', './assets/**/*.ts', './ui/**/*.tsx', './view/**/*.ts', '!./**/*.test.ts'], { eager: true }),
 });
 `;
   files['locales/fr-FR.json'] = json({

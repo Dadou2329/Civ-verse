@@ -37,7 +37,7 @@ function statusOf(fn: () => unknown): number | 'ok' {
 function mountApi(root: string): Middleware {
   const plugin = civDevPlugin({ root });
   let mw: Middleware | null = null;
-  const fakeServer = { middlewares: { use: (fn: Middleware) => (mw = fn) } };
+  const fakeServer = { middlewares: { use: (fn: Middleware) => (mw = fn) }, config: { logger: { error: () => undefined } } };
   (plugin.configureServer as (s: unknown) => void)(fakeServer);
   if (!mw) throw new Error('middleware non installé');
   return mw;
@@ -151,6 +151,7 @@ describe('file API middleware (temporary repository)', () => {
       'mechanics/x.ts': 'export const x = 1;\n',
       'seed/s.ts': 'export const s = 1;\n',
       'content/.cache.json': '{}\n',
+      'pack.ts': 'export default {};\n',
     })) {
       await fsp.mkdir(path.dirname(pack(rel)), { recursive: true });
       await fsp.writeFile(pack(rel), content);
@@ -226,6 +227,18 @@ describe('file API middleware (temporary repository)', () => {
     expect(fs.existsSync(pack('mechanics/x.ts'))).toBe(false);
     expect(fs.readFileSync(path.join(root, String(r.json!.backup)), 'utf8')).toBe('export const x = 1;\n');
     expect((await call(mw, 'DELETE', fileUrl('civilizations/demo/mechanics/x.ts'))).status).toBe(404);
+  });
+
+  it('scaffolds a script into mechanics/ from a template, never over an existing file', async () => {
+    const r = await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: 'demo', kind: 'behavior', name: 'Porte à résonance' } });
+    expect(r.status).toBe(200);
+    expect(r.json).toMatchObject({ path: 'civilizations/demo/mechanics/porteAResonance.ts', id: 'demo.porteAResonance' });
+    const code = fs.readFileSync(pack('mechanics/porteAResonance.ts'), 'utf8');
+    expect(code).toContain("id: 'demo.porteAResonance'");
+    expect(code).toContain("from '@sdk'");
+    expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: 'demo', kind: 'behavior', name: 'Porte à résonance' } })).status).toBe(400);
+    expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: '../x', kind: 'behavior', name: 'a' } })).status).toBe(400);
+    expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: 'demo', kind: 'exec', name: 'a' } })).status).toBe(400);
   });
 
   it('answers unknown routes with 404 and leaves other URLs to Vite', async () => {

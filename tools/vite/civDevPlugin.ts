@@ -290,7 +290,13 @@ export function civDevPlugin(opts: { root?: string } = {}): Plugin {
 
     if (route === 'scaffold' && method === 'POST') {
       const body = JSON.parse((await readBody(req)) || '{}') as ScaffoldRequest;
-      const result = await scaffoldScript(body, (rel) => resolvePackPath(rel, 'write', roots.repo));
+      let result: Awaited<ReturnType<typeof scaffoldScript>>;
+      try {
+        result = await scaffoldScript(body, (rel) => resolvePackPath(rel, 'write', roots.repo));
+      } catch (err) {
+        if (err instanceof CivApiError) throw err;
+        throw new CivApiError(400, (err as Error).message);
+      }
       send(res, 200, result);
       return;
     }

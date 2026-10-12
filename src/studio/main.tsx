@@ -13,6 +13,7 @@ import { GlobContentProvider } from '@engine/platform/globContent';
 import { Studio } from './core/studio';
 import { DevContentProvider, bumpPackCode, bundledProjectIO, devProjectIO } from './core/devContent';
 import { StudioApp } from './StudioApp';
+import { viewportRef } from './hooks';
 
 /**
  * Civilization Studio entry point (studio.html).
@@ -30,7 +31,8 @@ async function boot() {
     const provider = dev ? new DevContentProvider() : new GlobContentProvider();
     const studio = await Studio.create({ provider, io: dev ? devProjectIO : bundledProjectIO() });
     root.render(<StudioApp studio={studio} />);
-    if (import.meta.env.DEV) (window as unknown as { __studio: Studio }).__studio = studio;
+    // Development hooks for the browser tests (tests/e2e): the Studio and its 3D viewport.
+    if (import.meta.env.DEV) Object.assign(window, { __studio: studio, __studioViewport: viewportRef });
     const initial = new URLSearchParams(location.search).get('pack') ?? studio.packList().find((p) => p !== 'core') ?? null;
     if (initial) await studio.openPack(initial);
     if (import.meta.hot && provider instanceof DevContentProvider) {

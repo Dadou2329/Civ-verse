@@ -86,6 +86,7 @@ describe('Localization — French is complete', () => {
         if (/\s{2,}/.test(value.replace(/\n/g, ''))) problems.push(`double espace : ${where}`);
         if (/⟦|\bTODO\b|\bFIXME\b|\bTBD\b|lorem ipsum/i.test(value)) problems.push(`texte provisoire : ${where}`);
         if (hasStraightElision(value)) problems.push(`apostrophe droite (’ attendue) : ${where}`);
+        if (value.includes('...')) problems.push(`trois points (« … » attendu) : ${where}`);
         // French spacing: no-break space before « ? ! ; : » and inside « », not a plain space.
         if (/ [?!;:»]/.test(value) || /« /.test(value)) problems.push(`espace normale au lieu d’insécable : ${where}`);
         // English leftovers (placeholders such as {item} are ignored).

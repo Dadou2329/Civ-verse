@@ -41,7 +41,9 @@ export function Hud() {
       const b = controller.settings.bindings;
       const is = (a: keyof typeof b) => b[a].includes(e.code);
       if (session.dialogue.isActive || session.cinematics.current) return;
-      if (is('pause') && overlay === null && e.code !== 'Escape') {
+      // With the pointer locked, Échap releases it and the lock change opens the pause menu
+      // (the browser keeps that key press); without the lock, the key opens it directly.
+      if (is('pause') && overlay === null && (e.code !== 'Escape' || !controller.view?.input.pointerLocked)) {
         controller.openOverlay('pause');
       } else if (is('journal')) {
         e.preventDefault();

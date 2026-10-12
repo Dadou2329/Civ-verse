@@ -34,7 +34,7 @@ export default defineConfig({
         viewport: { width: 1280, height: 720 },
         launchOptions: {
           executablePath: process.env.CIV_CHROMIUM ?? preinstalled,
-          args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'],
+          args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'],
         },
       },
     },

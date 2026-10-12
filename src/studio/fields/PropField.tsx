@@ -214,9 +214,9 @@ export function NumberInput({
   );
 }
 
-export function Vec3Input({ value, step, onChange }: { value: [number, number, number]; step: number; onChange: OnChange<[number, number, number]> }) {
+export function Vec3Input({ value, step, onChange, testId }: { value: [number, number, number]; step: number; onChange: OnChange<[number, number, number]>; testId?: string }) {
   return (
-    <div className="st-vec">
+    <div className="st-vec" data-testid={testId}>
       {(['x', 'y', 'z'] as const).map((axis, i) => (
         <label key={axis}>
           {axis}
