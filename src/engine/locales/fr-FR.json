@@ -1,0 +1,23 @@
+{
+  "core.speaker.player": "Vous",
+  "core.quest.started": "Nouvelle quête : {title}",
+  "core.quest.updated": "Journal mis à jour : {title}",
+  "core.quest.objectiveDone": "Objectif accompli : {text}",
+  "core.quest.completed": "Quête terminée : {title}",
+  "core.quest.failed": "Quête échouée : {title}",
+  "core.item.acquired": "{count, plural, one {Obtenu : {name}} other {Obtenu : {name} ×{count}}}",
+  "core.item.removed": "{count, plural, one {Perdu : {name}} other {Perdu : {name} ×{count}}}",
+  "core.prompt.talk": "Parler à {name}",
+  "core.prompt.open": "Ouvrir {name}",
+  "core.prompt.close": "Fermer {name}",
+  "core.prompt.examine": "Examiner",
+  "core.prompt.take": "Prendre : {name}",
+  "core.prompt.read": "Lire",
+  "core.prompt.alreadyRead": "Déjà lu",
+  "core.prompt.enter": "Entrer",
+  "core.door.name": "la porte",
+  "core.portal.closed": "Le passage est fermé.",
+  "core.interaction.unavailable": "Impossible pour le moment.",
+  "core.error.civNotFound": "Civilisation introuvable : {id}",
+  "core.verb.use": "Utiliser"
+}
