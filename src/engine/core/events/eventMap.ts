@@ -23,7 +23,36 @@ export interface CivEventMap {
   'door.closed': { entityId: string };
   'item.acquired': { itemId: string; count: number; total: number };
   'item.removed': { itemId: string; count: number; total: number };
-  'item.used': { itemId: string; action: string };
+  /** An inventory action (`action` = its id) or a mouse button of the item in hand (`use` = the use type). */
+  'item.used': { itemId: string; action: string; use?: string };
+  /** The item in hand changed ('' = empty hand). */
+  'item.held': { itemId: string; previous: string };
+  /** A civilization rule refused the change of item in hand. */
+  'item.switchRefused': { itemId: string; reason: string };
+  'item.equipped': { itemId: string; slot: string };
+  'item.unequipped': { itemId: string; slot: string };
+  /** A tool finished its work on a `core.toolTarget` (repair, unlock…). */
+  'tool.used': { itemId: string; entityId: string; tool: string };
+  /** An entity with health was hit. */
+  'combat.hit': { entityId: string; source: string; amount: number; health: number; outcome: string; tags: string[] };
+  /** An entity with health was defeated. */
+  'combat.defeated': { entityId: string; by: string };
+  'combat.playerHit': { amount: number; source: string; health: number; outcome: string };
+  'combat.playerDefeated': { by: string };
+  'combat.playerRespawned': Record<string, never>;
+  'combat.parried': { source: string; kind: string };
+  'combat.blocked': { source: string; amount: number };
+  'combat.guardBroken': { source: string };
+  'combat.reflected': { source: string };
+  /** Dodges and other player combat moves. */
+  'combat.playerAction': { action: string };
+  /** The player entered or left combat. */
+  'combat.engaged': { engaged: boolean };
+  'combat.encounterStarted': { encounterId: string };
+  'combat.encounterWave': { encounterId: string; wave: number };
+  'combat.encounterCompleted': { encounterId: string };
+  'combat.encounterReset': { encounterId: string };
+  'combat.bossPhase': { entityId: string; phase: number };
   'var.changed': { name: string; value: unknown; previous: unknown };
   'dialogue.started': { dialogueId: string; entityId: string | null };
   'dialogue.node': { dialogueId: string; nodeId: string };

@@ -240,6 +240,158 @@ export const coreSounds = [
       ],
     },
   }),
+  // ---- Combat and tools ---------------------------------------------------------------------
+  defineSound({
+    id: 'core:swing',
+    label: 'Geste rapide',
+    category: 'sfx',
+    recipe: { variation: 0.08, layers: [noise('white', { filter: { type: 'bandpass', freq: 900, freqEnd: 2600, q: 1.4 }, attack: 0.03, duration: 0.18, gain: 0.16 })] },
+  }),
+  defineSound({
+    id: 'core:swing_heavy',
+    label: 'Geste lourd',
+    category: 'sfx',
+    recipe: {
+      variation: 0.05,
+      layers: [
+        noise('pink', { filter: { type: 'bandpass', freq: 420, freqEnd: 1600, q: 1.1 }, attack: 0.06, duration: 0.32, gain: 0.26 }),
+        osc('sine', 110, { freqEnd: 70, attack: 0.05, duration: 0.3, gain: 0.12 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:hit',
+    label: 'Coup qui porte',
+    category: 'sfx',
+    recipe: {
+      variation: 0.1,
+      layers: [
+        noise('brown', { filter: { type: 'lowpass', freq: 900 }, duration: 0.14, gain: 0.55 }),
+        osc('square', 180, { freqEnd: 70, filter: { type: 'lowpass', freq: 1200 }, duration: 0.12, gain: 0.12 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:clang',
+    label: 'Coup sans effet (métal)',
+    category: 'sfx',
+    recipe: {
+      variation: 0.06,
+      layers: [
+        osc('triangle', 1240, { duration: 0.5, gain: 0.09 }),
+        osc('sine', 1870, { duration: 0.35, gain: 0.06 }),
+        noise('white', { filter: { type: 'highpass', freq: 3000 }, duration: 0.05, gain: 0.12 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:block',
+    label: 'Coup bloqué',
+    category: 'sfx',
+    recipe: {
+      variation: 0.08,
+      layers: [
+        noise('pink', { filter: { type: 'bandpass', freq: 700, q: 1.5 }, duration: 0.12, gain: 0.35 }),
+        osc('triangle', 520, { freqEnd: 380, duration: 0.18, gain: 0.08 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:parry',
+    label: 'Parade parfaite',
+    category: 'sfx',
+    recipe: {
+      layers: [
+        osc('triangle', 1568, { duration: 0.6, gain: 0.11 }),
+        osc('sine', 2349, { delay: 0.02, duration: 0.5, gain: 0.07 }),
+        noise('white', { filter: { type: 'highpass', freq: 2500 }, duration: 0.06, gain: 0.2 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:guard_break',
+    label: 'Garde brisée',
+    category: 'sfx',
+    recipe: {
+      layers: [
+        noise('brown', { filter: { type: 'lowpass', freq: 600 }, duration: 0.35, gain: 0.6 }),
+        osc('sawtooth', 220, { freqEnd: 60, filter: { type: 'lowpass', freq: 900 }, duration: 0.35, gain: 0.12 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:guard_up',
+    label: 'Garde levée',
+    category: 'sfx',
+    recipe: { variation: 0.05, layers: [noise('pink', { filter: { type: 'bandpass', freq: 1200, q: 2 }, attack: 0.01, duration: 0.07, gain: 0.12 })] },
+  }),
+  defineSound({
+    id: 'core:hurt',
+    label: 'Le joueur est touché',
+    category: 'sfx',
+    recipe: {
+      variation: 0.06,
+      layers: [
+        noise('brown', { filter: { type: 'lowpass', freq: 500 }, duration: 0.22, gain: 0.5 }),
+        osc('sine', 90, { freqEnd: 50, duration: 0.25, gain: 0.3 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:defeat',
+    label: 'Le joueur tombe',
+    category: 'sfx',
+    recipe: {
+      layers: [
+        osc('sine', 196, { freqEnd: 65, attack: 0.05, duration: 1.6, gain: 0.18 }),
+        osc('sine', 233, { freqEnd: 78, attack: 0.05, duration: 1.6, gain: 0.1 }),
+        noise('brown', { filter: { type: 'lowpass', freq: 220 }, delay: 0.4, duration: 0.6, gain: 0.4 }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:defeat_enemy',
+    label: 'Adversaire vaincu',
+    category: 'sfx',
+    recipe: {
+      variation: 0.08,
+      layers: [
+        noise('brown', { filter: { type: 'lowpass', freq: 400 }, delay: 0.05, duration: 0.5, gain: 0.5 }),
+        osc('square', 330, { freqEnd: 90, filter: { type: 'lowpass', freq: 1400 }, duration: 0.45, gain: 0.07 }),
+        noise('white', { filter: { type: 'bandpass', freq: 3200, q: 6 }, delay: 0.15, duration: 0.03, gain: 0.12, repeat: { count: 5, interval: 0.06, gainStep: -0.02 } }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:dodge',
+    label: 'Esquive',
+    category: 'sfx',
+    recipe: { variation: 0.08, layers: [noise('white', { filter: { type: 'bandpass', freq: 600, freqEnd: 1800, q: 0.9 }, attack: 0.02, duration: 0.22, gain: 0.14 })] },
+  }),
+  defineSound({
+    id: 'core:windup',
+    label: 'Adversaire qui prépare un coup',
+    category: 'sfx',
+    recipe: {
+      variation: 0.05,
+      layers: [
+        osc('sawtooth', 140, { freqEnd: 260, filter: { type: 'lowpass', freq: 700 }, attack: 0.08, duration: 0.4, gain: 0.07 }),
+        noise('white', { filter: { type: 'bandpass', freq: 2200, q: 8 }, duration: 0.03, gain: 0.08, repeat: { count: 3, interval: 0.08 } }),
+      ],
+    },
+  }),
+  defineSound({
+    id: 'core:charge_ready',
+    label: 'Coup chargé prêt',
+    category: 'sfx',
+    recipe: { layers: [osc('sine', 880, { duration: 0.18, gain: 0.07 }), osc('sine', 1320, { delay: 0.06, duration: 0.22, gain: 0.06 })] },
+  }),
+  defineSound({
+    id: 'core:thud',
+    label: 'Coup dans un mur',
+    category: 'sfx',
+    recipe: { variation: 0.1, layers: [noise('brown', { filter: { type: 'lowpass', freq: 380 }, duration: 0.1, gain: 0.45 })] },
+  }),
   // ---- Ambiences (looped) -------------------------------------------------------------------
   defineSound({
     id: 'core:amb_wind',

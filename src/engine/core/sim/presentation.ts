@@ -27,6 +27,8 @@ export class PresentationBus {
   private listeners = new Set<PresentationListener>();
   private recorded: PresentationRequest[] = [];
   private nextHandle = 1;
+  /** Last music asked for (combat music returns to it). */
+  currentMusic: string | null = null;
 
   constructor(private readonly record = false) {}
 
@@ -35,6 +37,7 @@ export class PresentationBus {
   }
 
   emit(req: PresentationRequest): void {
+    if (req.type === 'music') this.currentMusic = req.id;
     if (this.record) {
       this.recorded.push(req);
       if (this.recorded.length > 2000) this.recorded.splice(0, 500);

@@ -19,7 +19,21 @@ export type GameAction =
   | 'skip'
   | 'debug'
   | 'colliders'
-  | 'quicksave';
+  | 'quicksave'
+  /** Left click: use the item in hand (strike, repair…). */
+  | 'attack'
+  /** Right click: guard, aim or alternate use of the item in hand. */
+  | 'block'
+  /** Dodge (civilizations with combat). */
+  | 'dodge'
+  | 'hotbar1'
+  | 'hotbar2'
+  | 'hotbar3'
+  | 'hotbar4'
+  | 'hotbar5'
+  | 'hotbar6'
+  | 'nextItem'
+  | 'prevItem';
 
 export interface GameSettings {
   mouseSensitivity: number;
@@ -34,6 +48,8 @@ export interface GameSettings {
   textSpeed: number;
   showFps: boolean;
   showMarkers: boolean;
+  /** « Indulgente »: enemies hit softer and telegraph longer (civilizations with combat). */
+  difficulty: 'normal' | 'indulgent';
   locale: string;
   bindings: Record<GameAction, string[]>;
 }
@@ -54,6 +70,17 @@ export const DEFAULT_BINDINGS: Record<GameAction, string[]> = {
   debug: ['F3'],
   colliders: ['F4'],
   quicksave: ['F5'],
+  attack: ['Mouse0'],
+  block: ['Mouse2'],
+  dodge: ['KeyC'],
+  hotbar1: ['Digit1'],
+  hotbar2: ['Digit2'],
+  hotbar3: ['Digit3'],
+  hotbar4: ['Digit4'],
+  hotbar5: ['Digit5'],
+  hotbar6: ['Digit6'],
+  nextItem: ['WheelDown'],
+  prevItem: ['WheelUp'],
 };
 
 export const DEFAULT_SETTINGS: GameSettings = {
@@ -67,6 +94,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   textSpeed: 55,
   showFps: false,
   showMarkers: true,
+  difficulty: 'normal',
   locale: 'fr-FR',
   bindings: DEFAULT_BINDINGS,
 };

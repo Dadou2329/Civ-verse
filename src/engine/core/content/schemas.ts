@@ -363,6 +363,19 @@ export const IconSchema = z.object({
   glow: z.boolean().optional(),
 });
 
+/** A mouse button of an item in hand: a registered item use and its props (see defineItemUse). */
+export const ItemUseSchema = z.looseObject({ type: z.string() });
+
+export const HeldItemSchema = z.object({
+  model: z.string().optional(),
+  offset: z.tuple([z.number(), z.number(), z.number()]).optional(),
+  rotation: z.tuple([z.number(), z.number(), z.number()]).optional(),
+  scale: z.number().positive().optional(),
+  drawTime: z.number().min(0).optional(),
+  primary: ItemUseSchema.nullable().optional(),
+  secondary: ItemUseSchema.nullable().optional(),
+});
+
 export const ItemDocSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -374,6 +387,8 @@ export const ItemDocSchema = z.object({
   questItem: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   slot: z.string().optional(),
+  grants: z.array(z.string()).optional(),
+  held: HeldItemSchema.optional(),
   actions: z.array(z.object({ id: localId, label: z.string(), condition: ConditionSchema.nullable().optional(), actions: z.array(ActionSchema) })).optional(),
 });
 

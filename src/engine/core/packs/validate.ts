@@ -257,6 +257,20 @@ export async function validateCivilization(session: GameSession, civId: string, 
       checkCondition(ctx, a.condition, `items.${it.id}.actions.${a.id}.condition`);
       checkActions(ctx, a.actions, `items.${it.id}.actions.${a.id}.actions`);
     }
+    for (const ability of it.grants ?? []) {
+      if (!civ.abilities.has(ability)) err(ctx, `items.${it.id}.grants`, `Capacité inconnue : ${ability}`);
+    }
+    if (it.grants?.length && !it.slot) warn(ctx, `items.${it.id}.grants`, 'Capacités accordées sans emplacement (« slot ») : l’objet ne peut pas être porté.');
+    if (it.held) {
+      if (it.held.model && !session.models.get(it.held.model)) err(ctx, `items.${it.id}.held.model`, `Modèle inconnu : ${it.held.model}`);
+      for (const button of ['primary', 'secondary'] as const) {
+        const use = it.held[button];
+        if (!use) continue;
+        const reg = session.itemUses.get(use.type);
+        if (!reg) err(ctx, `items.${it.id}.held.${button}.type`, `Utilisation d’objet inconnue : ${use.type}`);
+        else checkProps(ctx, reg.def.props, use as Record<string, unknown>, `items.${it.id}.held.${button}`);
+      }
+    }
   }
   ctx.file = 'content/characters.json';
   for (const [id, ch] of pack.characters) checkKey(ctx, ch.name, `characters.${id}.name`);

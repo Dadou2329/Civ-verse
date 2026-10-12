@@ -1,6 +1,9 @@
 /**
  * Keyboard and mouse input for gameplay: pointer lock, mouse look, action bindings with edge
  * detection. Keys are physical (KeyboardEvent.code), so WASD bindings are ZQSD on AZERTY layouts.
+ * Mouse buttons and the wheel are bindable like keys: `Mouse0` (left), `Mouse1` (middle),
+ * `Mouse2` (right), `WheelUp`, `WheelDown`. They count only while the pointer is locked, so the
+ * click that captures the mouse never strikes.
  */
 import type { GameAction } from '../platform/settings';
 
@@ -9,7 +12,7 @@ export class InputManager {
   private pressed = new Set<string>();
   private lookDX = 0;
   private lookDY = 0;
-  private keyListeners = new Set<(code: string, down: boolean, e: KeyboardEvent) => boolean | void>();
+  private keyListeners = new Set<(code: string, down: boolean, e: KeyboardEvent | null) => boolean | void>();
   private cleanup: (() => void)[] = [];
   /** When false, gameplay keys are ignored (menus open). */
   enabled = true;
@@ -42,15 +45,43 @@ export class InputManager {
       this.down.clear();
       this.pressed.clear();
     };
+    const onMouseDown = (e: MouseEvent) => {
+      if (!this.pointerLocked) return;
+      const code = `Mouse${e.button}`;
+      this.pressed.add(code);
+      this.down.add(code);
+      for (const l of this.keyListeners) l(code, true, null);
+    };
+    const onMouseUp = (e: MouseEvent) => {
+      const code = `Mouse${e.button}`;
+      if (!this.down.delete(code)) return;
+      for (const l of this.keyListeners) l(code, false, null);
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (!this.pointerLocked || e.deltaY === 0) return;
+      const code = e.deltaY > 0 ? 'WheelDown' : 'WheelUp';
+      this.pressed.add(code);
+      for (const l of this.keyListeners) l(code, true, null);
+    };
+    // The right button guards: no context menu over the game.
+    const onContextMenu = (e: Event) => e.preventDefault();
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('blur', onBlur);
+    window.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('wheel', onWheel, { passive: true });
+    this.target.addEventListener('contextmenu', onContextMenu);
     this.cleanup.push(
       () => window.removeEventListener('keydown', onKeyDown),
       () => window.removeEventListener('keyup', onKeyUp),
       () => window.removeEventListener('mousemove', onMouseMove),
       () => window.removeEventListener('blur', onBlur),
+      () => window.removeEventListener('mousedown', onMouseDown),
+      () => window.removeEventListener('mouseup', onMouseUp),
+      () => window.removeEventListener('wheel', onWheel),
+      () => this.target.removeEventListener('contextmenu', onContextMenu),
     );
   }
 
@@ -107,7 +138,8 @@ export class InputManager {
     this.pressed.clear();
   }
 
-  onKey(cb: (code: string, down: boolean, e: KeyboardEvent) => boolean | void): () => void {
+  /** Key and mouse button changes (`e` is null for mouse buttons and the wheel). */
+  onKey(cb: (code: string, down: boolean, e: KeyboardEvent | null) => boolean | void): () => void {
     this.keyListeners.add(cb);
     return () => this.keyListeners.delete(cb);
   }
@@ -147,6 +179,13 @@ const FR_KEY_NAMES: Record<string, string> = {
   ArrowDown: '↓',
   ArrowLeft: '←',
   ArrowRight: '→',
+  Mouse0: 'Clic gauche',
+  Mouse1: 'Clic molette',
+  Mouse2: 'Clic droit',
+  Mouse3: 'Bouton 4',
+  Mouse4: 'Bouton 5',
+  WheelUp: 'Molette ↑',
+  WheelDown: 'Molette ↓',
 };
 
 let layoutMap: Map<string, string> | null = null;

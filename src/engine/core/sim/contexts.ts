@@ -9,6 +9,8 @@ import type {
   BehaviorContext,
   CinematicApi,
   CivContext,
+  CombatApi,
+  EquipmentApi,
   DialogueApi,
   EntityApi,
   FxApi,
@@ -137,10 +139,12 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
       grant(id) {
         if (!civ.abilities.has(id)) throw new Error(`Capacité inconnue : ${id}`);
         session.player.abilities.add(id);
+        session.equipment.makePermanent(id);
         session.changed();
       },
       revoke(id) {
         session.player.abilities.delete(id);
+        session.equipment.makePermanent(id);
         session.changed();
       },
       has: (id) => session.player.abilities.has(id),
@@ -157,6 +161,12 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
       },
     },
     box: () => session.player.body.box(),
+    forceMove: (velocity, seconds, opts) => session.player.forceMove(velocity, seconds, opts),
+    get forcedMoving() {
+      return session.player.forcedMoving;
+    },
+    cancelForcedMove: () => session.player.cancelForcedMove(),
+    impulse: (v) => session.player.impulse(v),
   };
 
   const world: WorldApi = {
@@ -373,6 +383,107 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
     isDown: (id) => session.isInputDown(id),
   };
 
+  const eq = session.equipment;
+  const equipment: EquipmentApi = {
+    get held() {
+      return eq.held;
+    },
+    hotbar: () => [...eq.hotbar],
+    get selected() {
+      return eq.selected;
+    },
+    select: (i) => eq.select(i),
+    hold: (id) => eq.hold(id),
+    assign: (i, id) => eq.assign(i, id),
+    equip: (id) => eq.equip(id),
+    unequip: (slot) => eq.unequip(slot),
+    worn: (slot) => eq.wornIn(slot),
+    wornItems: () => [...eq.worn].map(([slot, itemId]) => ({ slot, itemId })),
+    ready: (button) => eq.ready(button),
+    get drawRemaining() {
+      return eq.hand.drawRemaining;
+    },
+    delayUse: (s) => eq.delayUse(s),
+    guardSwitch: (fn) => scope.add(eq.guardSwitch(fn)),
+    setUnarmed: (spec) => eq.setUnarmed(spec),
+    press: (b) => eq.press(b),
+    release: (b) => eq.release(b),
+    setProgress(p) {
+      eq.progress = p ? { label: p.label, value: Math.min(1, Math.max(0, p.value)) } : null;
+    },
+    hand: eq.handApi,
+  };
+
+  const cb = session.combat;
+  const combat: CombatApi = {
+    enablePlayer: (opts) => cb.enablePlayer(opts),
+    get enabled() {
+      return cb.enabled;
+    },
+    player: {
+      get health() {
+        return cb.player.health;
+      },
+      get maxHealth() {
+        return cb.player.maxHealth;
+      },
+      get defeated() {
+        return cb.player.defeated;
+      },
+      get guarding() {
+        return cb.guarding;
+      },
+      get staggered() {
+        return cb.player.stagger > 0;
+      },
+      get riposte() {
+        return Math.max(0, cb.player.riposteUntil - session.clock.now);
+      },
+    },
+    get inCombat() {
+      return cb.inCombat;
+    },
+    get tuning() {
+      return cb.tuning;
+    },
+    damagePlayer: (info) => cb.damagePlayer(info),
+    healPlayer: (n) => cb.healPlayer(n),
+    setPlayerMaxHealth: (n, refill) => cb.setPlayerMaxHealth(n, refill),
+    damage: (id, info) => cb.damage(id, info),
+    heal: (id, n) => cb.healthOf(id)?.heal(n),
+    stagger: (id, s) => cb.staggerEntity(id, s),
+    strike: (spec) => cb.playerStrike(spec),
+    raiseGuard: (spec) => {
+      const release = cb.raiseGuard(spec);
+      const d = scope.add(toDisposable(release));
+      return () => d.dispose();
+    },
+    dodge: (dir) => cb.dodge(dir),
+    setInvulnerable: (s) => cb.setInvulnerable(s),
+    setCheckpoint(target, yawDeg) {
+      if (target === undefined) return cb.setCheckpointHere();
+      if (typeof target === 'string') {
+        const e = session.world?.entities.get(target);
+        if (!e) throw new Error(`Point de reprise introuvable : ${target}`);
+        const ground = session.world!.groundAt(e.position.x, e.position.z, e.position.y + 0.5);
+        cb.setCheckpoint({ x: e.position.x, y: ground ?? e.position.y, z: e.position.z }, ((yawDeg ?? e.yaw) * Math.PI) / 180);
+      } else cb.setCheckpoint(target, ((yawDeg ?? session.playerYawDeg()) * Math.PI) / 180);
+    },
+    spawnProjectile: (spec) => cb.spawnProjectile(spec),
+    spawnWave: (spec) => cb.spawnWave(spec),
+    hostilesNear: (point, radius, toward) => cb.hostilesNear(point, radius, toward).map((h) => session.entityApi(h.entity.id)!),
+    lineOfSight: (a, b) => cb.lineOfSight(a, b),
+    reportEngaged: (id) => cb.reportEngaged(id),
+    pushMusic(id) {
+      const token = cb.pushMusic(id);
+      const d = scope.add(toDisposable(() => cb.popMusic(token)));
+      return () => d.dispose();
+    },
+    setBossBar(bar) {
+      cb.bossBar = bar ? { entityId: bar.entityId, name: bar.name, title: bar.title ?? '', health: bar.health, max: bar.max, phase: bar.phase ?? 0 } : null;
+    },
+  };
+
   const time: TimeApi = {
     get now() {
       return session.clock.now;
@@ -443,6 +554,8 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
     audio,
     fx,
     input,
+    equipment,
+    combat,
     time,
     scenes,
     logic,
@@ -489,8 +602,12 @@ const motors = new WeakMap<RuntimeEntity, NpcMotor>();
 export function motorOf(session: GameSession, e: RuntimeEntity, create = true): NpcMotor | null {
   let m = motors.get(e);
   if (!m && create && session.world) {
-    const height = typeof e.components.get('core.npc')?.props.height === 'number' ? (e.components.get('core.npc')!.props.height as number) : 1.8;
-    m = new NpcMotor(e, session.world, height);
+    const num = (v: unknown): number | null => (typeof v === 'number' && v > 0 ? v : null);
+    const npc = e.components.get('core.npc')?.props;
+    const fighter = e.components.get('core.combatant')?.props;
+    const height = num(npc?.height) ?? num(fighter?.height) ?? 1.8;
+    const width = num(fighter?.width) ?? 0.6;
+    m = new NpcMotor(e, session.world, height, width);
     motors.set(e, m);
   }
   return m ?? null;
@@ -607,6 +724,13 @@ export function createEntityApi(session: GameSession, e: RuntimeEntity): EntityA
     setCollider: (part, local, opts) => world().setCollider(e, part, local, opts),
     setLights: (lights) => world().setEntityLights(e.id, lights.map((l) => ({ entityId: e.id, ...l }))),
     emit: (event, payload = {}) => session.bus.emit(event, { entityId: e.id, ...payload }),
+    steer: (direction, speed) => motorOf(session, e, true)?.steer(direction, speed),
+    push: (v) => motorOf(session, e, true)?.push(v),
+    setViewFlag(key, value) {
+      if (value === undefined || value === null) delete e.view.flags[key];
+      else e.view.flags[key] = value;
+    },
+    viewFlag: (key) => e.view.flags[key] as never,
   };
   return api;
 }

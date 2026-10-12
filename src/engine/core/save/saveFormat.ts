@@ -19,6 +19,7 @@ import type { GlobalState } from '../state/multiverse';
 import { GLOBAL_SCHEMA_VERSION } from '../state/multiverse';
 import type { QuestState } from '../story/quests';
 import type { JsonValue } from '../util/json';
+import type { EquipmentSnapshot } from '../equipment/equipment';
 
 export const SAVE_FORMAT = 'civverse.save';
 export const SAVE_FORMAT_VERSION = 1;
@@ -59,6 +60,10 @@ export interface LocalCivState {
     pitch: number;
     abilities: string[];
     title: string | null;
+    /** Hotbar, selected slot and worn items (absent in saves made before equipment existed). */
+    equipment?: EquipmentSnapshot;
+    /** Player health in civilizations with combat. */
+    combat?: { health: number };
   };
   vars: Record<string, JsonValue>;
   inventory: { id: string; count: number }[];

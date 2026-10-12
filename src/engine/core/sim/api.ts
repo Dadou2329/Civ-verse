@@ -18,6 +18,19 @@ import type { MovementParams } from '../physics/body';
 import type { ActionData, ConditionData } from '../logic/types';
 import type { VarDeclaration } from '../state/variables';
 import type { AABB } from '../physics/aabb';
+import type { HandApi, ItemUseData } from '../packs/definitions';
+import type {
+  DamageInfo,
+  Faction,
+  GuardSpec,
+  HitResult,
+  PlayerCombatOptions,
+  ProjectileSpec,
+  StrikeHit,
+  StrikeSpec,
+  WaveSpec,
+} from '../combat/combat';
+import type { SwitchDecision, SwitchRequest } from '../equipment/equipment';
 
 export type RunMode = 'play' | 'playtest' | 'headless';
 
@@ -111,6 +124,15 @@ export interface PlayerApi {
   /** How the world names the protagonist locally (e.g. "l’étranger sans plaque"). */
   readonly identity: { readonly title: string | null; setTitle(locKey: string | null): void };
   box(): AABB;
+  /**
+   * Moves the player at `velocity` (m/s) for `seconds`, ignoring input: dashes, grapple pulls,
+   * scripted leaps. Without gravity the move can go up.
+   */
+  forceMove(velocity: Vec3, seconds: number, opts?: { gravity?: boolean }): void;
+  readonly forcedMoving: boolean;
+  cancelForcedMove(): void;
+  /** Adds a velocity impulse (knockback, a jump pad). */
+  impulse(velocity: Vec3): void;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -165,6 +187,16 @@ export interface EntityApi {
   /** Light sources baked into the voxel light field (lanterns, glowing objects). */
   setLights(lights: { offset: [number, number, number]; level: number; color: string }[]): void;
   emit(event: string, payload?: Record<string, unknown>): void;
+  /**
+   * Walks this frame in a direction (combat movement: chasing, circling, backing off). Call it
+   * every frame; without a call the entity stops. Cancels a moveTo in progress.
+   */
+  steer(direction: { x: number; z: number } | null, speed?: number): void;
+  /** Velocity impulse (knockback, a leap). */
+  push(velocity: Vec3): void;
+  /** Presentation flag read by the entity's visuals (telegraphs, hit flashes…). Not saved. */
+  setViewFlag(key: string, value: unknown): void;
+  viewFlag<T = unknown>(key: string): T | undefined;
 }
 
 export interface RaycastResult {
@@ -326,6 +358,99 @@ export interface FxApi {
   custom(channel: string, payload: Record<string, unknown>): void;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Equipment and combat
+// ---------------------------------------------------------------------------------------------
+
+export interface EquipmentApi {
+  /** Item in hand (null = empty hand). */
+  readonly held: string | null;
+  /** The six hotbar slots (item ids or null). */
+  hotbar(): (string | null)[];
+  /** Selected hotbar slot (0–5). */
+  readonly selected: number;
+  /** Selects a hotbar slot. False when the change is refused (see guardSwitch). */
+  select(index: number): boolean;
+  /** Takes an item in hand (placed in the hotbar if needed); null empties the hand. */
+  hold(itemId: string | null): boolean;
+  /** Places an item in a hotbar slot (null clears it). */
+  assign(index: number, itemId: string | null): boolean;
+  /** Wears an item in its slot (definition `slot`), replacing the one worn there. */
+  equip(itemId: string): boolean;
+  unequip(slot: string): void;
+  worn(slot: string): string | null;
+  wornItems(): { slot: string; itemId: string }[];
+  /** Whether a button of the item in hand can be used now. */
+  ready(button?: 'primary' | 'secondary'): boolean;
+  /** Seconds before the item in hand can be used (drawing it, attunement). */
+  readonly drawRemaining: number;
+  /** Delays the use of the item in hand (attunement, recoil). */
+  delayUse(seconds: number): void;
+  /**
+   * Rule applied when the player changes the item in hand: return `{ allow: false, reason }` to
+   * refuse, `{ drawTime }` to make the new item usable later (a mask that needs attuning).
+   */
+  guardSwitch(fn: (change: SwitchRequest) => SwitchDecision | void): Disposable;
+  /** Uses of the empty hand (a punch, a shove). */
+  setUnarmed(spec: { primary?: ItemUseData | null; secondary?: ItemUseData | null }): void;
+  /** Presses / releases a mouse button by code (tutorials, tests). */
+  press(button: 'primary' | 'secondary'): boolean;
+  release(button: 'primary' | 'secondary'): void;
+  /** Progress ring under the crosshair (long uses); null hides it. */
+  setProgress(progress: { label: string; value: number } | null): void;
+  /** First-person hand animations. */
+  readonly hand: HandApi;
+}
+
+export interface CombatApi {
+  /** Gives the player health, damage, defeat and dodge in this civilization. */
+  enablePlayer(opts?: PlayerCombatOptions): void;
+  readonly enabled: boolean;
+  readonly player: {
+    readonly health: number;
+    readonly maxHealth: number;
+    readonly defeated: boolean;
+    readonly guarding: boolean;
+    readonly staggered: boolean;
+    /** Seconds left of the riposte opened by a parry (0 = none). */
+    readonly riposte: number;
+  };
+  /** Combat in progress (an enemy fights the player). */
+  readonly inCombat: boolean;
+  /** Damage and telegraph tuning of the player's difficulty setting. */
+  readonly tuning: { readonly damageTaken: number; readonly telegraph: number; readonly parryBonus: number };
+  damagePlayer(info: DamageInfo): HitResult;
+  healPlayer(amount: number): void;
+  setPlayerMaxHealth(max: number, refill?: boolean): void;
+  /** Damages an entity with a `core.health` component. */
+  damage(entityId: string, info: DamageInfo): HitResult;
+  heal(entityId: string, amount: number): void;
+  /** Staggers a combatant (it stops attacking for a moment). */
+  stagger(entityId: string, seconds: number): void;
+  /** Melee strike from the player's eyes: hits what is in front, nearest first. */
+  strike(spec: StrikeSpec): StrikeHit[];
+  /** Raises the player's guard until the returned function is called. */
+  raiseGuard(spec?: GuardSpec): () => void;
+  /** Sidestep with a moment of invulnerability (input direction, else backward). */
+  dodge(direction?: { x: number; z: number }): boolean;
+  /** Ignores blows for a while (cinematic moment, power). */
+  setInvulnerable(seconds: number): void;
+  /** Where the player gets back up after a defeat (an entity id or a position of this scene). */
+  setCheckpoint(target?: string | Vec3, yawDeg?: number): void;
+  spawnProjectile(spec: ProjectileSpec): void;
+  spawnWave(spec: WaveSpec): void;
+  /** Living entities hostile to `toward` (default: the player's side) around a point. */
+  hostilesNear(point: Vec3, radius: number, toward?: Faction): EntityApi[];
+  /** No voxel between two points. */
+  lineOfSight(from: Vec3, to: Vec3): boolean;
+  /** Declares that an entity fights the player this frame (combat music, regeneration). */
+  reportEngaged(entityId: string): void;
+  /** Plays a music over the current one until the returned function is called. */
+  pushMusic(musicId: string): () => void;
+  /** Boss health bar shown at the top of the screen (null hides it). */
+  setBossBar(bar: { entityId: string; name: string; title?: string; health: number; max: number; phase?: number } | null): void;
+}
+
 export interface InputApi {
   /** Declares an input action with a default key (KeyboardEvent.code) and a localized label. */
   bind(actionId: string, spec: { key: string; label: string }): Disposable;
@@ -408,6 +533,8 @@ export interface CivContext {
   readonly audio: AudioApi;
   readonly fx: FxApi;
   readonly input: InputApi;
+  readonly equipment: EquipmentApi;
+  readonly combat: CombatApi;
   readonly time: TimeApi;
   readonly scenes: SceneApi;
   readonly logic: LogicApi;

@@ -266,7 +266,7 @@ export async function loadSceneDoc(provider: ContentProvider, pack: LoadedPack, 
  */
 export function checkDefinitionIds(packId: string, defs: CollectedDefinitions): ContentIssue[] {
   const issues: ContentIssue[] = [];
-  const types = [...defs.mechanics, ...defs.behaviors, ...defs.actions, ...defs.conditions, ...defs.events, ...defs.abilities, ...defs.huds, ...defs.panels, ...defs.visuals, ...defs.viewEffects];
+  const types = [...defs.mechanics, ...defs.behaviors, ...defs.actions, ...defs.conditions, ...defs.events, ...defs.abilities, ...defs.huds, ...defs.panels, ...defs.visuals, ...defs.viewEffects, ...defs.itemUses];
   const assets = [...defs.blocks, ...defs.models, ...defs.sounds, ...defs.music, ...defs.items];
   for (const d of types) {
     if (!TYPE_ID_RE.test(d.id) || packOfType(d.id) !== packId) issues.push({ pack: packId, file: 'pack.ts', severity: 'error', message: `Identifiant « ${d.id} » : « ${packId}.<nom> » attendu.` });

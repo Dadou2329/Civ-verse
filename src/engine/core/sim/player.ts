@@ -41,6 +41,8 @@ export class PlayerController {
   /** Debug fly mode (Studio playtest). */
   debugFly = false;
   private lastEvents: BodyStepEvents | null = null;
+  /** Scripted movement (dodge, dash, grapple pull) that overrides input for a short time. */
+  private forced: { v: Vec3; remaining: number; gravity: boolean } | null = null;
 
   constructor(position: Vec3 = { x: 0, y: 0, z: 0 }) {
     this.body = new KinematicBody({ ...DEFAULT_MOVEMENT }, 'player', position);
@@ -107,6 +109,34 @@ export class PlayerController {
     return this.modifiers.length;
   }
 
+  /**
+   * Moves the player at `velocity` (m/s) for `seconds`, ignoring input (dodges, dashes, grapple
+   * pulls). Without gravity the move can go up; with gravity only the horizontal part is forced
+   * and the vertical speed is set once.
+   */
+  forceMove(velocity: Vec3, seconds: number, opts: { gravity?: boolean } = {}): void {
+    const gravity = opts.gravity ?? true;
+    this.forced = { v: { ...velocity }, remaining: Math.max(0, seconds), gravity };
+    if (gravity) this.body.velocity.y = velocity.y;
+  }
+
+  /** True while a forced move runs. */
+  get forcedMoving(): boolean {
+    return this.forced !== null;
+  }
+
+  cancelForcedMove(): void {
+    this.forced = null;
+  }
+
+  /** Adds a velocity impulse (knockback); it fades with the usual acceleration. */
+  impulse(v: Vec3): void {
+    this.body.velocity.x += v.x;
+    this.body.velocity.y += v.y;
+    this.body.velocity.z += v.z;
+    if (v.y > 0) this.body.grounded = false;
+  }
+
   setCivBase(patch: Partial<MovementParams>): void {
     this.civBase = { ...this.civBase, ...patch };
   }
@@ -121,6 +151,7 @@ export class PlayerController {
     this.cooldowns.clear();
     this.title = null;
     this.debugFly = false;
+    this.forced = null;
   }
 
   get params(): Readonly<MovementParams> {
@@ -179,7 +210,21 @@ export class PlayerController {
       }
     }
     for (const m of this.modifiers) m.modifyVelocity?.(state, dt);
-    const ev = this.body.step(world, { wishX: state.wish.x, wishZ: state.wish.z, wishY: locked ? 0 : i.up, sprint: state.sprinting, jump }, dt);
+    let ev: BodyStepEvents;
+    const f = this.forced;
+    if (f) {
+      // The forced velocity is reached at once (very high acceleration), input is ignored.
+      f.remaining -= dt;
+      const horizontal = Math.hypot(f.v.x, f.v.z);
+      const speed = f.gravity ? horizontal : Math.hypot(f.v.x, f.v.y, f.v.z);
+      const k = speed > 1e-6 ? 1 / speed : 0;
+      this.body.params = { ...params, groundAccel: 80, airAccel: 80, flying: !f.gravity || params.flying };
+      ev = this.body.step(world, { wishX: f.v.x * k, wishZ: f.v.z * k, wishY: f.gravity ? 0 : f.v.y * k, sprint: false, jump: false, speedOverride: speed }, dt);
+      this.body.params = params;
+      if (f.remaining <= 0) this.forced = null;
+    } else {
+      ev = this.body.step(world, { wishX: state.wish.x, wishZ: state.wish.z, wishY: locked ? 0 : i.up, sprint: state.sprinting, jump }, dt);
+    }
     if (ev.jumped) for (const m of this.modifiers) m.onJump?.();
     if (ev.landed !== null) for (const m of this.modifiers) m.onLand?.(ev.landed);
     i.jump = false;

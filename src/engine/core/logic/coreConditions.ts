@@ -173,4 +173,50 @@ export const coreConditions = [
     props: { civ: prop.string({ label: 'Civilisation' }) },
     test: (ctx, p) => ctx.multiverse.isCivCompleted(p.civ),
   }),
+  // ---- Equipment and combat -----------------------------------------------------------------
+  defineCondition({
+    id: 'core.holding',
+    label: 'Le joueur tient un objet en main',
+    category: 'Équipement',
+    props: { item: prop.item({ label: 'Objet (vide = main nue)' }) },
+    test: (ctx, p) => ctx.equipment.held === (p.item || null),
+  }),
+  defineCondition({
+    id: 'core.wearing',
+    label: 'Le joueur porte un objet',
+    category: 'Équipement',
+    props: { item: prop.item({ label: 'Objet' }) },
+    test: (ctx, p) => ctx.equipment.wornItems().some((w) => w.itemId === p.item),
+  }),
+  defineCondition({
+    id: 'core.entityDefeated',
+    label: 'Entité vaincue',
+    category: 'Combat',
+    props: { entity: prop.entity({ label: 'Entité', withComponent: 'core.health' }) },
+    test: (ctx, p) => {
+      const e = ctx.world.entity(p.entity);
+      return !!e && e.behavior<{ defeated: boolean }>('core.health')?.defeated === true;
+    },
+  }),
+  defineCondition({
+    id: 'core.encounterDone',
+    label: 'Rencontre gagnée',
+    category: 'Combat',
+    props: { encounter: prop.entity({ label: 'Rencontre', withComponent: 'core.encounter' }) },
+    test: (ctx, p) => ctx.world.entity(p.encounter)?.behavior<{ status: string }>('core.encounter')?.status === 'done',
+  }),
+  defineCondition({
+    id: 'core.playerHealth',
+    label: 'Vie du joueur sous un seuil',
+    category: 'Combat',
+    props: { below: prop.number({ label: 'Fraction de la vie (0–1)', default: 0.3, min: 0, max: 1, step: 0.05 }) },
+    test: (ctx, p) => ctx.combat.enabled && ctx.combat.player.health / ctx.combat.player.maxHealth < p.below,
+  }),
+  defineCondition({
+    id: 'core.inCombat',
+    label: 'Combat en cours',
+    category: 'Combat',
+    props: {},
+    test: (ctx) => ctx.combat.inCombat,
+  }),
 ];

@@ -162,6 +162,108 @@ export const coreActions = [
     run: (ctx, p) => void ctx.inventory.remove(p.item, p.count, { silent: p.silent }),
     summarize: (p) => `Retirer ${p.count} × ${p.item}`,
   }),
+  // ---- Equipment ---------------------------------------------------------------------------
+  defineAction({
+    id: 'core.holdItem',
+    label: 'Mettre un objet en main',
+    category: 'Équipement',
+    props: { item: prop.item({ label: 'Objet (vide = main nue)' }) },
+    run: (ctx, p) => void ctx.equipment.hold(p.item || null),
+    summarize: (p) => (p.item ? `Prendre en main ${p.item}` : 'Vider la main'),
+  }),
+  defineAction({
+    id: 'core.equipItem',
+    label: 'Porter un objet',
+    category: 'Équipement',
+    props: { item: prop.item({ label: 'Objet (avec un emplacement)' }) },
+    run: (ctx, p) => void ctx.equipment.equip(p.item),
+    summarize: (p) => `Porter ${p.item}`,
+  }),
+  defineAction({
+    id: 'core.unequipSlot',
+    label: 'Retirer l’objet porté',
+    category: 'Équipement',
+    props: { slot: prop.string({ label: 'Emplacement', default: 'masque' }) },
+    run: (ctx, p) => ctx.equipment.unequip(p.slot),
+  }),
+  // ---- Combat ------------------------------------------------------------------------------
+  defineAction({
+    id: 'core.damagePlayer',
+    label: 'Blesser le joueur',
+    category: 'Combat',
+    props: {
+      amount: prop.number({ label: 'Dégâts', default: 10, min: 0 }),
+      from: prop.entity({ label: 'Venant de (optionnel)' }),
+      knockback: prop.number({ label: 'Recul (m/s)', default: 0, min: 0 }),
+      unblockable: prop.boolean({ label: 'Imparable', default: true }),
+    },
+    run: (ctx, p) => void ctx.combat.damagePlayer({ amount: p.amount, source: p.from || null, kind: 'environment', knockback: p.knockback, unblockable: p.unblockable }),
+  }),
+  defineAction({
+    id: 'core.healPlayer',
+    label: 'Soigner le joueur',
+    category: 'Combat',
+    props: { amount: prop.number({ label: 'Vie rendue', default: 100, min: 0 }) },
+    run: (ctx, p) => ctx.combat.healPlayer(p.amount),
+  }),
+  defineAction({
+    id: 'core.damageEntity',
+    label: 'Blesser une entité',
+    category: 'Combat',
+    props: {
+      entity: prop.entity({ label: 'Entité', withComponent: 'core.health' }),
+      amount: prop.number({ label: 'Dégâts', default: 10, min: 0 }),
+      tags: prop.list(prop.string({ label: 'Étiquette' }), { label: 'Étiquettes de dégâts' }),
+    },
+    run: (ctx, p) => void ctx.combat.damage(p.entity, { amount: p.amount, source: null, kind: 'environment', tags: p.tags }),
+  }),
+  defineAction({
+    id: 'core.reviveEntity',
+    label: 'Relever une entité vaincue',
+    category: 'Combat',
+    props: { entity: prop.entity({ label: 'Entité', withComponent: 'core.health' }) },
+    run: (ctx, p) => ctx.world.require(p.entity).behavior<{ revive(): void }>('core.health')?.revive(),
+  }),
+  defineAction({
+    id: 'core.exposeEntity',
+    label: 'Exposer un point faible',
+    category: 'Combat',
+    description: 'Une cible protégée peut être blessée par tous les coups pendant ce temps.',
+    props: { entity: prop.entity({ label: 'Entité', withComponent: 'core.health' }), seconds: prop.number({ label: 'Durée (s)', default: 5, min: 0.1 }) },
+    run: (ctx, p) => ctx.world.require(p.entity).behavior<{ expose(s: number): void }>('core.health')?.expose(p.seconds),
+  }),
+  defineAction({
+    id: 'core.engage',
+    label: 'Lancer un combattant à l’attaque',
+    category: 'Combat',
+    props: { entity: prop.entity({ label: 'Combattant', withComponent: 'core.combatant' }), engage: prop.boolean({ label: 'Attaquer (sinon : se retirer)', default: true }) },
+    run: (ctx, p) => {
+      const c = ctx.world.require(p.entity).behavior<{ engage(): void; disengage(): void }>('core.combatant');
+      if (p.engage) c?.engage();
+      else c?.disengage();
+    },
+  }),
+  defineAction({
+    id: 'core.startEncounter',
+    label: 'Démarrer une rencontre',
+    category: 'Combat',
+    props: { encounter: prop.entity({ label: 'Rencontre', withComponent: 'core.encounter' }) },
+    run: (ctx, p) => ctx.world.require(p.encounter).behavior<{ start(): void }>('core.encounter')?.start(),
+  }),
+  defineAction({
+    id: 'core.completeEncounter',
+    label: 'Terminer une rencontre (victoire)',
+    category: 'Combat',
+    props: { encounter: prop.entity({ label: 'Rencontre', withComponent: 'core.encounter' }) },
+    run: (ctx, p) => ctx.world.require(p.encounter).behavior<{ complete(): void }>('core.encounter')?.complete(),
+  }),
+  defineAction({
+    id: 'core.setCheckpoint',
+    label: 'Définir le point de reprise',
+    category: 'Combat',
+    props: { at: prop.entity({ label: 'Repère (vide = position actuelle)' }) },
+    run: (ctx, p) => ctx.combat.setCheckpoint(p.at || undefined),
+  }),
   // ---- Story -------------------------------------------------------------------------------
   defineAction({
     id: 'core.startDialogue',

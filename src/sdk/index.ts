@@ -22,6 +22,14 @@ export {
   defineModel,
   defineSound,
   defineMusic,
+  defineItemUse,
+  type ItemUseDefinition,
+  type ItemUseContext,
+  type ItemUseData,
+  type ItemUseMode,
+  type HeldItemSpec,
+  type HandApi,
+  type HandAnimation,
   type MechanicDefinition,
   type BehaviorDefinition,
   type ActionDefinition,
@@ -56,3 +64,20 @@ export { hexToRgb, rgbToHex, mixRgb, shade, type RGB } from '../engine/core/util
 export { Rng, hashString } from '../engine/core/util/rng';
 export { ENGINE_API_VERSION, ENGINE_VERSION } from '../engine/core/version';
 export type { DoorApi } from '../engine/core/behaviors/doors';
+export type { EncounterApi, ToolTargetApi } from '../engine/core/behaviors/combat';
+export {
+  isHostile,
+  type Faction,
+  type DamageInfo,
+  type HitOutcome,
+  type HitResult,
+  type PlayerCombatOptions,
+  type GuardSpec,
+  type StrikeSpec,
+  type StrikeHit,
+  type ProjectileSpec,
+  type WaveSpec,
+  type HealthApi,
+  type CombatantApi,
+} from '../engine/core/combat/combat';
+export { HOTBAR_SIZE, type SwitchDecision, type SwitchRequest, type EquipmentSnapshot } from '../engine/core/equipment/equipment';

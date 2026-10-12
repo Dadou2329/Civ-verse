@@ -5,7 +5,61 @@ import type { GameAction, GameSettings } from '@engine/platform/settings';
 import { DEFAULT_SETTINGS } from '@engine/platform/settings';
 import type { QualityLevel } from '@engine/view/quality';
 
-const ACTIONS: GameAction[] = ['forward', 'back', 'left', 'right', 'jump', 'sprint', 'interact', 'secondary', 'journal', 'inventory', 'pause', 'skip', 'quicksave', 'debug'];
+const ACTIONS: GameAction[] = [
+  'forward',
+  'back',
+  'left',
+  'right',
+  'jump',
+  'sprint',
+  'interact',
+  'secondary',
+  'attack',
+  'block',
+  'dodge',
+  'hotbar1',
+  'hotbar2',
+  'hotbar3',
+  'hotbar4',
+  'hotbar5',
+  'hotbar6',
+  'nextItem',
+  'prevItem',
+  'journal',
+  'inventory',
+  'pause',
+  'skip',
+  'quicksave',
+  'debug',
+];
+
+/** Waits for the next key, mouse button or wheel turn; Échap cancels. */
+function captureInput(done: (code: string | null) => void): void {
+  const finish = (code: string | null) => {
+    window.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('mousedown', onMouse, true);
+    window.removeEventListener('wheel', onWheel, true);
+    done(code);
+  };
+  const onKey = (e: KeyboardEvent) => {
+    e.preventDefault();
+    finish(e.code === 'Escape' ? null : e.code);
+  };
+  const onMouse = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    finish(`Mouse${e.button}`);
+  };
+  const onWheel = (e: WheelEvent) => {
+    if (e.deltaY !== 0) finish(e.deltaY > 0 ? 'WheelDown' : 'WheelUp');
+  };
+  window.addEventListener('keydown', onKey, true);
+  // Registered after the click that started the capture has finished.
+  setTimeout(() => {
+    window.addEventListener('mousedown', onMouse, true);
+    window.addEventListener('wheel', onWheel, true);
+  }, 0);
+}
 
 export function SettingsPanel({ onClose }: { onClose: () => void }) {
   const controller = useController();
@@ -57,14 +111,10 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                       variant="ghost"
                       onClick={() => {
                         setRebinding(a);
-                        const onKey = (e: KeyboardEvent) => {
-                          e.preventDefault();
-                          window.removeEventListener('keydown', onKey, true);
+                        captureInput((code) => {
                           setRebinding(null);
-                          if (e.code === 'Escape') return;
-                          update({ bindings: { ...s.bindings, [a]: [e.code] } });
-                        };
-                        window.addEventListener('keydown', onKey, true);
+                          if (code) update({ bindings: { ...s.bindings, [a]: [code] } });
+                        });
                       }}
                     >
                       {rebinding === a ? t('ui.settings.pressKey') : t('ui.settings.rebind')}
@@ -125,6 +175,16 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
           <label className="cv-field cv-field--check">
             <input type="checkbox" checked={s.showMarkers} onChange={(e) => update({ showMarkers: e.target.checked })} />
             <span>{t('ui.settings.markers')}</span>
+          </label>
+          <label className="cv-field">
+            <span>{t('ui.settings.difficulty')}</span>
+            <select value={s.difficulty} onChange={(e) => update({ difficulty: e.target.value as GameSettings['difficulty'] })} data-testid="difficulty">
+              {(['normal', 'indulgent'] as const).map((k) => (
+                <option key={k} value={k}>
+                  {t(`ui.settings.difficulty.${k}`)}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="cv-field">
             <span>{t('ui.settings.language')}</span>

@@ -33,17 +33,42 @@ export class NpcMotor {
   facing: number | null = null;
   walkSpeed = 1.6;
   runSpeed = 3.4;
+  /** Direction asked for this frame by steer() (combat movement), consumed by update(). */
+  private steering: { x: number; z: number; speed: number } | null = null;
 
   constructor(
     private readonly entity: RuntimeEntity,
     private readonly world: SceneWorld,
     height = 1.8,
+    width = 0.6,
   ) {
     this.body = new KinematicBody(
-      { ...DEFAULT_MOVEMENT, height, eyeHeight: height * 0.9, walkSpeed: this.walkSpeed, sprintSpeed: this.runSpeed, groundAccel: 10, stepHeight: 0.6 },
+      { ...DEFAULT_MOVEMENT, width, height, eyeHeight: height * 0.9, walkSpeed: this.walkSpeed, sprintSpeed: this.runSpeed, groundAccel: 10, stepHeight: 0.6 },
       entity.id,
       { ...entity.position },
     );
+  }
+
+  /**
+   * Walks this frame in a direction without pathfinding (combat: chase, circle, back off). Must be
+   * called every frame; cancels a moveTo in progress.
+   */
+  steer(direction: { x: number; z: number } | null, speed = this.runSpeed): void {
+    if (!direction) {
+      this.steering = null;
+      return;
+    }
+    if (this.goal) this.cancel(false);
+    const len = Math.hypot(direction.x, direction.z);
+    this.steering = len > 1e-6 ? { x: direction.x / len, z: direction.z / len, speed } : null;
+  }
+
+  /** Velocity impulse (knockback, a leap). */
+  push(v: Vec3): void {
+    this.body.velocity.x += v.x;
+    this.body.velocity.y += v.y;
+    this.body.velocity.z += v.z;
+    if (v.y > 0) this.body.grounded = false;
   }
 
   get moving(): boolean {
@@ -98,6 +123,14 @@ export class NpcMotor {
     const e = this.entity;
     let wishX = 0;
     let wishZ = 0;
+    let speed = this.speed;
+    const steer = this.steering;
+    this.steering = null;
+    if (!this.goal && steer) {
+      wishX = steer.x;
+      wishZ = steer.z;
+      speed = steer.speed;
+    }
     if (this.goal) {
       this.elapsed += dt;
       const toGoal = Math.hypot(this.goal.x - this.body.position.x, this.goal.z - this.body.position.z);
@@ -130,7 +163,7 @@ export class NpcMotor {
         }
       }
     }
-    this.body.step(this.world.collision, { wishX, wishZ, sprint: false, jump: false, speedOverride: this.speed }, dt);
+    this.body.step(this.world.collision, { wishX, wishZ, sprint: false, jump: false, speedOverride: speed }, dt);
     const p = this.body.position;
     const movedNow = Math.hypot(p.x - e.position.x, p.z - e.position.z);
     e.view.speed = dt > 0 ? movedNow / dt : 0;
@@ -149,6 +182,8 @@ export class NpcMotor {
         this.world.syncColliders(e);
       } else this.facing = null;
     }
+    // A combat move (lunge, recoil) keeps its own animation while the body slides.
+    if (e.view.flags.holdAnimation) return;
     e.view.animation = e.view.speed > 2.5 ? 'run' : e.view.speed > 0.2 ? 'walk' : e.view.animation === 'walk' || e.view.animation === 'run' ? 'idle' : e.view.animation;
   }
 }

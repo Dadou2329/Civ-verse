@@ -28,7 +28,8 @@ export type DefinitionKind =
   | 'hud'
   | 'panel'
   | 'visual'
-  | 'viewEffect';
+  | 'viewEffect'
+  | 'itemUse';
 
 interface Branded<K extends DefinitionKind> {
   readonly __kind: K;
@@ -167,8 +168,34 @@ export interface ItemDefinition extends Branded<'item'> {
   questItem?: boolean;
   tags?: string[];
   actions?: ItemActionDef[];
-  /** Equipment slot id when equippable. */
+  /** Equipment slot id when equippable (« mask », « gloves »…): equipped items are worn. */
   slot?: string;
+  /** Abilities granted while the item is equipped in its slot. */
+  grants?: string[];
+  /** Holdable item: shown in the hand and used with the mouse buttons (see defineItemUse). */
+  held?: HeldItemSpec;
+}
+
+/** A use of a held item, stored like an action: a registered type plus its props. */
+export interface ItemUseData {
+  type: string;
+  [field: string]: unknown;
+}
+
+export interface HeldItemSpec {
+  /** Model shown in the hand (first person) and in characters' hands. */
+  model?: string;
+  /** First-person placement relative to the camera: offset in meters (right, up, forward). */
+  offset?: [number, number, number];
+  /** Rotation in degrees (x, y, z). */
+  rotation?: [number, number, number];
+  scale?: number;
+  /** Seconds after taking the item in hand before it can be used (default 0.3). */
+  drawTime?: number;
+  /** Left click (attack / use). */
+  primary?: ItemUseData | null;
+  /** Right click (guard / aim / alternate use). */
+  secondary?: ItemUseData | null;
 }
 
 export function defineItem(def: Omit<ItemDefinition, '__kind'>): ItemDefinition {
@@ -192,6 +219,66 @@ export interface AbilityDefinition extends Branded<'ability'> {
 
 export function defineAbility(def: Omit<AbilityDefinition, '__kind'>): AbilityDefinition {
   return { __kind: 'ability', ...def };
+}
+
+/** First-person animations of the hand (the held item's view model). */
+export type HandAnimation = 'swing' | 'swingHeavy' | 'thrust' | 'raise' | 'charge' | 'use' | 'cast' | 'inspect' | 'recoil';
+
+export interface HandApi {
+  /** Plays a hand animation for `seconds` (uses wait for nothing: animations are visual). */
+  play(animation: HandAnimation, seconds: number): void;
+  /** Holds a pose until released (guard raised, lens up, charge): returns the release function. */
+  hold(animation: HandAnimation): () => void;
+}
+
+export type ItemUseMode = 'press' | 'hold' | 'charge';
+
+export interface ItemUseContext<P> {
+  readonly ctx: CivContext;
+  readonly props: P;
+  /** Item in hand (null: the empty hand, see `ctx.equipment.setUnarmed`). */
+  readonly itemId: string | null;
+  readonly button: 'primary' | 'secondary';
+  /** Seconds since the button was pressed (hold and charge uses). */
+  readonly heldFor: number;
+  /** True in `stop` when the use was interrupted (dialogue, hit, item change) rather than released. */
+  readonly cancelled: boolean;
+  readonly hand: HandApi;
+}
+
+/**
+ * What a mouse button does with an item in hand (« Frapper », « Parer », « Réparer »…). Uses are
+ * registered like actions: items reference them by type with their props (content/items.json or
+ * code), so the Studio edits them with the same fields.
+ *
+ * - `press`: `start` runs once per click.
+ * - `hold`: `start` on press, `update` every frame while held, `stop` on release.
+ * - `charge`: like hold; `stop` receives `heldFor` to tell a quick tap from a charged release.
+ */
+export interface ItemUseDefinition<Sch extends PropSchema = PropSchema> extends Branded<'itemUse'> {
+  /** French label (Studio). */
+  label: string;
+  category?: string;
+  description?: string;
+  props: Sch;
+  mode: ItemUseMode;
+  /** Localization key of the verb shown next to the mouse button in the HUD (« Frapper »). */
+  hint?: string;
+  /** Seconds before the same button can be used again (default: props.cooldown or 0). */
+  cooldown?: (props: InferProps<Sch>) => number;
+  /**
+   * Contextual verb shown for the item in hand, every frame (« Réparer la pompe » while aiming at
+   * it). Null falls back to `hint`.
+   */
+  aim?(use: ItemUseContext<InferProps<Sch>>): string | null;
+  /** Returns false when nothing happened (no cooldown). */
+  start?(use: ItemUseContext<InferProps<Sch>>): boolean | void;
+  update?(use: ItemUseContext<InferProps<Sch>>, dt: number): void;
+  stop?(use: ItemUseContext<InferProps<Sch>>): void;
+}
+
+export function defineItemUse<Sch extends PropSchema>(def: Omit<ItemUseDefinition<Sch>, '__kind'>): ItemUseDefinition<Sch> {
+  return { __kind: 'itemUse', ...def };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -286,7 +373,8 @@ export type AnyDefinition =
   | HudDefinition
   | PanelDefinition
   | VisualDefinition
-  | ViewEffectDefinition;
+  | ViewEffectDefinition
+  | ItemUseDefinition<PropSchema>;
 
 export interface CollectedDefinitions {
   mechanics: MechanicDefinition<unknown, unknown, PropSchema>[];
@@ -304,6 +392,7 @@ export interface CollectedDefinitions {
   panels: PanelDefinition[];
   visuals: VisualDefinition[];
   viewEffects: ViewEffectDefinition[];
+  itemUses: ItemUseDefinition<PropSchema>[];
 }
 
 export function emptyDefinitions(): CollectedDefinitions {
@@ -323,6 +412,7 @@ export function emptyDefinitions(): CollectedDefinitions {
     panels: [],
     visuals: [],
     viewEffects: [],
+    itemUses: [],
   };
 }
 
@@ -391,6 +481,9 @@ export function collectDefinitions(modules: Record<string, unknown>, into = empt
         break;
       case 'viewEffect':
         into.viewEffects.push(d);
+        break;
+      case 'itemUse':
+        into.itemUses.push(d as unknown as ItemUseDefinition<PropSchema>);
         break;
     }
   };

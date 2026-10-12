@@ -35,10 +35,13 @@ import { BehaviorSystem } from './behaviorSystem';
 import { SceneWorld } from '../world/sceneWorld';
 import { RuntimeEntity } from '../world/entity';
 import { createCivContext, createEntityApi } from './contexts';
+import { EquipmentSystem } from '../equipment/equipment';
+import { CombatSystem } from '../combat/combat';
 import type {
   AbilityDefinition,
   BehaviorDefinition,
   HudDefinition,
+  ItemUseDefinition,
   MechanicDefinition,
   MusicDefinition,
   PanelDefinition,
@@ -125,6 +128,7 @@ export class GameSession {
   readonly music = new Map<string, { def: MusicDefinition; owner: string }>();
   readonly visuals = new Map<string, { def: VisualDefinition; owner: string }>();
   readonly viewEffects = new Map<string, { def: ViewEffectDefinition; owner: string }>();
+  readonly itemUses = new Map<string, { def: ItemUseDefinition<PropSchema>; owner: string }>();
   readonly vars: VariableStore;
   readonly multiverse = new MultiverseState();
   readonly interpreter: LogicInterpreter;
@@ -134,6 +138,8 @@ export class GameSession {
   readonly cinematics: CinematicSystem;
   readonly player = new PlayerController();
   readonly inventory = new Inventory();
+  readonly equipment: EquipmentSystem;
+  readonly combat: CombatSystem;
   readonly interaction: InteractionSystem;
   readonly behaviors: BehaviorSystem;
   readonly manifests = new Map<string, PackManifest>();
@@ -238,6 +244,8 @@ export class GameSession {
     });
     this.behaviors = new BehaviorSystem(this);
     this.interaction = new InteractionSystem(this);
+    this.equipment = new EquipmentSystem(this);
+    this.combat = new CombatSystem(this);
     // Quests react to every gameplay event (conditions and event matchers).
     this.bus.onAny((name, payload) => {
       if (this.civ && !name.startsWith('ui.')) this.quests.evaluate(name, payload);
@@ -463,6 +471,11 @@ export class GameSession {
       if (prev && prev.owner !== owner) this.log.error(`Composant ${b.id} déjà défini par ${prev.owner}.`);
       else this.behaviorDefs.set(b.id, { def: b, owner });
     }
+    for (const u of d.itemUses) {
+      const prev = this.itemUses.get(u.id);
+      if (prev && prev.owner !== owner) this.log.error(`Utilisation d’objet ${u.id} déjà définie par ${prev.owner}.`);
+      else this.itemUses.set(u.id, { def: u, owner });
+    }
     for (const s of d.sounds) this.sounds.set(s.id, { def: s, owner });
     for (const m of d.music) this.music.set(m.id, { def: m, owner });
     for (const v of d.visuals) this.visuals.set(v.component, { def: v, owner });
@@ -475,7 +488,7 @@ export class GameSession {
     this.models.unregisterOwner(owner);
     this.items.unregisterOwner(owner);
     this.logicRegistry.unregisterOwner(owner);
-    for (const map of [this.behaviorDefs, this.sounds, this.music, this.visuals, this.viewEffects] as Map<string, { owner: string }>[]) {
+    for (const map of [this.behaviorDefs, this.sounds, this.music, this.visuals, this.viewEffects, this.itemUses] as Map<string, { owner: string }>[]) {
       for (const [k, v] of [...map]) if (v.owner === owner) map.delete(k);
     }
     this.i18n.removeNamespace(owner);
@@ -559,6 +572,8 @@ export class GameSession {
       for (const r of saved?.rulesFired ?? []) this.rules.firedOnce.add(r);
       this.player.resetCivilizationState();
       this.player.title = saved?.player.title ?? null;
+      this.equipment.reset();
+      this.combat.reset();
 
       // Mechanic settings (Civilization Rules editor).
       for (const m of pack.defs.mechanics) {
@@ -587,6 +602,9 @@ export class GameSession {
       for (const el of manifest.hud.hide) this.ui.setHudVisible(el as never, false);
       for (const a of civ.abilities.values()) if (a.autoGrant) this.player.abilities.add(a.id);
       for (const a of saved?.player.abilities ?? []) if (civ.abilities.has(a)) this.player.abilities.add(a);
+      // After abilities: worn items only add the abilities the player does not have otherwise.
+      this.equipment.restore(saved?.player.equipment);
+      this.combat.restore(saved?.player.combat);
       this.rules.load(pack.logic);
 
       const firstTime = !this.multiverse.progress(civId).started || !saved;
@@ -671,6 +689,8 @@ export class GameSession {
       this.ui.closePanel(id);
     }
     civ.panelLocks.forEach((l) => l.dispose());
+    this.equipment.reset();
+    this.combat.reset();
     civ.scope.dispose();
     this.rules.unload();
     this.quests.load([]);
@@ -720,6 +740,7 @@ export class GameSession {
     world.computeLight();
     this.placePlayer(world, spawnId, place);
     this.registerPlayerCollider();
+    this.combat.onSceneEntered();
     this.changed();
     this.runLifecycle('sceneEnter');
     this.bus.emit('scene.entered', { sceneId });
@@ -808,6 +829,7 @@ export class GameSession {
     if (!civ || !world) return;
     this.runLifecycle('sceneExit');
     this.bus.emit('scene.exiting', { sceneId: world.id });
+    this.equipment.cancelUses();
     civ.sceneStates.set(world.id, this.captureSceneState(world));
     this.dialogue.abort();
     this.cinematics.abort();
@@ -888,6 +910,8 @@ export class GameSession {
     world.colliders.updateBox('player#body', this.player.body.box());
     this.behaviors.update(dt);
     this.behaviors.updateMotors(dt);
+    this.combat.update(dt);
+    this.equipment.update(dt);
     this.cinematics.update(dt);
     this.interaction.refresh();
     const region = world.flushLight();
@@ -940,6 +964,7 @@ export class GameSession {
     const a = civ?.abilities.get(id);
     if (!civ || !a || !this.player.abilities.has(id)) return false;
     if (this._paused || this.player.movementLocked || this.dialogue.isActive || this.cinematics.current) return false;
+    if (!this.combat.canAct) return false;
     if ((this.player.cooldowns.get(id) ?? 0) > 0) return false;
     try {
       if (a.canActivate && !a.canActivate(civ.ctx)) return false;
@@ -1028,8 +1053,10 @@ export class GameSession {
         position: [p.x, p.y, p.z],
         yaw: this.player.yaw,
         pitch: this.player.pitch,
-        abilities: [...this.player.abilities],
+        abilities: [...this.player.abilities].filter((a) => !this.equipment.isGrantedOnly(a)),
         title: this.player.title,
+        equipment: this.equipment.snapshot(),
+        combat: this.combat.snapshot(),
       },
       vars: this.vars.snapshot(civ.id),
       inventory: this.inventory.entries(),
