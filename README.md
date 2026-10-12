@@ -62,6 +62,7 @@ keys cannot (they are set in each pack's `content/rules.json`).
 | `npm run dev` | Dev server (game, Studio, file API, hot reload). |
 | `npm run build` | Type-check, then build the game into `dist/` (no Studio). |
 | `npm run build:with-studio` | Same, plus a Studio page (read-only: no file API outside the dev server). |
+| `npm run build:artifact` | The game alone (no Studio) as a claude.ai Artifact page: `dist-artifact/civilizationverse.html` plus `dist-artifact/assets/` (one script, fonts, stylesheet). |
 | `npm run preview` | Serve the production build. |
 | `npm run typecheck` | TypeScript, strict, for the app and the tools. |
 | `npm run lint` | ESLint. |

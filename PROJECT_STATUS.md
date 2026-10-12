@@ -254,9 +254,16 @@ npm run test:e2e             # browser tests (starts or reuses vite on port 5199
 npm run validate             # content and French texts of every civilization
 npm run bench                # CPU measurements on the real packs
 npm run build                # production build into dist/ (no Studio, no file API)
+npm run build:artifact       # the game as a claude.ai Artifact page (dist-artifact/)
 npm run civ -- new-pack <id> --name "Nom"    # new civilization skeleton
 npm run civ -- seed <pack> [--force]         # regenerate a pack's first scenes (backs up files)
 ```
+
+The game is also published as a private claude.ai Artifact, <https://claude.ai/artifact/FWXWnsuuf8mGje3qBsiH7P>
+(game only, no Studio; saves live in each player's browser). To update it, run
+`npm run build:artifact` and republish `dist-artifact/civilizationverse.html` with every file of
+`dist-artifact/assets/` under `assets/` to the same URL. The build was played under the
+Artifact's constraints (sandboxed frame, strict content security policy) before publishing.
 
 Notes for this kind of container:
 - Playwright uses the preinstalled Chromium (`/opt/pw-browsers`, or `CIV_CHROMIUM=<path>`) with

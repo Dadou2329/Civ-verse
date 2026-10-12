@@ -10,14 +10,19 @@ import { civDevPlugin } from './tools/vite/civDevPlugin.ts';
  * - `index.html`  → the game (always built).
  * - `studio.html` → Civilization Studio. Served in dev; excluded from production builds unless
  *   CIV_BUILD_STUDIO=1 (even then the file-writing API does not exist outside the dev server).
+ * - CIV_BUILD_ARTIFACT=1 (`npm run build:artifact`): the game alone, for a claude.ai Artifact —
+ *   relative paths, one script instead of hundreds of chunks (an Artifact holds at most 511
+ *   files), no source maps, into `dist-artifact/`.
  */
 export default defineConfig(({ command }) => {
-  const buildStudio = process.env.CIV_BUILD_STUDIO === '1';
+  const artifact = process.env.CIV_BUILD_ARTIFACT === '1';
+  const buildStudio = process.env.CIV_BUILD_STUDIO === '1' && !artifact;
   const input: Record<string, string> = { main: path.resolve(repoRoot, 'index.html') };
   if (command === 'serve' || buildStudio) input.studio = path.resolve(repoRoot, 'studio.html');
 
   return {
     root: repoRoot,
+    base: artifact ? './' : '/',
     resolve: { alias: civAliases },
     plugins: [react(), civDevPlugin()],
     server: {
@@ -32,9 +37,10 @@ export default defineConfig(({ command }) => {
     optimizeDeps: { include: ['monaco-editor'] },
     build: {
       target: 'es2022',
-      sourcemap: true,
-      chunkSizeWarningLimit: 4000,
-      rolldownOptions: { input },
+      sourcemap: !artifact,
+      chunkSizeWarningLimit: artifact ? 12000 : 4000,
+      ...(artifact ? { outDir: 'dist-artifact' } : {}),
+      rolldownOptions: { input, ...(artifact ? { output: { codeSplitting: false } } : {}) },
     },
     define: {
       __CIV_STUDIO_AVAILABLE__: JSON.stringify(command === 'serve'),
