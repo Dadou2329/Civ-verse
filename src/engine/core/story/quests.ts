@@ -110,10 +110,12 @@ export class QuestSystem {
     }
     if (this.status(id) !== 'inactive') return;
     const first = doc.stages[0]!;
+    // Objectives completed before the quest started (e.g. a place visited early) are kept.
+    const early = this.states.get(id)?.done ?? [];
     this.states.set(id, {
       status: 'active',
       stage: first.id,
-      done: [],
+      done: [...early],
       startedAt: this.host.now(),
       finishedAt: null,
       history: [first.description],
@@ -126,6 +128,7 @@ export class QuestSystem {
     this.host.bus.emit('quest.stageChanged', { questId: id, stageId: first.id, previous: null });
     void this.host.interpreter.run(doc.onStart, { origin: `quête ${id}/début` });
     this.changed();
+    if (early.length) this.checkStage(id);
     this.requestEvaluation();
   }
 
@@ -136,13 +139,14 @@ export class QuestSystem {
   setStage(id: string, stageId: string): void {
     const doc = this.docs.get(id);
     const st = this.states.get(id);
-    if (!doc || !st) {
-      if (doc && !st) {
-        this.start(id);
-        return this.setStage(id, stageId);
-      }
+    if (!doc) {
       this.host.log.error(`Quête inconnue : ${id}`);
       return;
+    }
+    if (!st || st.status === 'inactive') {
+      this.start(id);
+      if (this.states.get(id)?.status !== 'active') return;
+      return this.setStage(id, stageId);
     }
     const stage = doc.stages.find((s) => s.id === stageId);
     if (!stage) {
@@ -165,16 +169,11 @@ export class QuestSystem {
 
   completeObjective(id: string, objectiveId: string): void {
     const doc = this.docs.get(id);
-    let st = this.states.get(id);
+    const st = this.states.get(id);
     if (!doc) {
       this.host.log.error(`Quête inconnue : ${id}`);
       return;
     }
-    if (!st) {
-      this.start(id);
-      st = this.states.get(id);
-    }
-    if (!st || st.status !== 'active') return;
     // The objective may belong to the current stage or to a later one (completed ahead of time).
     const stage = doc.stages.find((s) => s.objectives.some((o) => o.id === objectiveId));
     if (!stage) {
@@ -182,6 +181,18 @@ export class QuestSystem {
       return;
     }
     const key = `${stage.id}/${objectiveId}`;
+    if (!st) {
+      // Not started yet: remember it, the quest will start with this objective done.
+      this.states.set(id, { status: 'inactive', stage: null, done: [key], startedAt: null, finishedAt: null, history: [] });
+      this.host.bus.emit('quest.objectiveCompleted', { questId: id, objectiveId });
+      this.changed();
+      return;
+    }
+    if (st.status === 'inactive') {
+      if (!st.done.includes(key)) st.done.push(key);
+      return;
+    }
+    if (st.status !== 'active') return;
     if (st.done.includes(key)) return;
     st.done.push(key);
     const obj = stage.objectives.find((o) => o.id === objectiveId)!;
@@ -197,8 +208,9 @@ export class QuestSystem {
     const doc = this.docs.get(id);
     const st = this.states.get(id);
     if (!doc) return this.host.log.error(`Quête inconnue : ${id}`);
-    if (st && st.status !== 'active') return;
+    if (st && st.status !== 'active' && st.status !== 'inactive') return;
     const state: QuestState = st ?? { status: 'active', stage: null, done: [], startedAt: this.host.now(), finishedAt: null, history: [] };
+    state.startedAt ??= this.host.now();
     state.status = 'completed';
     state.finishedAt = this.host.now();
     this.states.set(id, state);

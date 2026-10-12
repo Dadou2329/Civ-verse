@@ -360,8 +360,14 @@ export class GameSession {
       // Names, descriptions and fragments must be readable before the pack itself is loaded
       // (civilization selection, multiverse registry).
       try {
-        const table = await this.provider.readJson(manifest.id, 'locales/fr-FR.json');
-        if (table && typeof table === 'object') this.i18n.addTable(`${manifest.id}#manifeste`, 'fr-FR', table as StringTable);
+        const table = (await this.provider.readJson(manifest.id, 'locales/fr-FR.json')) as StringTable | null;
+        if (table && typeof table === 'object') {
+          // Only what describes the pack from the outside; the rest loads with the pack.
+          const keys = [manifest.name, manifest.description, manifest.tagline, ...manifest.fragments.flatMap((f) => [f.name, f.hint])].filter((k): k is string => !!k);
+          const subset: StringTable = {};
+          for (const k of keys) if (typeof table[k] === 'string') subset[k] = table[k];
+          this.i18n.addTable(`${manifest.id}#manifeste`, 'fr-FR', subset);
+        }
       } catch {
         this.log.warn(`Aucune table française pour « ${manifest.id} » (locales/fr-FR.json).`);
       }

@@ -380,7 +380,9 @@ describe('GameSession (headless integration)', () => {
     expect(session.behaviorDefs.has('testciv.lock')).toBe(false);
     expect(session.blocks.has('testciv:wall')).toBe(false);
     expect(session.vars.get('testciv.canOpen')).toBeUndefined();
-    expect(session.i18n.has('testciv.name')).toBe(false);
+    expect(session.i18n.has('testciv.dlg.hello')).toBe(false);
+    // The pack's name stays readable for the civilization selection screen.
+    expect(session.i18n.has('testciv.name')).toBe(true);
     await advance(session, 5);
     // The testciv state kept in memory did not keep ticking while "other" runs.
     expect((session.civStates.get('testciv')!.mechanics['testciv.counter']!.state as { ticks: number }).ticks).toBe(3);
