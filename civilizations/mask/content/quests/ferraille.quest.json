@@ -1,0 +1,50 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "ferraille",
+  "title": "mask.quest.ferraille.title",
+  "summary": "mask.quest.ferraille.summary",
+  "kind": "side",
+  "order": 10,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "ramasser",
+      "description": "mask.quest.ferraille.ramasser",
+      "objectives": [
+        {
+          "id": "ferraille",
+          "text": "mask.quest.ferraille.ramasser.ferraille",
+          "completeWhen": {
+            "type": "core.hasItem",
+            "item": "mask:ferraille",
+            "count": 4
+          },
+          "progress": {
+            "var": "mask.ferrailleRamassee",
+            "count": 4
+          }
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "rapporter",
+      "description": "mask.quest.ferraille.rapporter",
+      "objectives": [
+        {
+          "id": "nora",
+          "text": "mask.quest.ferraille.rapporter.nora",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.ferrailleRendue",
+            "op": "==",
+            "value": true
+          },
+          "target": "nora"
+        }
+      ],
+      "completion": "all"
+    }
+  ]
+}

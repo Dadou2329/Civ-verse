@@ -1,0 +1,63 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C02b_frein",
+  "title": "C02b — Le frein est grippé",
+  "duration": 8.8,
+  "skippable": true,
+  "letterbox": false,
+  "lockPlayer": false,
+  "hideHud": false,
+  "returnCamera": "cut",
+  "tracks": [
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.2,
+          "duration": 2.4,
+          "speaker": "player",
+          "text": "mask.cin.c02b.1"
+        },
+        {
+          "t": 2.8,
+          "duration": 2.6,
+          "speaker": "juno",
+          "text": "mask.cin.c02b.2"
+        },
+        {
+          "t": 5.6,
+          "duration": 3.2,
+          "speaker": "juno",
+          "text": "mask.cin.c02b.3"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0,
+          "sound": "core:clang",
+          "at": "frein"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "juno",
+      "keys": [
+        {
+          "t": 2.8,
+          "lookAt": "player",
+          "animation": "point"
+        },
+        {
+          "t": 5.6,
+          "animation": "talk"
+        }
+      ]
+    }
+  ],
+  "onComplete": []
+}

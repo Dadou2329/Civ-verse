@@ -1,0 +1,233 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "prologue",
+  "title": "mask.quest.prologue.title",
+  "summary": "mask.quest.prologue.summary",
+  "kind": "main",
+  "order": 0,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "chambre",
+      "description": "mask.quest.prologue.chambre",
+      "objectives": [
+        {
+          "id": "cle",
+          "text": "mask.quest.prologue.chambre.cle",
+          "completeWhen": {
+            "type": "core.hasItem",
+            "item": "mask:cle_atelier",
+            "count": 1
+          },
+          "target": "cle_atelier"
+        },
+        {
+          "id": "affiche",
+          "text": "mask.quest.prologue.chambre.affiche",
+          "optional": true,
+          "target": "affiche"
+        },
+        {
+          "id": "carte",
+          "text": "mask.quest.prologue.chambre.carte",
+          "optional": true,
+          "target": "carte"
+        },
+        {
+          "id": "lys",
+          "text": "mask.quest.prologue.chambre.lys",
+          "target": "lys"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "roue",
+      "description": "mask.quest.prologue.roue",
+      "objectives": [
+        {
+          "id": "piece",
+          "text": "mask.quest.prologue.roue.piece",
+          "completeWhen": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.hasItem",
+                "item": "mask:roue_rechange",
+                "count": 1
+              },
+              {
+                "type": "core.var",
+                "var": "mask.essieuAligne",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "target": "roue_rechange"
+        },
+        {
+          "id": "essieu",
+          "text": "mask.quest.prologue.roue.essieu",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.essieuAligne",
+            "op": "==",
+            "value": true
+          },
+          "target": "chariot"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "marteau",
+      "description": "mask.quest.prologue.marteau",
+      "objectives": [
+        {
+          "id": "main",
+          "text": "mask.quest.prologue.marteau.main",
+          "completeWhen": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.holding",
+                "item": "mask:marteau_cendre"
+              },
+              {
+                "type": "core.var",
+                "var": "mask.roueFixee",
+                "op": "==",
+                "value": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "fixer",
+          "text": "mask.quest.prologue.marteau.fixer",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.roueFixee",
+            "op": "==",
+            "value": true
+          },
+          "target": "chariot"
+        }
+      ],
+      "completion": "all",
+      "onComplete": [
+        {
+          "type": "core.emit",
+          "event": "mask.prologue.workshop_repaired",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "id": "juno",
+      "description": "mask.quest.prologue.juno",
+      "objectives": [
+        {
+          "id": "suivre",
+          "text": "mask.quest.prologue.juno.suivre",
+          "completeOn": {
+            "event": "mask.prologue.rampe"
+          },
+          "target": "juno"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "monte_charge",
+      "description": "mask.quest.prologue.monte_charge",
+      "objectives": [
+        {
+          "id": "station",
+          "text": "mask.quest.prologue.monte_charge.station",
+          "completeOn": {
+            "event": "trigger.entered",
+            "where": {
+              "triggerId": "declencheur_station"
+            }
+          },
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.levierTire",
+            "op": "==",
+            "value": true
+          },
+          "target": "declencheur_station"
+        },
+        {
+          "id": "levier",
+          "text": "mask.quest.prologue.monte_charge.levier",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.levierTire",
+            "op": "==",
+            "value": true
+          },
+          "target": "levier"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "frein",
+      "description": "mask.quest.prologue.frein",
+      "objectives": [
+        {
+          "id": "braise",
+          "text": "mask.quest.prologue.frein.braise",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.freinLibere",
+            "op": "==",
+            "value": true
+          },
+          "target": "frein"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "fin",
+      "description": "mask.quest.prologue.fin",
+      "objectives": [
+        {
+          "id": "relais",
+          "text": "mask.quest.prologue.fin.relais",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "mask.junoRelais",
+            "op": "==",
+            "value": true
+          },
+          "completeOn": {
+            "event": "dialogue.ended",
+            "where": {
+              "dialogueId": "p02_juno_fin"
+            }
+          },
+          "target": "juno"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.music",
+      "music": "mask:music.rives",
+      "fade": 3
+    },
+    {
+      "type": "core.showLocation",
+      "title": "mask.fin.prologue.titre",
+      "subtitle": "mask.fin.prologue.sous"
+    }
+  ]
+}

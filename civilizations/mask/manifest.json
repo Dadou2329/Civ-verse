@@ -1,0 +1,36 @@
+{
+  "format": "civverse.pack",
+  "version": 1,
+  "id": "mask",
+  "kind": "civilization",
+  "name": "mask.name",
+  "description": "mask.description",
+  "tagline": "mask.tagline",
+  "packVersion": "0.1.0",
+  "engineApi": "^1.0.0",
+  "dependencies": ["core"],
+  "entry": { "scene": "rives", "spawn": "spawn_chambre" },
+  "scenes": ["rives"],
+  "stateVersion": 1,
+  "globalWrites": ["flags.mask.*"],
+  "fragments": [],
+  "playerSpeaker": "mask.speaker.heros",
+  "theme": {
+    "accent": "#f2a541",
+    "accentSoft": "#5fc6c9",
+    "panel": "rgba(30, 20, 24, 0.9)",
+    "panelBorder": "rgba(242, 165, 65, 0.45)",
+    "text": "#f6ead8",
+    "textDim": "#b8a48e",
+    "font": "\"Alegreya Sans\", system-ui, sans-serif",
+    "titleFont": "\"Alegreya Sans\", system-ui, sans-serif"
+  },
+  "cover": { "colors": ["#2a1a1e", "#b5402e", "#f2a541"], "motif": "mask" },
+  "hud": { "hide": [] },
+  "order": 30,
+  "credits": [
+    "Scénario : « Mask Civilization — Les Cent Visages », bible narrative et scénario jouable, version 1.0.",
+    "Ville, masques, mécaniques, musiques et sons originaux, générés de manière procédurale."
+  ],
+  "tags": ["aventure", "action", "ascension", "humour"]
+}

@@ -18,7 +18,10 @@ The first large civilization, **Mask Civilization** (« Les Cent Visages », sce
 [`docs/narrative/MASK_CIVILIZATION_SCENARIO.md`](docs/narrative/MASK_CIVILIZATION_SCENARIO.md)), is
 being built chapter by chapter. Its engine foundations are done: items held in hand and really
 used, worn items, combat with enemies, bosses and encounters, all part of the SDK and the Studio
-([`docs/COMBAT_AND_EQUIPMENT.md`](docs/COMBAT_AND_EQUIPMENT.md)). Its chapters are not written yet.
+([`docs/COMBAT_AND_EQUIPMENT.md`](docs/COMBAT_AND_EQUIPMENT.md)). Its **Prologue** is written,
+playable from the first cinematic to Juno's offer and tested by a headless playthrough; Chapters I
+to VI, the Epilogue and the side quests are not written yet
+([`docs/narrative/MASK_TRACEABILITY.md`](docs/narrative/MASK_TRACEABILITY.md)).
 
 What is not done is listed honestly in [Outstanding bugs and limitations](#outstanding-bugs-and-limitations)
 and [In progress and partial](#in-progress-and-partial): mostly Studio comfort features, the
@@ -95,8 +98,16 @@ traces in development).
 `civilizations/core` is a library pack of shared blocks, models, sounds (now also combat sounds)
 and character looks. All assets are original and generated in code.
 
-**Mask Civilization**: in development; its pack is not written yet, see
-[In progress and partial](#in-progress-and-partial).
+**Mask Civilization — « Les Cent Visages »** (in development, see
+[In progress and partial](#in-progress-and-partial)):
+
+| | Mask — Prologue « La place qu’on nous donne » |
+|---|---|
+| Scenes | `rives`: the Rives Basses (the hero's room above Nora's workshop, quays and canal, market, registration office, candidates' stage, lift mill, the freight lift on its inclined rail with scaffolds and a brake station) under the upper tiers of Viremasque seen from below (Toits du Fil, Bastion de Fer, Terrasses de Verre, Jardins d'Or, Tour de l'Accord) |
+| Content (validated) | 119 entities, 6 dialogues, 2 quests (Prologue, side errand « Rien ne se jette »), 5 cinematics, 13 rules, 24 characters, 6 items, 248 French texts |
+| Mechanics | `mask.ranks` (civic rank, ranks revealed by the story), `mask.masks` (the worn mask gives its power to the tool in hand), item use `mask.braise` (hammer blow; charged Braise strike with the Cendre mask), component `mask.monteCharge` (runaway wagon with a soft countdown: Juno holds it back instead of a failure), component `mask.voltige` (couriers leaping from roof to roof) |
+| Interface | rank plaque with the ladder of known ranks, wagon countdown, ember view effect, ochre and teal theme |
+| Multiverse | none yet |
 
 ### Civilization Studio (`src/studio`, French interface)
 
@@ -133,8 +144,11 @@ scaffolding, hot reload of packs).
 - **Mask Civilization**: scenario received (7 chapters, epilogue, 5 side quests). Built one
   finished, tested chapter at a time (scenario §11.4). Done: the engine foundations it needs
   (equipment, item uses, combat, enemies, bosses, encounters, masks on characters, combat music),
-  with headless tests and a visual check in the browser. Not done yet: the Mask pack itself (city
-  of Viremasque, masks and their powers, overload, characters, the seven zones) and every chapter.
+  the pack (Rives Basses, the Cendre mask and Braise, ranks, 24 characters) and the **Prologue**
+  (P00–P02), checked by six headless playthrough tests and in the browser. Gaps of the Prologue
+  are listed in [`docs/narrative/MASK_TRACEABILITY.md`](docs/narrative/MASK_TRACEABILITY.md) §2.4.
+  Not done yet: Chapters I–VI, the Epilogue, the side quests Q1–Q5, the other masks and their
+  powers (Fil, Fer, Verre, Or), mask switching and overload, the other six zones.
 - **Door and Memory are frozen**: the *Partial* rows below stay as they are, by decision.
 - **Scenario details marked *Partial*** in [`docs/narrative/TRACEABILITY.md`](docs/narrative/TRACEABILITY.md) §3
   (seven of the scenario requirements; everything else is *Implemented*):
@@ -181,7 +195,7 @@ Measured on 2026-10-12 on this tree:
 |---|---|---|
 | Type checking (strict, app and tools) | `npm run typecheck` | no error |
 | Lint | `npm run lint` | no error, no warning |
-| Unit, integration, playthrough and acceptance tests | `npm test` | 21 files, 113 tests, all pass (~24 s), including 16 equipment and combat tests (`src/engine/core/combat/combat.test.ts`) |
+| Unit, integration, playthrough and acceptance tests | `npm test` | 22 files, 121 tests, all pass, including 16 equipment and combat tests (`src/engine/core/combat/combat.test.ts`) and the Mask Prologue playthroughs (`civilizations/mask/tests/mask.prologue.test.ts`, ~2.5 min) |
 | Browser tests (game and Studio) | `npm run test:e2e` | 6 tests (A, B, C, E, H, I), all pass (~2.8 min) |
 | Content validation | `npm run validate` | 0 errors, 0 warnings (door 503 texts checked, memory 567, core library 0 issues) |
 | Production build | `npm run build` | builds; `dist/` holds `index.html` and assets only — no `studio.html`, no Monaco, no file-API code in the JavaScript; Vite warns about one 5 MB chunk (Babylon.js and React, 1.1 MB gzipped) |
@@ -256,9 +270,10 @@ None of these breaks a playthrough of Door or Memory.
 
 ## Next priorities
 
-1. Mask Civilization, chapter by chapter: the pack (Viremasque, masks, powers, overload,
-   characters) with Rives Basses and the Prologue, then Chapters I to VI, the Epilogue and the
-   side quests — each one playable, tested by a headless playthrough, committed and published.
+1. Mask Civilization, chapter by chapter: Chapter I « Courir plus haut » (registration office,
+   three proofs, the box of old masks, Kaël and the qualifying course), then Chapters II to VI,
+   the Epilogue and the side quests — each one playable, tested by a headless playthrough,
+   committed and published.
 2. Measure the frame rate on real GPUs (F3 overlay, `npm run bench` for CPU) and apply
    `viewDistance` per quality level.
 3. Studio: id renames that update references, a delete button, refreshing open scripts changed

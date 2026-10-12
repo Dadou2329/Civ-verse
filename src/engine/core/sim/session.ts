@@ -307,7 +307,7 @@ export class GameSession {
 
   speakerName(id: string, explicitKey?: string): string | null {
     if (explicitKey) return this.t(explicitKey);
-    if (id === 'player') return this.t('core.speaker.player');
+    if (id === 'player') return this.t(this.civ?.manifest.playerSpeaker ?? 'core.speaker.player');
     if (id === 'narrator') return null;
     const e = this.world?.entities.get(id);
     const npc = e?.components.get('core.npc');

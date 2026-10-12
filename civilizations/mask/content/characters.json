@@ -1,0 +1,923 @@
+{
+  "format": "civverse.characters",
+  "version": 1,
+  "characters": [
+    {
+      "id": "mask:lys",
+      "name": "mask.npc.lys",
+      "build": {
+        "body": "slim",
+        "height": 0.97
+      },
+      "skin": "#e8b894",
+      "eyes": "#3a6a4a",
+      "hair": {
+        "style": "ponytail",
+        "color": "#a8482a"
+      },
+      "face": {
+        "freckles": true,
+        "brows": "#7a3018"
+      },
+      "outfit": {
+        "style": "vest",
+        "top": "#2f8a86",
+        "bottom": "#4a3a2e",
+        "shoes": "#2a1e16",
+        "accent": "#e2b23c",
+        "trim": "#b5402e"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "apron",
+          "color": "#7a5030"
+        },
+        {
+          "type": "gloves",
+          "color": "#5a3a20"
+        },
+        {
+          "type": "satchel",
+          "color": "#6a4a2e"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.1
+    },
+    {
+      "id": "mask:nora",
+      "name": "mask.npc.nora",
+      "build": {
+        "body": "broad",
+        "height": 1.0
+      },
+      "skin": "#c8906a",
+      "eyes": "#5a3a22",
+      "hair": {
+        "style": "bun",
+        "color": "#7a7672"
+      },
+      "face": {
+        "wrinkles": true,
+        "brows": "#4a4a4a"
+      },
+      "outfit": {
+        "style": "tunic",
+        "top": "#b5402e",
+        "bottom": "#3a2e26",
+        "shoes": "#2a1e16",
+        "accent": "#e2b23c"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "apron",
+          "color": "#5a3a20"
+        },
+        {
+          "type": "scarf",
+          "color": "#e2b23c",
+          "accent": "#b5402e"
+        },
+        {
+          "type": "keyring",
+          "color": "#c79a42"
+        }
+      ],
+      "idle": "proud",
+      "voicePitch": 0.9
+    },
+    {
+      "id": "mask:juno",
+      "name": "mask.npc.juno",
+      "build": {
+        "body": "slim",
+        "height": 1.0
+      },
+      "skin": "#9a6a4a",
+      "eyes": "#2a1e1a",
+      "hair": {
+        "style": "swept",
+        "color": "#1e1a2a"
+      },
+      "face": {
+        "brows": "#141018"
+      },
+      "outfit": {
+        "style": "coat",
+        "top": "#1e6a8a",
+        "bottom": "#24323e",
+        "shoes": "#14181c",
+        "accent": "#7fe0ff",
+        "trim": "#f2e6c8"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#1e5a6a",
+          "accent": "#7fe0ff",
+          "pattern": "threads"
+        },
+        {
+          "type": "scarf",
+          "color": "#f2c84a",
+          "accent": "#1e6a8a"
+        },
+        {
+          "type": "gloves",
+          "color": "#24323e"
+        },
+        {
+          "type": "belt",
+          "color": "#5a3a20"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.15
+    },
+    {
+      "id": "mask:bastien",
+      "name": "mask.npc.bastien",
+      "build": {
+        "body": "elder",
+        "height": 0.95
+      },
+      "skin": "#d4a07a",
+      "eyes": "#4a5a6a",
+      "hair": {
+        "style": "short",
+        "color": "#d8d4cc"
+      },
+      "face": {
+        "beard": "#cfcac0",
+        "wrinkles": true,
+        "brows": "#cfcac0"
+      },
+      "outfit": {
+        "style": "shirt",
+        "top": "#c8b48a",
+        "bottom": "#5a4a3a",
+        "shoes": "#2a1e16",
+        "accent": "#3f78a8"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "cap",
+          "color": "#3f78a8"
+        }
+      ],
+      "idle": "tired",
+      "voicePitch": 0.8
+    },
+    {
+      "id": "mask:ada",
+      "name": "mask.npc.ada",
+      "build": {
+        "body": "adult",
+        "height": 0.96
+      },
+      "skin": "#e0b08f",
+      "eyes": "#6a4a2a",
+      "hair": {
+        "style": "long",
+        "color": "#3a2416"
+      },
+      "face": {
+        "blush": true
+      },
+      "outfit": {
+        "style": "dress",
+        "top": "#d88c78",
+        "bottom": "#8a4a3e",
+        "shoes": "#3a2416",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "flower",
+          "color": "#d83a2a"
+        }
+      ],
+      "idle": "calm",
+      "voicePitch": 1.1
+    },
+    {
+      "id": "mask:pol",
+      "name": "mask.npc.pol",
+      "build": {
+        "body": "adult",
+        "height": 1.03
+      },
+      "skin": "#8a5a3a",
+      "eyes": "#2a1a12",
+      "hair": {
+        "style": "curly",
+        "color": "#1a1410"
+      },
+      "face": {},
+      "outfit": {
+        "style": "vest",
+        "top": "#e2b23c",
+        "bottom": "#3a3e5a",
+        "shoes": "#1a1410",
+        "accent": "#3f78a8"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "satchel",
+          "color": "#6a4a2e"
+        }
+      ],
+      "idle": "nervous",
+      "voicePitch": 0.95
+    },
+    {
+      "id": "mask:marchande_fruits",
+      "name": "mask.npc.marchande_fruits",
+      "build": {
+        "body": "broad",
+        "height": 0.98
+      },
+      "skin": "#c8906a",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "braids",
+        "color": "#2a1810"
+      },
+      "face": {},
+      "outfit": {
+        "style": "dress",
+        "top": "#4f8a4a",
+        "bottom": "#3a2e26",
+        "shoes": "#2a1e16",
+        "accent": "#e8743a"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "apron",
+          "color": "#efe2c2"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:marchand_tissus",
+      "name": "mask.npc.marchand_tissus",
+      "build": {
+        "body": "slim",
+        "height": 1.04
+      },
+      "skin": "#e8c4a0",
+      "eyes": "#2a4a6a",
+      "hair": {
+        "style": "swept",
+        "color": "#8a5a2a"
+      },
+      "face": {
+        "mustache": "#8a5a2a"
+      },
+      "outfit": {
+        "style": "coat",
+        "top": "#2f8a86",
+        "bottom": "#2a2a3a",
+        "shoes": "#1a1410",
+        "accent": "#e2b23c"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "scarf",
+          "color": "#d88c78"
+        }
+      ],
+      "idle": "proud",
+      "voicePitch": 0.95
+    },
+    {
+      "id": "mask:marchande_masques",
+      "name": "mask.npc.marchande_masques",
+      "build": {
+        "body": "elder",
+        "height": 0.93
+      },
+      "skin": "#b88060",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "bun",
+        "color": "#e8e4dc"
+      },
+      "face": {
+        "wrinkles": true
+      },
+      "outfit": {
+        "style": "robe",
+        "top": "#6a3a5a",
+        "bottom": "#3a2a3a",
+        "shoes": "#1a1410",
+        "accent": "#e2b23c"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "pendant",
+          "color": "#e2b23c"
+        }
+      ],
+      "idle": "calm",
+      "voicePitch": 0.85
+    },
+    {
+      "id": "mask:enfant_a",
+      "name": "mask.npc.enfant",
+      "build": {
+        "body": "child",
+        "height": 0.85
+      },
+      "skin": "#e8b894",
+      "eyes": "#3a5a2a",
+      "hair": {
+        "style": "short",
+        "color": "#6a3a1a"
+      },
+      "face": {
+        "freckles": true
+      },
+      "outfit": {
+        "style": "tunic",
+        "top": "#e2b23c",
+        "bottom": "#4a3a2e",
+        "shoes": "#2a1e16",
+        "accent": "#b5402e"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.4
+    },
+    {
+      "id": "mask:enfant_b",
+      "name": "mask.npc.enfant",
+      "build": {
+        "body": "child",
+        "height": 0.8
+      },
+      "skin": "#8a5a3a",
+      "eyes": "#2a1a12",
+      "hair": {
+        "style": "braids",
+        "color": "#1a1410"
+      },
+      "face": {},
+      "outfit": {
+        "style": "dress",
+        "top": "#3f78a8",
+        "bottom": "#2a2a3a",
+        "shoes": "#1a1410",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.45
+    },
+    {
+      "id": "mask:habitant_a",
+      "name": "mask.npc.habitant",
+      "build": {
+        "body": "adult",
+        "height": 1.0
+      },
+      "skin": "#e8b894",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "short",
+        "color": "#2a1810"
+      },
+      "face": {},
+      "outfit": {
+        "style": "tunic",
+        "top": "#b5402e",
+        "bottom": "#3a2e26",
+        "shoes": "#2a1e16",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "apron",
+          "color": "#7a5030"
+        }
+      ],
+      "idle": "calm",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:habitant_b",
+      "name": "mask.npc.habitant",
+      "build": {
+        "body": "slim",
+        "height": 0.97
+      },
+      "skin": "#c8906a",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "long",
+        "color": "#6a3a1a"
+      },
+      "face": {},
+      "outfit": {
+        "style": "shirt",
+        "top": "#3f78a8",
+        "bottom": "#4a3a2e",
+        "shoes": "#2a1e16",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        }
+      ],
+      "idle": "nervous",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:habitant_c",
+      "name": "mask.npc.habitant",
+      "build": {
+        "body": "broad",
+        "height": 1.02
+      },
+      "skin": "#8a5a3a",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "curly",
+        "color": "#1a1410"
+      },
+      "face": {},
+      "outfit": {
+        "style": "vest",
+        "top": "#4f8a4a",
+        "bottom": "#3a3e5a",
+        "shoes": "#2a1e16",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "apron",
+          "color": "#7a5030"
+        }
+      ],
+      "idle": "proud",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:habitant_d",
+      "name": "mask.npc.habitant",
+      "build": {
+        "body": "adult",
+        "height": 0.95
+      },
+      "skin": "#e0b08f",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "bob",
+        "color": "#a8482a"
+      },
+      "face": {},
+      "outfit": {
+        "style": "dress",
+        "top": "#e2b23c",
+        "bottom": "#5a4a3a",
+        "shoes": "#2a1e16",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "satchel",
+          "color": "#6a4a2e"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:habitant_e",
+      "name": "mask.npc.habitant",
+      "build": {
+        "body": "elder",
+        "height": 0.93
+      },
+      "skin": "#b88060",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "bald",
+        "color": "#3a3a3a"
+      },
+      "face": {},
+      "outfit": {
+        "style": "rags",
+        "top": "#d88c78",
+        "bottom": "#2a2a3a",
+        "shoes": "#2a1e16",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "apron",
+          "color": "#7a5030"
+        }
+      ],
+      "idle": "tired",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:habitant_f",
+      "name": "mask.npc.habitant",
+      "build": {
+        "body": "slim",
+        "height": 1.04
+      },
+      "skin": "#d4a07a",
+      "eyes": "#3a2a1a",
+      "hair": {
+        "style": "ponytail",
+        "color": "#3a2416"
+      },
+      "face": {},
+      "outfit": {
+        "style": "coat",
+        "top": "#2f8a86",
+        "bottom": "#3a2e26",
+        "shoes": "#2a1e16",
+        "accent": "#efe2c2"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#8f8a84",
+          "accent": "#ff7a2e",
+          "pattern": "ember"
+        },
+        {
+          "type": "scarf",
+          "color": "#e2b23c"
+        }
+      ],
+      "idle": "calm",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:coursier_a",
+      "name": "mask.npc.coursier",
+      "build": {
+        "body": "slim",
+        "height": 1.0
+      },
+      "skin": "#e0b08f",
+      "eyes": "#2a3a4a",
+      "hair": {
+        "style": "swept",
+        "color": "#f2c84a"
+      },
+      "face": {},
+      "outfit": {
+        "style": "coat",
+        "top": "#1e8aa8",
+        "bottom": "#24323e",
+        "shoes": "#14181c",
+        "accent": "#7fe0ff",
+        "trim": "#f2e6c8"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#1e5a6a",
+          "accent": "#7fe0ff",
+          "pattern": "threads"
+        },
+        {
+          "type": "scarf",
+          "color": "#f2805a"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.1
+    },
+    {
+      "id": "mask:coursier_b",
+      "name": "mask.npc.coursier",
+      "build": {
+        "body": "slim",
+        "height": 1.02
+      },
+      "skin": "#8a5a3a",
+      "eyes": "#1a1410",
+      "hair": {
+        "style": "mohawk",
+        "color": "#1a1410"
+      },
+      "face": {},
+      "outfit": {
+        "style": "coat",
+        "top": "#2a6a9a",
+        "bottom": "#24323e",
+        "shoes": "#14181c",
+        "accent": "#f2c84a",
+        "trim": "#7fe0ff"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#1e5a6a",
+          "accent": "#7fe0ff",
+          "pattern": "threads"
+        },
+        {
+          "type": "gloves",
+          "color": "#24323e"
+        }
+      ],
+      "idle": "playful",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:garde_fer",
+      "name": "mask.npc.garde_fer",
+      "build": {
+        "body": "broad",
+        "height": 1.06
+      },
+      "skin": "#c8906a",
+      "eyes": "#2a2a2a",
+      "hair": {
+        "style": "short",
+        "color": "#2a1810"
+      },
+      "face": {},
+      "outfit": {
+        "style": "uniform",
+        "top": "#6a2a26",
+        "bottom": "#2a1e1e",
+        "shoes": "#141010",
+        "accent": "#c8a050",
+        "trim": "#c8a050"
+      },
+      "accessories": [
+        {
+          "type": "mask",
+          "color": "#6a2a26",
+          "accent": "#c8a050",
+          "pattern": "rivets"
+        },
+        {
+          "type": "epaulettes",
+          "color": "#c8a050"
+        }
+      ],
+      "idle": "proud",
+      "voicePitch": 0.8
+    },
+    {
+      "id": "mask:noble_or",
+      "name": "mask.npc.noble_or",
+      "build": {
+        "body": "slim",
+        "height": 1.03
+      },
+      "skin": "#f0d0b0",
+      "eyes": "#3a5a8a",
+      "hair": {
+        "style": "long",
+        "color": "#e8d8a8"
+      },
+      "face": {},
+      "outfit": {
+        "style": "robe",
+        "top": "#f2ece0",
+        "bottom": "#c8b890",
+        "shoes": "#8a6a2a",
+        "accent": "#e0b44a",
+        "trim": "#e0b44a"
+      },
+      "accessories": [
+        {
+          "type": "mask",
+          "color": "#d8b04a",
+          "accent": "#fff0b0",
+          "pattern": "ornate"
+        },
+        {
+          "type": "cape",
+          "color": "#e0b44a"
+        }
+      ],
+      "idle": "proud",
+      "voicePitch": 1.0
+    },
+    {
+      "id": "mask:commis",
+      "name": "mask.npc.commis",
+      "build": {
+        "body": "adult",
+        "height": 0.98
+      },
+      "skin": "#e8c4a0",
+      "eyes": "#3a4a5a",
+      "hair": {
+        "style": "bob",
+        "color": "#4a3a2a"
+      },
+      "face": {},
+      "outfit": {
+        "style": "uniform",
+        "top": "#4a5a6a",
+        "bottom": "#2a2e36",
+        "shoes": "#1a1410",
+        "accent": "#c8c0b0",
+        "trim": "#c8c0b0"
+      },
+      "accessories": [
+        {
+          "type": "halfmask",
+          "color": "#1e5a6a",
+          "accent": "#7fe0ff",
+          "pattern": "threads"
+        },
+        {
+          "type": "plaque",
+          "color": "#c8c0b0",
+          "accent": "#4a5a6a"
+        }
+      ],
+      "idle": "calm",
+      "voicePitch": 0.95
+    },
+    {
+      "id": "mask:kael",
+      "name": "mask.npc.kael",
+      "build": {
+        "body": "broad",
+        "height": 1.06
+      },
+      "skin": "#d8b090",
+      "eyes": "#3a4a6a",
+      "hair": {
+        "style": "short",
+        "color": "#e8d8a8"
+      },
+      "face": {
+        "scar": true,
+        "brows": "#c8b890"
+      },
+      "outfit": {
+        "style": "uniform",
+        "top": "#6a2a26",
+        "bottom": "#2a1e1e",
+        "shoes": "#141010",
+        "accent": "#c8a050",
+        "trim": "#c8a050"
+      },
+      "accessories": [
+        {
+          "type": "mask",
+          "color": "#6a2a26",
+          "accent": "#c8a050",
+          "pattern": "rivets"
+        },
+        {
+          "type": "epaulettes",
+          "color": "#c8a050"
+        },
+        {
+          "type": "belt",
+          "color": "#2a1e1e"
+        }
+      ],
+      "idle": "proud",
+      "voicePitch": 0.85
+    },
+    {
+      "id": "mask:vaurel",
+      "name": "mask.npc.vaurel",
+      "build": {
+        "body": "slim",
+        "height": 1.08
+      },
+      "skin": "#d8c4b0",
+      "eyes": "#6a5a8a",
+      "hair": {
+        "style": "short",
+        "color": "#c8c4cc"
+      },
+      "face": {
+        "wrinkles": true
+      },
+      "outfit": {
+        "style": "robe",
+        "top": "#2a2238",
+        "bottom": "#1a1622",
+        "shoes": "#0e0c12",
+        "accent": "#b48aff",
+        "trim": "#b48aff"
+      },
+      "accessories": [
+        {
+          "type": "mask",
+          "color": "#2a2238",
+          "accent": "#b48aff",
+          "pattern": "split"
+        },
+        {
+          "type": "cape",
+          "color": "#1a1622"
+        }
+      ],
+      "idle": "calm",
+      "voicePitch": 0.75
+    }
+  ]
+}

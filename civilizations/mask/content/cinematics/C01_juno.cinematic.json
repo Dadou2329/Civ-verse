@@ -1,0 +1,171 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C01_juno",
+  "title": "C01 — Juno arrive en trombe",
+  "duration": 9.5,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            44.2,
+            10.1,
+            41.6
+          ],
+          "target": [
+            62,
+            9.4,
+            39.6
+          ],
+          "fov": 54
+        },
+        {
+          "t": 2.6,
+          "position": [
+            44,
+            10,
+            41.8
+          ],
+          "target": [
+            52,
+            9.3,
+            40
+          ],
+          "fov": 52,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 4.8,
+          "position": [
+            43.6,
+            9.9,
+            42.4
+          ],
+          "target": [
+            40.8,
+            9.45,
+            40.4
+          ],
+          "fov": 46,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 9.5,
+          "position": [
+            43.2,
+            9.8,
+            42.2
+          ],
+          "target": [
+            40.3,
+            9.5,
+            39.8
+          ],
+          "fov": 46,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.8,
+          "duration": 2.8,
+          "speaker": "juno",
+          "text": "mask.cin.c01.1"
+        },
+        {
+          "t": 4.4,
+          "duration": 2.2,
+          "speaker": "ada",
+          "text": "mask.cin.c01.2"
+        },
+        {
+          "t": 6.8,
+          "duration": 2.5,
+          "speaker": "juno",
+          "text": "mask.cin.c01.3"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.3,
+          "sound": "mask:elan"
+        },
+        {
+          "t": 4.6,
+          "sound": "core:thud",
+          "at": "ada"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "juno",
+      "keys": [
+        {
+          "t": 0.2,
+          "moveTo": "juno_atelier",
+          "speed": 7.5
+        },
+        {
+          "t": 6.7,
+          "lookAt": "lys",
+          "animation": "talk"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "ada",
+      "keys": [
+        {
+          "t": 4.2,
+          "lookAt": "juno",
+          "animation": "surprised",
+          "expression": "angry"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "lys",
+      "keys": [
+        {
+          "t": 2,
+          "lookAt": "juno"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "nora",
+      "keys": [
+        {
+          "t": 2.4,
+          "lookAt": "juno"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startDialogue",
+      "dialogue": "p01_juno",
+      "entity": "juno",
+      "wait": false
+    }
+  ]
+}

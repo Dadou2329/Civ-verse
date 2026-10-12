@@ -30,7 +30,16 @@ export type IconShape =
   | 'spring'
   | 'feather'
   | 'star'
-  | 'circle';
+  | 'circle'
+  | 'hammer'
+  | 'wrench'
+  | 'mask'
+  | 'glove'
+  | 'shield'
+  | 'lens'
+  | 'seal'
+  | 'bracelet'
+  | 'wheel';
 
 export const ICON_SHAPES: readonly IconShape[] = [
   'key',
@@ -59,6 +68,15 @@ export const ICON_SHAPES: readonly IconShape[] = [
   'feather',
   'star',
   'circle',
+  'hammer',
+  'wrench',
+  'mask',
+  'glove',
+  'shield',
+  'lens',
+  'seal',
+  'bracelet',
+  'wheel',
 ];
 
 export interface IconSpec {

@@ -1,0 +1,431 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C00_matin",
+  "title": "C00 — Matin aux Rives Basses",
+  "duration": 35,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            35.5,
+            15.620000000000001,
+            30.9
+          ],
+          "target": [
+            36.5,
+            15.02,
+            33.18
+          ],
+          "fov": 60
+        },
+        {
+          "t": 4.4,
+          "position": [
+            36.1,
+            15.55,
+            32.1
+          ],
+          "target": [
+            36.5,
+            15.02,
+            33.18
+          ],
+          "fov": 50,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 7.2,
+          "position": [
+            36.2,
+            15.4,
+            32.5
+          ],
+          "target": [
+            36.4,
+            15.3,
+            33.8
+          ],
+          "fov": 44,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 9.4,
+          "position": [
+            37.6,
+            15.620000000000001,
+            33.3
+          ],
+          "target": [
+            38.6,
+            16.1,
+            40
+          ],
+          "fov": 62,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 12.4,
+          "position": [
+            38.5,
+            15.9,
+            35.3
+          ],
+          "target": [
+            35,
+            38.5,
+            104
+          ],
+          "fov": 26,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 15.4,
+          "position": [
+            38.5,
+            15.9,
+            35.3
+          ],
+          "target": [
+            37,
+            38.8,
+            104
+          ],
+          "fov": 25,
+          "ease": "linear"
+        },
+        {
+          "t": 16.6,
+          "position": [
+            38.5,
+            15.9,
+            35.3
+          ],
+          "target": [
+            67,
+            31.4,
+            101
+          ],
+          "fov": 20,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 19.4,
+          "position": [
+            38.5,
+            15.9,
+            35.3
+          ],
+          "target": [
+            68.5,
+            31.4,
+            101
+          ],
+          "fov": 20,
+          "ease": "linear"
+        },
+        {
+          "t": 20.8,
+          "position": [
+            38.5,
+            15.9,
+            35.3
+          ],
+          "target": [
+            80,
+            55.4,
+            139.5
+          ],
+          "fov": 22,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 22.8,
+          "position": [
+            38.5,
+            15.9,
+            35.3
+          ],
+          "target": [
+            81,
+            55.6,
+            139.5
+          ],
+          "fov": 22,
+          "ease": "linear"
+        },
+        {
+          "t": 26.6,
+          "position": [
+            38.5,
+            15.8,
+            35.1
+          ],
+          "target": [
+            70,
+            44,
+            126
+          ],
+          "fov": 62,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 28.2,
+          "position": [
+            40.4,
+            16.3,
+            36.6
+          ],
+          "target": [
+            36,
+            9.3,
+            39.8
+          ],
+          "fov": 40,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 31.4,
+          "position": [
+            40.3,
+            16.2,
+            36.5
+          ],
+          "target": [
+            36,
+            9.4,
+            39.8
+          ],
+          "fov": 38,
+          "ease": "linear"
+        },
+        {
+          "t": 34.6,
+          "position": [
+            37.6,
+            15.620000000000001,
+            33.4
+          ],
+          "target": [
+            34.6,
+            15.35,
+            30.4
+          ],
+          "fov": 70,
+          "ease": "inOutSine"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 1,
+          "duration": 4.4,
+          "speaker": "player",
+          "text": "mask.cin.c00.1"
+        },
+        {
+          "t": 5.6,
+          "duration": 2.8,
+          "speaker": "player",
+          "text": "mask.cin.c00.2"
+        },
+        {
+          "t": 8.6,
+          "duration": 3.8,
+          "speaker": "player",
+          "text": "mask.cin.c00.3"
+        },
+        {
+          "t": 12.8,
+          "duration": 3.4,
+          "speaker": "player",
+          "text": "mask.cin.c00.4"
+        },
+        {
+          "t": 16.6,
+          "duration": 2.8,
+          "speaker": "player",
+          "text": "mask.cin.c00.5"
+        },
+        {
+          "t": 22.2,
+          "duration": 5.2,
+          "speaker": "player",
+          "text": "mask.cin.c00.6"
+        },
+        {
+          "t": 28.2,
+          "duration": 3.6,
+          "speaker": "lys",
+          "text": "mask.cin.c00.7"
+        },
+        {
+          "t": 31.8,
+          "duration": 3.1,
+          "speaker": "player",
+          "text": "mask.cin.c00.8"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 2.4
+        },
+        {
+          "t": 7,
+          "fx": "tint",
+          "color": "#ff7a2e",
+          "strength": 0.28,
+          "seconds": 0.25
+        },
+        {
+          "t": 7.1,
+          "fx": "vignette",
+          "intensity": 0.8
+        },
+        {
+          "t": 8,
+          "fx": "tint",
+          "color": null,
+          "strength": 0,
+          "seconds": 0.8
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.2,
+          "sound": "mask:cloches_ville"
+        },
+        {
+          "t": 6.9,
+          "sound": "mask:masque_enfile"
+        },
+        {
+          "t": 27.8,
+          "sound": "mask:cloches_ville",
+          "volume": 0.6
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 6.9,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.setProp",
+              "entity": "support_masque",
+              "component": "core.model",
+              "prop": "model",
+              "value": "mask:support_masque_vide"
+            },
+            {
+              "type": "core.giveItem",
+              "item": "mask:masque_cendre",
+              "count": 1,
+              "silent": true
+            },
+            {
+              "type": "core.equipItem",
+              "item": "mask:masque_cendre"
+            }
+          ]
+        },
+        {
+          "t": 7.2,
+          "actions": [
+            {
+              "type": "core.fx",
+              "channel": "mask.embers",
+              "payload": {
+                "strength": 0.6
+              }
+            }
+          ]
+        },
+        {
+          "t": 34.7,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.teleportPlayer",
+              "spawn": "apres_fenetre"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "garde_fil",
+      "keys": [
+        {
+          "t": 13,
+          "moveTo": "garde_fil_halte",
+          "speed": 2.2
+        },
+        {
+          "t": 17.2,
+          "animation": "point"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "charretier",
+      "keys": [
+        {
+          "t": 17.8,
+          "animation": "shake"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "lys",
+      "keys": [
+        {
+          "t": 27.6,
+          "lookAt": "player",
+          "animation": "wave"
+        },
+        {
+          "t": 31.6,
+          "animation": "point"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "prologue"
+    },
+    {
+      "type": "core.notify",
+      "text": "mask.tuto.deplacement",
+      "kind": "info"
+    }
+  ]
+}

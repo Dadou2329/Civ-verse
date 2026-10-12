@@ -228,6 +228,119 @@ export function iconDataUrl(spec: IconSpec): string {
       g.closePath();
       g.fill();
       break;
+    case 'hammer':
+      // Handle (accent) and a heavy head.
+      g.save();
+      g.translate(16, 16);
+      g.rotate(-Math.PI / 4);
+      px(-2, -4, 4, 18, accent);
+      px(-2, -4, 1, 18, rgbToHex(shade(hexToRgb(accent), 0.25)));
+      px(-9, -12, 18, 8, base);
+      px(-9, -12, 18, 2, light);
+      px(-9, -6, 18, 2, dark);
+      g.restore();
+      break;
+    case 'wrench':
+      g.save();
+      g.translate(16, 16);
+      g.rotate(-Math.PI / 4);
+      px(-2, -6, 4, 18, base);
+      px(-2, -6, 1, 18, light);
+      px(-6, -13, 12, 6, base);
+      g.clearRect(-2, -13, 4, 4);
+      px(-2, 12, 4, 3, dark);
+      g.restore();
+      break;
+    case 'mask':
+      g.fillStyle = base;
+      g.beginPath();
+      g.moveTo(5, 10);
+      g.quadraticCurveTo(16, 4, 27, 10);
+      g.lineTo(26, 18);
+      g.quadraticCurveTo(21, 26, 16, 22);
+      g.quadraticCurveTo(11, 26, 6, 18);
+      g.closePath();
+      g.fill();
+      px(5, 10, 22, 2, light);
+      g.clearRect(9, 13, 5, 3);
+      g.clearRect(18, 13, 5, 3);
+      px(15, 16, 2, 4, dark);
+      px(8, 20, 2, 2, accent);
+      px(22, 19, 2, 2, accent);
+      break;
+    case 'glove':
+      px(9, 12, 14, 14, base);
+      for (let i = 0; i < 4; i++) px(9 + i * 3.5, 5 + (i === 0 || i === 3 ? 3 : 0), 3, 8, base);
+      px(5, 15, 5, 4, base);
+      px(9, 24, 14, 3, accent);
+      px(9, 12, 14, 1, light);
+      break;
+    case 'shield':
+      g.fillStyle = base;
+      g.beginPath();
+      g.moveTo(6, 6);
+      g.lineTo(26, 6);
+      g.lineTo(25, 18);
+      g.quadraticCurveTo(16, 28, 16, 28);
+      g.quadraticCurveTo(7, 22, 7, 18);
+      g.closePath();
+      g.fill();
+      px(6, 6, 20, 2, light);
+      px(15, 8, 2, 18, accent);
+      px(8, 13, 16, 2, accent);
+      break;
+    case 'lens':
+      g.strokeStyle = dark;
+      g.lineWidth = 3;
+      g.beginPath();
+      g.arc(14, 14, 8, 0, Math.PI * 2);
+      g.stroke();
+      g.fillStyle = `${base}cc`;
+      g.beginPath();
+      g.arc(14, 14, 6.5, 0, Math.PI * 2);
+      g.fill();
+      px(10, 10, 3, 2, '#ffffff');
+      g.lineWidth = 4;
+      g.beginPath();
+      g.moveTo(20, 20);
+      g.lineTo(27, 27);
+      g.stroke();
+      break;
+    case 'seal':
+      px(12, 4, 8, 12, accent);
+      px(12, 4, 8, 2, light);
+      g.fillStyle = base;
+      g.beginPath();
+      g.arc(16, 21, 8, 0, Math.PI * 2);
+      g.fill();
+      px(12, 19, 8, 1, dark);
+      px(15, 17, 2, 8, dark);
+      break;
+    case 'bracelet':
+      g.strokeStyle = base;
+      g.lineWidth = 5;
+      g.beginPath();
+      g.ellipse(16, 17, 10, 7, 0, 0, Math.PI * 2);
+      g.stroke();
+      px(13, 7, 6, 6, accent);
+      px(14, 8, 4, 4, light);
+      break;
+    case 'wheel':
+      g.strokeStyle = base;
+      g.lineWidth = 3;
+      g.beginPath();
+      g.arc(16, 16, 11, 0, Math.PI * 2);
+      g.stroke();
+      g.lineWidth = 2;
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        g.beginPath();
+        g.moveTo(16, 16);
+        g.lineTo(16 + Math.cos(a) * 10, 16 + Math.sin(a) * 10);
+        g.stroke();
+      }
+      px(13, 13, 6, 6, dark);
+      break;
   }
   const url = canvas.toDataURL();
   cache.set(key, url);

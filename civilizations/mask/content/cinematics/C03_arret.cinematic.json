@@ -1,0 +1,238 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C03_arret",
+  "title": "C03 — Le monte-charge s’arrête",
+  "duration": 12,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            113.4,
+            13.5,
+            85
+          ],
+          "target": [
+            115.5,
+            12.6,
+            86.6
+          ],
+          "fov": 50
+        },
+        {
+          "t": 4.4,
+          "position": [
+            113.1,
+            13.6,
+            84.6
+          ],
+          "target": [
+            115.5,
+            12.6,
+            86.6
+          ],
+          "fov": 46,
+          "ease": "linear"
+        },
+        {
+          "t": 4.6,
+          "position": [
+            117.5,
+            10.4,
+            49.2
+          ],
+          "lookAt": "wagon",
+          "fov": 52,
+          "cut": true
+        },
+        {
+          "t": 6.4,
+          "position": [
+            117.8,
+            10.3,
+            49.8
+          ],
+          "lookAt": "wagon",
+          "fov": 46,
+          "ease": "linear"
+        },
+        {
+          "t": 6.5,
+          "position": [
+            118.4,
+            9.9,
+            60.2
+          ],
+          "target": [
+            118,
+            9.2,
+            55
+          ],
+          "fov": 58,
+          "cut": true
+        },
+        {
+          "t": 8.2,
+          "position": [
+            118.3,
+            9.9,
+            59.8
+          ],
+          "target": [
+            118,
+            9.3,
+            55
+          ],
+          "fov": 54,
+          "ease": "linear"
+        },
+        {
+          "t": 8.4,
+          "position": [
+            112.4,
+            13.7,
+            85.6
+          ],
+          "lookAt": "juno",
+          "fov": 54,
+          "cut": true
+        },
+        {
+          "t": 12,
+          "position": [
+            112.6,
+            13.620000000000001,
+            86
+          ],
+          "lookAt": "juno",
+          "fov": 62,
+          "ease": "inOutSine"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.3,
+          "duration": 2,
+          "speaker": "player",
+          "text": "mask.cin.c03.1"
+        },
+        {
+          "t": 2.4,
+          "duration": 2.2,
+          "speaker": "juno",
+          "text": "mask.cin.c03.2"
+        },
+        {
+          "t": 5,
+          "duration": 3,
+          "speaker": "habitante_bas",
+          "text": "mask.cin.c03.3"
+        },
+        {
+          "t": 8.6,
+          "duration": 3.2,
+          "speaker": "juno",
+          "text": "mask.cin.c03.4"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.1,
+          "sound": "mask:vapeur",
+          "at": "frein"
+        },
+        {
+          "t": 4.7,
+          "sound": "mask:acclamations"
+        },
+        {
+          "t": 4.7,
+          "music": "mask:music.victoire"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 0,
+          "essential": true,
+          "actions": [
+            {
+              "type": "mask.stopLift",
+              "lift": "wagon"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "juno",
+      "keys": [
+        {
+          "t": 2.4,
+          "lookAt": "player",
+          "animation": "talk"
+        },
+        {
+          "t": 8.6,
+          "animation": "nod"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "habitante_bas",
+      "keys": [
+        {
+          "t": 4.7,
+          "lookAt": "wagon",
+          "animation": "wave"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "enfant_bas",
+      "keys": [
+        {
+          "t": 4.9,
+          "lookAt": "wagon",
+          "animation": "wave"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "habitant_bas",
+      "keys": [
+        {
+          "t": 5.2,
+          "animation": "nod"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.emit",
+      "event": "mask.prologue.lift_saved",
+      "payload": {}
+    }
+  ]
+}

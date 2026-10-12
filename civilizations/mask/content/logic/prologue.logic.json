@@ -1,0 +1,337 @@
+{
+  "format": "civverse.logic",
+  "version": 1,
+  "id": "prologue",
+  "title": "Prologue — La place qu’on nous donne",
+  "rules": [
+    {
+      "id": "ouverture",
+      "name": "Ouverture : matin aux Rives Basses (C00)",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "civ.started"
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C00_matin",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "id": "cle_en_main",
+      "name": "Tutoriel : la clé en main",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "mask:cle_atelier"
+        }
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.cleEnMain",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "essieu",
+      "name": "Essieu aligné : Nora apporte le marteau",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "mask.prologue.essieu"
+      },
+      "then": [
+        {
+          "type": "core.setProp",
+          "entity": "chariot",
+          "component": "core.health",
+          "prop": "invulnerable",
+          "value": false
+        },
+        {
+          "type": "core.say",
+          "entity": "lys",
+          "text": "mask.bark.lys.essieu",
+          "seconds": 3.5
+        },
+        {
+          "type": "core.wait",
+          "seconds": 1.2
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "nora",
+          "target": "nora_chariot",
+          "run": false,
+          "wait": true
+        },
+        {
+          "type": "core.startDialogue",
+          "dialogue": "p01_nora",
+          "entity": "nora",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "id": "marteau_recu",
+      "name": "Tutoriel : le marteau",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "mask:marteau_cendre"
+        }
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 0.5
+        },
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.marteau",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "roue_fixee",
+      "name": "Roue fixée : les clients sont ravis",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "mask.prologue.roueFixee"
+      },
+      "then": [
+        {
+          "type": "core.say",
+          "entity": "ada",
+          "text": "mask.bark.ada.roue",
+          "seconds": 3.5
+        },
+        {
+          "type": "core.playAnimation",
+          "entity": "ada",
+          "animation": "wave",
+          "loop": false
+        },
+        {
+          "type": "core.playAnimation",
+          "entity": "pol",
+          "animation": "nod",
+          "loop": false
+        }
+      ]
+    },
+    {
+      "id": "juno_arrive",
+      "name": "Atelier réparé : Juno arrive en trombe (C01)",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "mask.prologue.workshop_repaired"
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 1.5
+        },
+        {
+          "type": "core.setProp",
+          "entity": "juno",
+          "component": "mask.voltige",
+          "prop": "points",
+          "value": []
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "juno",
+          "target": "juno_arrivee"
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C01_juno",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "id": "juno_part",
+      "name": "Juno file au monte-charge par le pont est",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "dialogue.ended",
+        "where": {
+          "dialogueId": "p01_juno"
+        }
+      },
+      "then": [
+        {
+          "type": "core.moveEntity",
+          "entity": "juno",
+          "target": "pont_juno",
+          "run": true,
+          "wait": true
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "juno",
+          "target": "pont_juno_nord",
+          "run": true,
+          "wait": true
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "juno",
+          "target": "juno_rampe",
+          "run": true,
+          "wait": true
+        },
+        {
+          "type": "core.setVar",
+          "var": "mask.junoAuMonteCharge",
+          "value": true
+        },
+        {
+          "type": "core.lookAt",
+          "entity": "juno",
+          "target": "player"
+        }
+      ],
+      "if": {
+        "type": "core.questStage",
+        "quest": "prologue",
+        "stage": "juno"
+      }
+    },
+    {
+      "id": "rampe",
+      "name": "Au pied du monte-charge : le frein lâche (C02)",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "mask.prologue.rampe"
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C02_monte_charge",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "id": "levier",
+      "name": "Levier tiré : le frein est grippé (C02b)",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "mask.prologue.levier"
+      },
+      "then": [
+        {
+          "type": "core.setProp",
+          "entity": "frein",
+          "component": "core.health",
+          "prop": "invulnerable",
+          "value": false
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C02b_frein",
+          "wait": false
+        },
+        {
+          "type": "core.wait",
+          "seconds": 2.5
+        },
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.braise",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "frein_libere",
+      "name": "Frein libéré : le wagon s’arrête (C03)",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "mask.prologue.freinLibere"
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C03_arret",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "id": "relais",
+      "name": "Incident résolu : Juno propose le relais de candidats",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "mask.prologue.lift_saved"
+      },
+      "then": [
+        {
+          "type": "core.startDialogue",
+          "dialogue": "p02_juno_fin",
+          "entity": "juno",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "id": "sans_masque",
+      "name": "Rappel : sans masque, pas de Braise",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "item.unequipped",
+        "where": {
+          "slot": "masque"
+        }
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "mask.tuto.sansMasque",
+          "kind": "warning"
+        }
+      ]
+    },
+    {
+      "id": "ferraille_compte",
+      "name": "Ferraille ramassée (compteur de la quête de Nora)",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "mask:ferraille"
+        }
+      },
+      "then": [
+        {
+          "type": "core.addVar",
+          "var": "mask.ferrailleRamassee",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

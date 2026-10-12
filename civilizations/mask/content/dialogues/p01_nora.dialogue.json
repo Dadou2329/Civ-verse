@@ -1,0 +1,281 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "p01_nora",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "mask.essieuAligne",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.hasItem",
+                  "item": "mask:marteau_cendre",
+                  "count": 1
+                }
+              }
+            ]
+          },
+          "next": "marteau1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "ferraille",
+                "status": "active"
+              },
+              {
+                "type": "core.hasItem",
+                "item": "mask:ferraille",
+                "count": 4
+              }
+            ]
+          },
+          "next": "ferraille_merci"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "ferraille",
+            "status": "active"
+          },
+          "next": "ferraille_rappel"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "prologue",
+            "stage": "chambre"
+          },
+          "next": "matin"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "prologue",
+            "stage": "roue"
+          },
+          "next": "roue"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "prologue",
+            "stage": "marteau"
+          },
+          "next": "marteau_rappel"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "prologue",
+            "status": "active"
+          },
+          "next": "pendant"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "prologue",
+            "status": "completed"
+          },
+          "next": "apres"
+        }
+      ],
+      "next": "atelier"
+    },
+    {
+      "id": "matin",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.matin",
+      "end": true
+    },
+    {
+      "id": "roue",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.roue",
+      "choices": [
+        {
+          "id": "ferraille",
+          "text": "mask.dlg.p01_nora.roue.ferraille",
+          "next": "ferraille_offre",
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "ferraille",
+            "status": "inactive"
+          }
+        },
+        {
+          "id": "ok",
+          "text": "mask.dlg.p01_nora.roue.ok",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "marteau1",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.marteau1",
+      "next": "marteau2"
+    },
+    {
+      "id": "marteau2",
+      "speaker": "player",
+      "text": "mask.dlg.p01_nora.marteau2",
+      "next": "marteau3"
+    },
+    {
+      "id": "marteau3",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.marteau3",
+      "actions": [
+        {
+          "type": "core.giveItem",
+          "item": "mask:marteau_cendre",
+          "count": 1,
+          "silent": false
+        }
+      ],
+      "next": "marteau4"
+    },
+    {
+      "id": "marteau4",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.marteau4",
+      "end": true
+    },
+    {
+      "id": "marteau_rappel",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.marteau_rappel",
+      "end": true
+    },
+    {
+      "id": "pendant",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.pendant",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.apres",
+      "next": "atelier_choix"
+    },
+    {
+      "id": "atelier",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.atelier",
+      "next": "atelier_choix"
+    },
+    {
+      "id": "atelier_choix",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.atelier_choix",
+      "choices": [
+        {
+          "id": "ferraille",
+          "text": "mask.dlg.p01_nora.atelier_choix.ferraille",
+          "next": "ferraille_offre",
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "ferraille",
+            "status": "inactive"
+          }
+        },
+        {
+          "id": "epreuves",
+          "text": "mask.dlg.p01_nora.atelier_choix.epreuves",
+          "next": "epreuves1"
+        },
+        {
+          "id": "rien",
+          "text": "mask.dlg.p01_nora.atelier_choix.rien",
+          "next": "rien"
+        }
+      ]
+    },
+    {
+      "id": "ferraille_offre",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.ferraille_offre",
+      "actions": [
+        {
+          "type": "core.startQuest",
+          "quest": "ferraille"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "epreuves1",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.epreuves1",
+      "next": "epreuves2"
+    },
+    {
+      "id": "epreuves2",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.epreuves2",
+      "end": true
+    },
+    {
+      "id": "rien",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.rien",
+      "end": true
+    },
+    {
+      "id": "ferraille_rappel",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.ferraille_rappel",
+      "end": true
+    },
+    {
+      "id": "ferraille_merci",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.ferraille_merci",
+      "actions": [
+        {
+          "type": "core.takeItem",
+          "item": "mask:ferraille",
+          "count": 4,
+          "silent": false
+        },
+        {
+          "type": "core.giveItem",
+          "item": "mask:galette",
+          "count": 2,
+          "silent": false
+        },
+        {
+          "type": "core.setVar",
+          "var": "mask.ferrailleRendue",
+          "value": true
+        }
+      ],
+      "next": "ferraille_merci2"
+    },
+    {
+      "id": "ferraille_merci2",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_nora.ferraille_merci2",
+      "end": true
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C02_monte_charge",
+  "title": "C02 — Le monte-charge fou",
+  "duration": 12.8,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            111.2,
+            10.6,
+            63.6
+          ],
+          "target": [
+            119,
+            21.8,
+            99
+          ],
+          "fov": 48
+        },
+        {
+          "t": 3.2,
+          "position": [
+            111.4,
+            10.5,
+            64
+          ],
+          "target": [
+            119,
+            21.8,
+            99
+          ],
+          "fov": 26,
+          "ease": "inOutSine"
+        },
+        {
+          "t": 7,
+          "position": [
+            111.4,
+            10.5,
+            64.2
+          ],
+          "target": [
+            119,
+            21.8,
+            99
+          ],
+          "fov": 24,
+          "ease": "linear"
+        },
+        {
+          "t": 7.4,
+          "position": [
+            111.6,
+            10.4,
+            64.4
+          ],
+          "lookAt": "wagon",
+          "fov": 34,
+          "ease": "outCubic"
+        },
+        {
+          "t": 9.6,
+          "position": [
+            111.8,
+            10.3,
+            64.8
+          ],
+          "lookAt": "wagon",
+          "fov": 44,
+          "ease": "linear"
+        },
+        {
+          "t": 12.8,
+          "position": [
+            112.3,
+            9.620000000000001,
+            65.6
+          ],
+          "target": [
+            112.6,
+            10.6,
+            75
+          ],
+          "fov": 68,
+          "ease": "inOutSine"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.4,
+          "duration": 3.6,
+          "speaker": "juno",
+          "text": "mask.cin.c02.1"
+        },
+        {
+          "t": 4.2,
+          "duration": 2.8,
+          "speaker": "player",
+          "text": "mask.cin.c02.2"
+        },
+        {
+          "t": 7.3,
+          "duration": 2,
+          "speaker": "juno",
+          "text": "mask.cin.c02.3"
+        },
+        {
+          "t": 9.4,
+          "duration": 3.4,
+          "speaker": "juno",
+          "text": "mask.cin.c02.4"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.3,
+          "sound": "mask:vapeur",
+          "at": "wagon"
+        },
+        {
+          "t": 3.6,
+          "sound": "mask:vapeur",
+          "at": "wagon"
+        },
+        {
+          "t": 6.8,
+          "sound": "mask:grincement",
+          "at": "wagon"
+        },
+        {
+          "t": 7,
+          "music": "mask:music.danger"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 6.9,
+          "fx": "shake",
+          "intensity": 0.35,
+          "seconds": 0.7
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 7,
+          "essential": true,
+          "actions": [
+            {
+              "type": "mask.startLift",
+              "lift": "wagon"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "juno",
+      "keys": [
+        {
+          "t": 0,
+          "lookAt": "wagon",
+          "animation": "point"
+        },
+        {
+          "t": 9.4,
+          "lookAt": "player",
+          "animation": "talk"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "habitante_bas",
+      "keys": [
+        {
+          "t": 7.6,
+          "lookAt": "wagon",
+          "animation": "surprised",
+          "say": "mask.bark.bas.panique"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "habitant_bas",
+      "keys": [
+        {
+          "t": 8,
+          "lookAt": "wagon",
+          "animation": "surprised"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.setProp",
+      "entity": "juno",
+      "component": "mask.voltige",
+      "prop": "loop",
+      "value": false
+    },
+    {
+      "type": "core.setProp",
+      "entity": "juno",
+      "component": "mask.voltige",
+      "prop": "points",
+      "value": [
+        [
+          110.5,
+          8,
+          63.5
+        ],
+        [
+          118.5,
+          10,
+          70.5
+        ],
+        [
+          118.5,
+          13,
+          78.5
+        ],
+        [
+          115.5,
+          12,
+          89.2
+        ]
+      ]
+    },
+    {
+      "type": "core.notify",
+      "text": "mask.tuto.sauter",
+      "kind": "info"
+    }
+  ]
+}

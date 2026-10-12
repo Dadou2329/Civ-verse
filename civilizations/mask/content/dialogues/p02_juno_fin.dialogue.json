@@ -1,0 +1,70 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "p02_juno_fin",
+  "start": "f1",
+  "nodes": [
+    {
+      "id": "f1",
+      "speaker": "juno",
+      "text": "mask.dlg.p02_juno_fin.f1",
+      "expression": "happy",
+      "next": "f2"
+    },
+    {
+      "id": "f2",
+      "speaker": "player",
+      "text": "mask.dlg.p02_juno_fin.f2",
+      "next": "f3"
+    },
+    {
+      "id": "f3",
+      "speaker": "juno",
+      "text": "mask.dlg.p02_juno_fin.f3",
+      "next": "f4"
+    },
+    {
+      "id": "f4",
+      "speaker": "juno",
+      "text": "mask.dlg.p02_juno_fin.f4",
+      "choices": [
+        {
+          "id": "merci",
+          "text": "mask.dlg.p02_juno_fin.f4.merci",
+          "next": "f5a"
+        },
+        {
+          "id": "regret",
+          "text": "mask.dlg.p02_juno_fin.f4.regret",
+          "next": "f5b"
+        }
+      ]
+    },
+    {
+      "id": "f5a",
+      "speaker": "juno",
+      "text": "mask.dlg.p02_juno_fin.f5a",
+      "next": "f6"
+    },
+    {
+      "id": "f5b",
+      "speaker": "juno",
+      "text": "mask.dlg.p02_juno_fin.f5b",
+      "next": "f6"
+    },
+    {
+      "id": "f6",
+      "speaker": "juno",
+      "text": "mask.dlg.p02_juno_fin.f6",
+      "expression": "happy",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "mask.junoRelais",
+          "value": true
+        }
+      ],
+      "end": true
+    }
+  ]
+}

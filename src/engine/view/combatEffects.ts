@@ -245,9 +245,12 @@ export class CombatEffects {
         const k = 1 + Math.sin(fx.punch * Math.PI) * 0.08;
         root.scaling.set(s[0] * k, s[1] * (2 - k), s[2] * k);
       } else root.scaling.set(s[0], s[1], s[2]);
-      // Props and creatures without a character body tip over when defeated.
+      // Props and creatures without a character body tip over when defeated (unless their
+      // defeat only runs actions: a freed brake, a repaired wheel stay upright).
       const hasRig = e.components.has('core.npc');
-      const target = flags.defeated && !hasRig && !e.components.has('core.boss') ? 1 : 0;
+      const mode = e.components.get('core.health')?.props.onDefeat;
+      const falls = mode === undefined || mode === 'down' || mode === 'remove';
+      const target = flags.defeated && falls && !hasRig && !e.components.has('core.boss') ? 1 : 0;
       fx.fall += (target - fx.fall) * damp(target ? 5 : 10, dt);
       if (!hasRig) root.rotation.x = e.rotation[0] * DEG2RAD + fx.fall * 1.35;
     }

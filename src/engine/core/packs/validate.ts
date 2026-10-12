@@ -88,6 +88,7 @@ export async function validateCivilization(session: GameSession, civId: string, 
     ['name', m.name],
     ['description', m.description],
     ['tagline', m.tagline],
+    ['playerSpeaker', m.playerSpeaker],
   ] as const)
     if (k) checkKey(ctx, k, p);
   m.fragments.forEach((f, i) => {

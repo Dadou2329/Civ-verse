@@ -87,10 +87,12 @@ export class CharacterAnimator {
     }
     const target: Pose = { ...ZERO };
     const style = this.rig.doc.idle;
-    const walk = clamp(input.speed / 1.6, 0, 1);
-    const run = clamp((input.speed - 2.4) / 1.5, 0, 1);
+    // A character moved by a script (leaps, rails) asks for 'run' or 'walk' without a motor speed.
+    const speed = input.speed > 0.05 ? input.speed : input.animation === 'run' ? 4.5 : input.animation === 'walk' ? 1.4 : 0;
+    const walk = clamp(speed / 1.6, 0, 1);
+    const run = clamp((speed - 2.4) / 1.5, 0, 1);
     const stride = 0.55 + run * 0.35;
-    this.phase += (input.speed * dt) / (stride * this.rig.scale * 16 * 0.55);
+    this.phase += (speed * dt) / (stride * this.rig.scale * 16 * 0.55);
 
     // Idle breathing and style.
     const breath = Math.sin(this.t * 1.7);

@@ -1,0 +1,106 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "p01_bastien",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "prologue",
+                "stage": "roue"
+              },
+              {
+                "type": "core.questStage",
+                "quest": "prologue",
+                "stage": "marteau"
+              }
+            ]
+          },
+          "next": "conseil1"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "prologue",
+            "status": "completed"
+          },
+          "next": "apres"
+        }
+      ],
+      "next": "epreuves1"
+    },
+    {
+      "id": "conseil1",
+      "speaker": "bastien",
+      "text": "mask.dlg.p01_bastien.conseil1",
+      "choices": [
+        {
+          "id": "apres",
+          "text": "mask.dlg.p01_bastien.conseil1.apres",
+          "next": "conseil2"
+        },
+        {
+          "id": "merci",
+          "text": "mask.dlg.p01_bastien.conseil1.merci",
+          "next": "merci"
+        }
+      ]
+    },
+    {
+      "id": "conseil2",
+      "speaker": "bastien",
+      "text": "mask.dlg.p01_bastien.conseil2",
+      "end": true
+    },
+    {
+      "id": "merci",
+      "speaker": "bastien",
+      "text": "mask.dlg.p01_bastien.merci",
+      "end": true
+    },
+    {
+      "id": "epreuves1",
+      "speaker": "bastien",
+      "text": "mask.dlg.p01_bastien.epreuves1",
+      "next": "epreuves2"
+    },
+    {
+      "id": "epreuves2",
+      "speaker": "player",
+      "text": "mask.dlg.p01_bastien.epreuves2",
+      "next": "epreuves3"
+    },
+    {
+      "id": "epreuves3",
+      "speaker": "bastien",
+      "text": "mask.dlg.p01_bastien.epreuves3",
+      "next": "epreuves4"
+    },
+    {
+      "id": "epreuves4",
+      "speaker": "player",
+      "text": "mask.dlg.p01_bastien.epreuves4",
+      "next": "epreuves5"
+    },
+    {
+      "id": "epreuves5",
+      "speaker": "bastien",
+      "text": "mask.dlg.p01_bastien.epreuves5",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "bastien",
+      "text": "mask.dlg.p01_bastien.apres",
+      "end": true
+    }
+  ]
+}

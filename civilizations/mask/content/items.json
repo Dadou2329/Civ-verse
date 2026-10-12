@@ -1,0 +1,143 @@
+{
+  "format": "civverse.items",
+  "version": 1,
+  "items": [
+    {
+      "id": "mask:cle_atelier",
+      "name": "mask.item.cle_atelier",
+      "description": "mask.item.cle_atelier.desc",
+      "icon": {
+        "shape": "wrench",
+        "color": "#6a7076",
+        "accent": "#c79a42"
+      },
+      "category": "tool",
+      "questItem": true,
+      "tags": [
+        "outil"
+      ],
+      "held": {
+        "model": "mask:cle_atelier",
+        "scale": 0.7,
+        "drawTime": 0.25,
+        "primary": {
+          "type": "core.useOnTarget",
+          "tool": "cle",
+          "reach": 3,
+          "speed": 1,
+          "sound": "core:mechanism",
+          "doneSound": "core:unlock",
+          "hint": "",
+          "cooldown": 0.2
+        }
+      }
+    },
+    {
+      "id": "mask:marteau_cendre",
+      "name": "mask.item.marteau_cendre",
+      "description": "mask.item.marteau_cendre.desc",
+      "icon": {
+        "shape": "hammer",
+        "color": "#5c6064",
+        "accent": "#ff7a2e"
+      },
+      "category": "equipment",
+      "questItem": true,
+      "tags": [
+        "outil",
+        "arme"
+      ],
+      "held": {
+        "model": "mask:marteau_cendre",
+        "scale": 0.68,
+        "drawTime": 0.3,
+        "primary": {
+          "type": "mask.braise",
+          "damage": 8,
+          "reach": 2.5,
+          "chargeSeconds": 0.8,
+          "braiseDamage": 24,
+          "braiseKnockback": 8,
+          "cooldown": 0.45
+        }
+      }
+    },
+    {
+      "id": "mask:masque_cendre",
+      "name": "mask.item.masque_cendre",
+      "description": "mask.item.masque_cendre.desc",
+      "icon": {
+        "shape": "mask",
+        "color": "#8f8a84",
+        "accent": "#ff7a2e"
+      },
+      "category": "equipment",
+      "questItem": true,
+      "slot": "masque",
+      "tags": [
+        "masque"
+      ]
+    },
+    {
+      "id": "mask:roue_rechange",
+      "name": "mask.item.roue_rechange",
+      "description": "mask.item.roue_rechange.desc",
+      "icon": {
+        "shape": "wheel",
+        "color": "#8a5e36",
+        "accent": "#4a4e52"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "mask:ferraille",
+      "name": "mask.item.ferraille",
+      "description": "mask.item.ferraille.desc",
+      "icon": {
+        "shape": "gear",
+        "color": "#7a6a5a",
+        "accent": "#b5402e"
+      },
+      "category": "misc",
+      "stackable": true,
+      "maxStack": 20
+    },
+    {
+      "id": "mask:galette",
+      "name": "mask.item.galette",
+      "description": "mask.item.galette.desc",
+      "icon": {
+        "shape": "circle",
+        "color": "#d9a85a",
+        "accent": "#8a5e36"
+      },
+      "category": "consumable",
+      "stackable": true,
+      "maxStack": 9,
+      "actions": [
+        {
+          "id": "manger",
+          "label": "mask.item.galette.manger",
+          "actions": [
+            {
+              "type": "core.takeItem",
+              "item": "mask:galette",
+              "count": 1,
+              "silent": true
+            },
+            {
+              "type": "core.healPlayer",
+              "amount": 40
+            },
+            {
+              "type": "core.notify",
+              "text": "mask.notify.galette",
+              "kind": "info"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+/* Viremasque: paper tags tied with string, ash and ember, thread blue — not brass plaques. */
+.mask-plaque {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--civ-font);
+}
+.mask-plaque__tag {
+  position: relative;
+  padding: 0.35rem 0.9rem 0.4rem 1.2rem;
+  background: linear-gradient(170deg, #f3e3c3 0%, #e2cba0 100%);
+  color: #3a2418;
+  clip-path: polygon(12% 0, 100% 0, 100% 100%, 12% 100%, 0 50%);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+.mask-plaque__tag::before {
+  content: '';
+  position: absolute;
+  left: 9%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: #3a2418;
+  box-shadow: 0 0 0 2px #c9a46a;
+}
+.mask-plaque__label {
+  display: block;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.mask-plaque__rank {
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+.mask-plaque__ladder {
+  display: flex;
+  gap: 0.3rem;
+}
+.mask-glyph {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 22px;
+  border-radius: 50% 50% 46% 46% / 40% 40% 60% 60%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+.mask-glyph__eye {
+  position: absolute;
+  top: 8px;
+  left: 6px;
+  width: 6px;
+  height: 4px;
+  border-radius: 50%;
+  background: #120c0a;
+}
+.mask-glyph__eye--r {
+  left: auto;
+  right: 6px;
+}
+.mask-glyph--cendre {
+  background: radial-gradient(circle at 70% 75%, #ff7a2e 0 2px, transparent 3px), #8f8a84;
+}
+.mask-glyph--fil {
+  background: repeating-linear-gradient(60deg, #1e5a6a 0 3px, #7fe0ff 3px 4px);
+}
+.mask-glyph--fer {
+  background: radial-gradient(circle at 15% 20%, #c8a050 0 1.5px, transparent 2px), radial-gradient(circle at 85% 20%, #c8a050 0 1.5px, transparent 2px), #6a2a26;
+}
+.mask-glyph--verre {
+  background: linear-gradient(135deg, #f2faff, #7ac8ff);
+}
+.mask-glyph--or {
+  background: linear-gradient(180deg, #fff0b0, #d8b04a);
+}
+.mask-glyph--miroir {
+  background: linear-gradient(120deg, #cfd6de 40%, #ffffff 50%, #cfd6de 60%);
+}
+.mask-glyph--libre {
+  background: linear-gradient(90deg, #8f8a84 0 50%, #f2a541 50% 100%);
+}
+.mask-glyph.is-locked {
+  filter: grayscale(0.85) brightness(0.55);
+  opacity: 0.75;
+}
+.mask-glyph.is-locked::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 9px;
+  height: 8px;
+  border-radius: 2px;
+  background: #2a1e1a;
+  box-shadow: 0 0 0 1px #c9a46a;
+}
+
+.mask-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.35rem 1.1rem;
+  border-radius: 6px;
+  background: rgba(40, 14, 10, 0.82);
+  border: 2px solid #e8743a;
+  color: #fde6cc;
+  box-shadow: 0 0 22px rgba(232, 116, 58, 0.35);
+}
+.mask-countdown__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.mask-countdown__time {
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+.mask-countdown.is-urgent {
+  animation: mask-pulse 0.6s ease-in-out infinite;
+}
+.mask-countdown.is-held {
+  border-color: #7fe0ff;
+  box-shadow: 0 0 22px rgba(127, 224, 255, 0.4);
+}
+@keyframes mask-pulse {
+  50% {
+    transform: scale(1.06);
+  }
+}

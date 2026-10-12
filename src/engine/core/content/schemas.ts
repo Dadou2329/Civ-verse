@@ -66,6 +66,8 @@ export const ManifestSchema = z.object({
     .array(z.object({ id: localId, name: z.string(), hint: z.string(), icon: z.enum(ICON_SHAPES as unknown as [string, ...string[]]).optional() }))
     .default([]),
   theme: ThemeSchema.optional(),
+  /** Localization key of the name shown for the player's lines (default « Vous »). */
+  playerSpeaker: z.string().optional(),
   cover: z.object({ colors: z.array(hex).min(2), motif: z.string() }).optional(),
   hud: z.object({ hide: z.array(z.string()).default([]) }).default({ hide: [] }),
   /** Order in the civilization selection screen. */

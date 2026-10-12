@@ -1,0 +1,245 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "p01_lys",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "prologue",
+                "stage": "chambre"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.hasItem",
+                  "item": "mask:cle_atelier",
+                  "count": 1
+                }
+              }
+            ]
+          },
+          "next": "sans_cle"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "prologue",
+            "stage": "chambre"
+          },
+          "next": "intro1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "prologue",
+                "stage": "roue"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.hasItem",
+                  "item": "mask:roue_rechange",
+                  "count": 1
+                }
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "mask.essieuAligne",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "aide_piece"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "prologue",
+            "stage": "roue"
+          },
+          "next": "aide_essieu"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "prologue",
+            "stage": "marteau"
+          },
+          "next": "aide_marteau"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "prologue",
+            "status": "active"
+          },
+          "next": "pendant"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "prologue",
+            "status": "completed"
+          },
+          "next": "apres"
+        }
+      ],
+      "next": "bavarde"
+    },
+    {
+      "id": "sans_cle",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.sans_cle",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "intro1",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.intro1",
+      "expression": "happy",
+      "next": "intro2"
+    },
+    {
+      "id": "intro2",
+      "speaker": "player",
+      "text": "mask.dlg.p01_lys.intro2",
+      "next": "intro3"
+    },
+    {
+      "id": "intro3",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.intro3",
+      "next": "intro4"
+    },
+    {
+      "id": "intro4",
+      "speaker": "player",
+      "text": "mask.dlg.p01_lys.intro4",
+      "next": "intro5"
+    },
+    {
+      "id": "intro5",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.intro5",
+      "next": "intro6"
+    },
+    {
+      "id": "intro6",
+      "speaker": "player",
+      "text": "mask.dlg.p01_lys.intro6",
+      "next": "intro7"
+    },
+    {
+      "id": "intro7",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_lys.intro7",
+      "actions": [
+        {
+          "type": "core.moveEntity",
+          "entity": "nora",
+          "target": "nora_chariot",
+          "run": false,
+          "wait": false
+        }
+      ],
+      "next": "intro8"
+    },
+    {
+      "id": "intro8",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.intro8",
+      "next": "intro9"
+    },
+    {
+      "id": "intro9",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.intro9",
+      "choices": [
+        {
+          "id": "supervise",
+          "text": "mask.dlg.p01_lys.intro9.supervise",
+          "next": "intro10"
+        },
+        {
+          "id": "parti",
+          "text": "mask.dlg.p01_lys.intro9.parti",
+          "next": "intro_fin"
+        }
+      ]
+    },
+    {
+      "id": "intro10",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.intro10",
+      "expression": "happy",
+      "next": "intro_fin"
+    },
+    {
+      "id": "intro_fin",
+      "text": "",
+      "actions": [
+        {
+          "type": "core.completeObjective",
+          "quest": "prologue",
+          "objective": "lys"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "aide_piece",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.aide_piece",
+      "end": true
+    },
+    {
+      "id": "aide_essieu",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.aide_essieu",
+      "end": true
+    },
+    {
+      "id": "aide_marteau",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.aide_marteau",
+      "end": true
+    },
+    {
+      "id": "pendant",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.pendant",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.apres",
+      "expression": "happy",
+      "end": true
+    },
+    {
+      "id": "bavarde",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_lys.bavarde",
+      "end": true
+    }
+  ]
+}

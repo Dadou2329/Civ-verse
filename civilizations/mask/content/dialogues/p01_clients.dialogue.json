@@ -1,0 +1,102 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "p01_clients",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.roueFixee",
+            "op": "==",
+            "value": true
+          },
+          "next": "merci1"
+        }
+      ],
+      "next": "attente1"
+    },
+    {
+      "id": "attente1",
+      "speaker": "ada",
+      "text": "mask.dlg.p01_clients.attente1",
+      "next": "attente2"
+    },
+    {
+      "id": "attente2",
+      "speaker": "pol",
+      "text": "mask.dlg.p01_clients.attente2",
+      "next": "attente3"
+    },
+    {
+      "id": "attente3",
+      "speaker": "ada",
+      "text": "mask.dlg.p01_clients.attente3",
+      "next": "attente4"
+    },
+    {
+      "id": "attente4",
+      "speaker": "pol",
+      "text": "mask.dlg.p01_clients.attente4",
+      "choices": [
+        {
+          "id": "chariot",
+          "text": "mask.dlg.p01_clients.attente4.chariot",
+          "next": "chariot"
+        },
+        {
+          "id": "treize",
+          "text": "mask.dlg.p01_clients.attente4.treize",
+          "next": "treize1"
+        }
+      ]
+    },
+    {
+      "id": "chariot",
+      "speaker": "ada",
+      "text": "mask.dlg.p01_clients.chariot",
+      "end": true
+    },
+    {
+      "id": "treize1",
+      "speaker": "pol",
+      "text": "mask.dlg.p01_clients.treize1",
+      "next": "treize2"
+    },
+    {
+      "id": "treize2",
+      "speaker": "ada",
+      "text": "mask.dlg.p01_clients.treize2",
+      "next": "treize3"
+    },
+    {
+      "id": "treize3",
+      "speaker": "pol",
+      "text": "mask.dlg.p01_clients.treize3",
+      "end": true
+    },
+    {
+      "id": "merci1",
+      "speaker": "ada",
+      "text": "mask.dlg.p01_clients.merci1",
+      "expression": "happy",
+      "next": "merci2"
+    },
+    {
+      "id": "merci2",
+      "speaker": "pol",
+      "text": "mask.dlg.p01_clients.merci2",
+      "next": "merci3"
+    },
+    {
+      "id": "merci3",
+      "speaker": "ada",
+      "text": "mask.dlg.p01_clients.merci3",
+      "end": true
+    }
+  ]
+}

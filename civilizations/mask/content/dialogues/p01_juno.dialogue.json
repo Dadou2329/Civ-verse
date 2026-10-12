@@ -1,0 +1,94 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "p01_juno",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "mask.junoRelais",
+            "op": "==",
+            "value": true
+          },
+          "next": "apres"
+        },
+        {
+          "condition": {
+            "type": "core.dialogueSeen",
+            "dialogue": "p01_juno",
+            "node": "j8"
+          },
+          "next": "pendant"
+        }
+      ],
+      "next": "j1"
+    },
+    {
+      "id": "j1",
+      "speaker": "juno",
+      "text": "mask.dlg.p01_juno.j1",
+      "expression": "worried",
+      "next": "j2"
+    },
+    {
+      "id": "j2",
+      "speaker": "nora",
+      "text": "mask.dlg.p01_juno.j2",
+      "next": "j3"
+    },
+    {
+      "id": "j3",
+      "speaker": "juno",
+      "text": "mask.dlg.p01_juno.j3",
+      "next": "j4"
+    },
+    {
+      "id": "j4",
+      "speaker": "juno",
+      "text": "mask.dlg.p01_juno.j4",
+      "next": "j5"
+    },
+    {
+      "id": "j5",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_juno.j5",
+      "next": "j6"
+    },
+    {
+      "id": "j6",
+      "speaker": "player",
+      "text": "mask.dlg.p01_juno.j6",
+      "next": "j7"
+    },
+    {
+      "id": "j7",
+      "speaker": "lys",
+      "text": "mask.dlg.p01_juno.j7",
+      "next": "j8"
+    },
+    {
+      "id": "j8",
+      "speaker": "juno",
+      "text": "mask.dlg.p01_juno.j8",
+      "expression": "determined",
+      "end": true
+    },
+    {
+      "id": "pendant",
+      "speaker": "juno",
+      "text": "mask.dlg.p01_juno.pendant",
+      "end": true
+    },
+    {
+      "id": "apres",
+      "speaker": "juno",
+      "text": "mask.dlg.p01_juno.apres",
+      "end": true
+    }
+  ]
+}

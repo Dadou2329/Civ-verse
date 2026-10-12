@@ -12,14 +12,15 @@ game.
 The player-facing game is entirely in **French** (fr-FR). Code, identifiers and developer
 documentation are in English; Civilization Studio's interface is French.
 
-Two playable civilizations ship with the engine:
+Two finished prototype civilizations and a long adventure in progress ship with the engine:
 
 | Pack | Adventure | Core mechanics |
 |---|---|---|
 | `civilizations/door` | **La Porte qui n’existe pas** — Verrou, a city where every door checks your social rank. | Rank locks and permissions, palm imprints, guards and localized suspicion, a door that remembers. |
 | `civilizations/memory` | **Le Nom qu’on t’a volé** — Réminence, where memories are traded as shards. | A memory chamber (shards that change perception and dialogue), echoes of the past, consent to restoration. |
+| `civilizations/mask` | **Les Cent Visages** — Viremasque, a vertical city where everyone wears the mask of their rank. In progress: the Prologue is playable. | Civic ranks distinct from worn masks, tools held in hand and really used, the Cendre mask's Braise strike, a runaway freight lift. |
 
-`civilizations/core` is a library pack (blocks, models, sounds, character looks) shared by both.
+`civilizations/core` is a library pack (blocks, models, sounds, character looks) shared by all.
 All textures, models, sounds and characters are original and generated procedurally in code.
 
 ## Quick start
@@ -32,7 +33,7 @@ npm run dev
 ```
 
 - Game: <http://127.0.0.1:5173/>
-- Civilization Studio: <http://127.0.0.1:5173/studio.html> (add `?pack=door` or `?pack=memory`)
+- Civilization Studio: <http://127.0.0.1:5173/studio.html> (add `?pack=door`, `?pack=memory` or `?pack=mask`)
 
 Civilization Studio can save files only under `npm run dev`: the dev server adds a small,
 scoped file API (see [ADR-006](docs/DECISIONS.md)). Production builds contain neither that API
@@ -47,6 +48,10 @@ Keys are physical positions, so the same keys work on AZERTY and QWERTY keyboard
 | Move | Z Q S D or arrows | W A S D or arrows |
 | Look | Mouse (click the view to capture it) | Mouse |
 | Jump / skip a cinematic | Espace | Space |
+| Run | Maj | Shift |
+| Use the item in hand / guard | Left / right click | Left / right click |
+| Item in hand (hotbar) | 1–6 or the wheel | 1–6 or the wheel |
+| Dodge | A | Q |
 | Interact / secondary action | E / F | E / F |
 | Journal / inventory | J / I | J / I |
 | Pause | Échap or P | Esc or P |
