@@ -399,6 +399,26 @@ export const coreActions = [
     },
     essential: false,
   }),
+  // ---- World ----------------------------------------------------------------------------------
+  defineAction({
+    id: 'core.setBlocks',
+    label: 'Modifier des blocs (passage, effondrement…)',
+    category: 'Monde',
+    description: 'Remplit une boîte de blocs (coins inclus) ; un bloc vide creuse. Sauvegardé avec la partie.',
+    props: {
+      from: prop.vec3({ label: 'Coin A' }),
+      to: prop.vec3({ label: 'Coin B' }),
+      block: prop.block({ label: 'Bloc (vide = air)' }),
+    },
+    run: (ctx, p) => {
+      const [x0, x1] = [Math.min(p.from[0], p.to[0]), Math.max(p.from[0], p.to[0])];
+      const [y0, y1] = [Math.min(p.from[1], p.to[1]), Math.max(p.from[1], p.to[1])];
+      const [z0, z1] = [Math.min(p.from[2], p.to[2]), Math.max(p.from[2], p.to[2])];
+      if ((x1 - x0 + 1) * (y1 - y0 + 1) * (z1 - z0 + 1) > 4096) throw new Error('core.setBlocks : boîte trop grande (4096 blocs maximum).');
+      ctx.world.fillBlocks([x0, y0, z0], [x1, y1, z1], p.block || null);
+    },
+    summarize: (p) => `${p.block || 'air'} de (${p.from.join(', ')}) à (${p.to.join(', ')})`,
+  }),
   defineAction({
     id: 'core.grantAbility',
     label: 'Accorder une capacité',

@@ -1,0 +1,232 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "varen",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.registryPass",
+            "op": "==",
+            "value": true
+          },
+          "next": "pass"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q02_ELIAS",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "door.foundTransferTrace",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.evidence.ordre",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "ask"
+        },
+        {
+          "condition": {
+            "type": "door.rankAtLeast",
+            "rank": 1
+          },
+          "next": "act2"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.motherSceneDone",
+            "op": "==",
+            "value": true
+          },
+          "next": "act1b"
+        }
+      ],
+      "next": "act1a"
+    },
+    {
+      "id": "act1a",
+      "speaker": "varen",
+      "text": "door.dlg.varen.act1a",
+      "end": true
+    },
+    {
+      "id": "act1b",
+      "speaker": "varen",
+      "text": "door.dlg.varen.act1b",
+      "choices": [
+        {
+          "id": "why",
+          "text": "door.dlg.varen.act1b.why",
+          "next": "act1c"
+        },
+        {
+          "id": "bye",
+          "text": "door.dlg.varen.act1b.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "act1c",
+      "speaker": "varen",
+      "text": "door.dlg.varen.act1c",
+      "end": true
+    },
+    {
+      "id": "act2",
+      "speaker": "varen",
+      "text": "door.dlg.varen.act2",
+      "end": true
+    },
+    {
+      "id": "ask",
+      "speaker": "varen",
+      "text": "door.dlg.varen.ask",
+      "choices": [
+        {
+          "id": "testimony",
+          "text": "door.dlg.varen.ask.testimony",
+          "next": "testimony",
+          "condition": {
+            "type": "core.var",
+            "var": "door.miraWillTestify",
+            "op": "==",
+            "value": true
+          }
+        },
+        {
+          "id": "report",
+          "text": "door.dlg.varen.ask.report",
+          "next": "report",
+          "condition": {
+            "type": "core.hasItem",
+            "item": "door:rapport_falsifie",
+            "count": 1
+          }
+        },
+        {
+          "id": "summons",
+          "text": "door.dlg.varen.ask.summons",
+          "next": "summons",
+          "condition": {
+            "type": "core.var",
+            "var": "door.varenSummons",
+            "op": "==",
+            "value": true
+          }
+        },
+        {
+          "id": "nothing",
+          "text": "door.dlg.varen.ask.nothing",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "testimony",
+      "speaker": "varen",
+      "text": "door.dlg.varen.testimony",
+      "expression": "sad",
+      "actions": [
+        {
+          "type": "core.addVar",
+          "var": "door.varenTrust",
+          "amount": 1
+        },
+        {
+          "type": "core.setVar",
+          "var": "door.registryPath",
+          "value": "temoignage"
+        }
+      ],
+      "next": "grant"
+    },
+    {
+      "id": "report",
+      "speaker": "varen",
+      "text": "door.dlg.varen.report",
+      "expression": "angry",
+      "actions": [
+        {
+          "type": "core.takeItem",
+          "item": "door:rapport_falsifie",
+          "count": 1
+        },
+        {
+          "type": "core.setVar",
+          "var": "door.usedForgedReport",
+          "value": true
+        },
+        {
+          "type": "core.addVar",
+          "var": "door.varenTrust",
+          "amount": -1
+        },
+        {
+          "type": "core.setVar",
+          "var": "door.registryPath",
+          "value": "rapport"
+        }
+      ],
+      "next": "grant"
+    },
+    {
+      "id": "summons",
+      "speaker": "varen",
+      "text": "door.dlg.varen.summons",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.registryPath",
+          "value": "convocation"
+        }
+      ],
+      "next": "grant"
+    },
+    {
+      "id": "grant",
+      "speaker": "varen",
+      "text": "door.dlg.varen.grant",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.registryPass",
+          "value": true
+        },
+        {
+          "type": "core.completeObjective",
+          "quest": "DOOR_Q02_ELIAS",
+          "objective": "acces"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "pass",
+      "speaker": "varen",
+      "text": "door.dlg.varen.pass",
+      "end": true
+    }
+  ]
+}

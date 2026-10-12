@@ -1,0 +1,387 @@
+{
+  "format": "civverse.logic",
+  "version": 1,
+  "id": "absente",
+  "title": "La Porte Absente — séquence finale",
+  "rules": [
+    {
+      "id": "portes_claquent",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "trigger.entered",
+        "where": {
+          "triggerId": "trig_entree_couloir"
+        }
+      },
+      "then": [
+        {
+          "type": "core.music",
+          "music": "door:music.absente",
+          "fade": 1
+        },
+        {
+          "type": "core.wait",
+          "seconds": 1.2
+        },
+        {
+          "type": "core.closeDoor",
+          "entity": "couloir_porte_1"
+        },
+        {
+          "type": "core.shake",
+          "intensity": 0.15,
+          "seconds": 0.4
+        },
+        {
+          "type": "core.wait",
+          "seconds": 0.7
+        },
+        {
+          "type": "core.closeDoor",
+          "entity": "couloir_porte_2"
+        },
+        {
+          "type": "core.shake",
+          "intensity": 0.15,
+          "seconds": 0.4
+        },
+        {
+          "type": "core.wait",
+          "seconds": 0.6
+        },
+        {
+          "type": "core.closeDoor",
+          "entity": "couloir_porte_3"
+        },
+        {
+          "type": "core.shake",
+          "intensity": 0.2,
+          "seconds": 0.4
+        },
+        {
+          "type": "core.wait",
+          "seconds": 0.5
+        },
+        {
+          "type": "core.closeDoor",
+          "entity": "couloir_porte_4"
+        },
+        {
+          "type": "core.shake",
+          "intensity": 0.2,
+          "seconds": 0.4
+        },
+        {
+          "type": "core.wait",
+          "seconds": 0.4
+        },
+        {
+          "type": "core.closeDoor",
+          "entity": "couloir_porte_5"
+        },
+        {
+          "type": "core.shake",
+          "intensity": 0.25,
+          "seconds": 0.4
+        },
+        {
+          "type": "core.wait",
+          "seconds": 0.3
+        },
+        {
+          "type": "core.closeDoor",
+          "entity": "couloir_porte_6"
+        },
+        {
+          "type": "core.shake",
+          "intensity": 0.3,
+          "seconds": 0.6
+        },
+        {
+          "type": "core.notify",
+          "text": "door.notify.doorsClosed",
+          "kind": "warning"
+        }
+      ],
+      "name": "Les portes normales se ferment autour du joueur",
+      "scene": "porte_absente"
+    },
+    {
+      "id": "allies_arrivent",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "trigger.entered",
+        "where": {
+          "triggerId": "trig_fond_couloir"
+        }
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 1.5
+        },
+        {
+          "type": "core.setVar",
+          "var": "door.alliesArrived",
+          "value": true
+        },
+        {
+          "type": "core.say",
+          "entity": "mira",
+          "text": "door.bark.mira.wait",
+          "seconds": 2.5
+        },
+        {
+          "type": "core.parallel",
+          "branches": [
+            [
+              {
+                "type": "core.moveEntity",
+                "entity": "mira",
+                "target": "marque_mira_fond",
+                "run": true,
+                "wait": true
+              }
+            ],
+            [
+              {
+                "type": "core.moveEntity",
+                "entity": "varen",
+                "target": "marque_varen_fond",
+                "run": true,
+                "wait": true
+              }
+            ]
+          ]
+        },
+        {
+          "type": "core.lookAt",
+          "entity": "mira",
+          "target": "player"
+        },
+        {
+          "type": "core.lookAt",
+          "entity": "varen",
+          "target": "player"
+        },
+        {
+          "type": "core.startDialogue",
+          "dialogue": "confrontation",
+          "entity": "varen",
+          "wait": true
+        }
+      ],
+      "name": "Mira et Varen rejoignent le joueur",
+      "scene": "porte_absente"
+    },
+    {
+      "id": "ouverture",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "dialogue.ended",
+        "where": {
+          "dialogueId": "confrontation"
+        }
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C04b_porte",
+          "wait": true
+        }
+      ],
+      "name": "La paroi cède (C04)",
+      "scene": "porte_absente",
+      "if": {
+        "type": "core.var",
+        "var": "door.finalChoice",
+        "op": "exists",
+        "value": true
+      }
+    },
+    {
+      "id": "fragment",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "door:fragment_seuil"
+        }
+      },
+      "then": [
+        {
+          "type": "core.grantFragment",
+          "fragment": "threshold"
+        },
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.var",
+            "var": "door.finalChoice",
+            "op": "==",
+            "value": "ecouter"
+          },
+          "then": [
+            {
+              "type": "core.setGlobalFlag",
+              "flag": "door.finalChoice",
+              "value": "ecouter"
+            }
+          ],
+          "else": [
+            {
+              "type": "core.setGlobalFlag",
+              "flag": "door.finalChoice",
+              "value": "ouvrir"
+            }
+          ]
+        },
+        {
+          "type": "core.wait",
+          "seconds": 1.2
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C04c_coupe",
+          "wait": true
+        }
+      ],
+      "name": "Fragment du Seuil puis coupe au noir",
+      "scene": "porte_absente"
+    },
+    {
+      "id": "reprise_couloir",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "scene.entered",
+        "where": {
+          "sceneId": "porte_absente"
+        }
+      },
+      "then": [
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "door.alliesArrived",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.var",
+                "var": "door.finalChoice",
+                "op": "exists",
+                "value": true
+              },
+              {
+                "type": "core.questStage",
+                "quest": "DOOR_Q04_PORTE_ABSENTE",
+                "stage": "varen"
+              }
+            ]
+          },
+          "then": [
+            {
+              "type": "core.setVar",
+              "var": "door.alliesArrived",
+              "value": true
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "mira",
+              "target": "marque_mira_fond",
+              "yaw": 0
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "varen",
+              "target": "marque_varen_fond",
+              "yaw": 0
+            }
+          ],
+          "else": []
+        },
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "DOOR_Q04_PORTE_ABSENTE",
+                "stage": "varen"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.finalChoice",
+                  "op": "exists",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "then": [
+            {
+              "type": "core.wait",
+              "seconds": 1
+            },
+            {
+              "type": "core.startDialogue",
+              "dialogue": "confrontation",
+              "entity": "varen",
+              "wait": false
+            }
+          ],
+          "else": []
+        },
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "door.finalChoice",
+                "op": "exists",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.absentDoorShown",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "then": [
+            {
+              "type": "core.wait",
+              "seconds": 1
+            },
+            {
+              "type": "core.playCinematic",
+              "cinematic": "C04b_porte",
+              "wait": false
+            }
+          ],
+          "else": []
+        }
+      ],
+      "name": "Reprise après un chargement au milieu de la scène finale",
+      "scene": "porte_absente"
+    }
+  ]
+}

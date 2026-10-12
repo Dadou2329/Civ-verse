@@ -789,6 +789,63 @@ const generators: Record<string, TextureGenerator> = {
       }
     }
   },
+
+  /** Night sky / void: c0 base, c1 nebula tint, c2 star color, c3 rare colored star. Param `density`. */
+  stars(ctx) {
+    const { t } = ctx;
+    const density = ctx.p('density', 0.035);
+    for (let y = 0; y < S; y++) {
+      for (let x = 0; x < S; x++) {
+        const neb = tileFbm(x, y, ctx.seed + 11);
+        t.set(x, y, mixRgb(ctx.c(0), ctx.c(1), Math.max(0, neb - 0.35) * 1.4));
+        const h = hash3(x, y, 21, ctx.seed);
+        if (h < density) {
+          const bright = h / density;
+          const star = hash3(x, y, 22, ctx.seed) > 0.9 ? ctx.c(3) : ctx.c(2);
+          t.set(x, y, mixRgb(t.get(x, y), star, 0.45 + bright * 0.55));
+        }
+      }
+    }
+  },
+
+  /** Cog wheel on a plate: c0 plate, c1 dark, c2 gear, c3 hub. */
+  gear(ctx) {
+    const { t } = ctx;
+    generators.metal!(ctx);
+    for (let y = 0; y < S; y++) {
+      for (let x = 0; x < S; x++) {
+        const dx = x - 7.5;
+        const dy = y - 7.5;
+        const d = Math.hypot(dx, dy);
+        const a = Math.atan2(dy, dx);
+        const tooth = Math.cos(a * 8) > 0.2 ? 6.6 : 5.4;
+        if (d < tooth && d > 2.4) t.set(x, y, shade(ctx.c(2), (hash3(x, y, 3, ctx.seed) - 0.5) * 0.12 + (dy < 0 ? 0.08 : -0.06)));
+        if (d <= 2.4 && d > 1.2) t.set(x, y, ctx.c(3));
+        if (d <= 1.2) t.set(x, y, ctx.c(1));
+      }
+    }
+  },
+
+  /** Paper sheets pinned on a wall: c0 wall, c1 paper, c2 ink, c3 pin. */
+  posters(ctx) {
+    const { t, rng } = ctx;
+    generators.plaster!(ctx);
+    const sheets = ctx.p('sheets', 2);
+    for (let k = 0; k < sheets; k++) {
+      const w = rng.int(5, 8);
+      const h = rng.int(6, 9);
+      const x0 = rng.int(0, S - w);
+      const y0 = rng.int(0, S - h);
+      for (let y = y0; y < y0 + h; y++) {
+        for (let x = x0; x < x0 + w; x++) {
+          let c = shade(ctx.c(1), (hash3(x, y, 5 + k, ctx.seed) - 0.5) * 0.1);
+          if ((y - y0) % 2 === 1 && x > x0 && x < x0 + w - 1 && y > y0 + 1 && rng.chance(0.75)) c = mixRgb(c, ctx.c(2), 0.55);
+          t.set(x, y, c);
+        }
+      }
+      t.set(x0 + Math.floor(w / 2), y0, ctx.c(3));
+    }
+  },
 };
 
 function luminance(c: RGB): number {

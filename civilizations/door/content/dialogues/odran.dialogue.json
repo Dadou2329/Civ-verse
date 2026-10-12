@@ -1,0 +1,71 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "odran",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.evidence.plaque",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        }
+      ],
+      "next": "first"
+    },
+    {
+      "id": "first",
+      "speaker": "odran",
+      "text": "door.dlg.odran.first",
+      "choices": [
+        {
+          "id": "seized",
+          "text": "door.dlg.odran.first.seized",
+          "next": "seized",
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q02_ELIAS",
+            "status": "active"
+          }
+        },
+        {
+          "id": "bye",
+          "text": "door.dlg.odran.first.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "seized",
+      "speaker": "odran",
+      "text": "door.dlg.odran.seized",
+      "next": "seized2"
+    },
+    {
+      "id": "seized2",
+      "speaker": "odran",
+      "text": "door.dlg.odran.seized2",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.odranTold",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "odran",
+      "text": "door.dlg.odran.after",
+      "end": true
+    }
+  ]
+}

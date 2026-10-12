@@ -138,10 +138,9 @@ export function rayBox(
     let t1 = (mn - oo) / d;
     let t2 = (mx - oo) / d;
     let n1 = nMin;
-    let n2 = nMax;
     if (t1 > t2) {
       [t1, t2] = [t2, t1];
-      [n1, n2] = [n2, n1];
+      n1 = nMax;
     }
     if (t1 > tMin) {
       tMin = t1;

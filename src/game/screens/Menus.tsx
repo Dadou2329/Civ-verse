@@ -72,27 +72,6 @@ export function CivSelect() {
   useSessionTick();
   const set = useUi((s) => s.set);
   const civs = session.civilizations();
-  const [locales, setLocales] = useState(0);
-  // Pack string tables are needed to show names before a pack is loaded.
-  useEffect(() => {
-    let alive = true;
-    void (async () => {
-      for (const m of civs) {
-        if (session.i18n.has(m.name)) continue;
-        try {
-          const table = (await session.provider.readJson(m.id, 'locales/fr-FR.json')) as Record<string, string>;
-          session.i18n.addTable(`${m.id}#menu`, 'fr-FR', table);
-        } catch (err) {
-          session.log.warn(`Textes de ${m.id} indisponibles`, err);
-        }
-      }
-      if (alive) setLocales((n) => n + 1);
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [civs, session]);
-  void locales;
   return (
     <div className="cv-civs" data-testid="civ-select">
       <h1>{t('ui.civs.title')}</h1>

@@ -1,0 +1,82 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "DOOR_Q02_ELIAS",
+  "title": "door.quest.DOOR_Q02_ELIAS.title",
+  "summary": "door.quest.DOOR_Q02_ELIAS.summary",
+  "kind": "main",
+  "order": 2,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "piste",
+      "description": "door.quest.DOOR_Q02_ELIAS.piste",
+      "objectives": [
+        {
+          "id": "affiche",
+          "text": "door.quest.DOOR_Q02_ELIAS.piste.affiche",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "door.foundEliasPoster",
+            "op": "==",
+            "value": true
+          },
+          "target": "affiche_elias_cour"
+        },
+        {
+          "id": "registre",
+          "text": "door.quest.DOOR_Q02_ELIAS.piste.registre",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "door.foundTransferTrace",
+            "op": "==",
+            "value": true
+          },
+          "target": "registre_transferts"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "preuves",
+      "description": "door.quest.DOOR_Q02_ELIAS.preuves",
+      "objectives": [
+        {
+          "id": "ordre",
+          "text": "door.quest.DOOR_Q02_ELIAS.preuves.ordre",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "door.evidence.ordre",
+            "op": "==",
+            "value": true
+          },
+          "target": "armoire_dossiers"
+        },
+        {
+          "id": "plaque",
+          "text": "door.quest.DOOR_Q02_ELIAS.preuves.plaque",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "door.evidence.plaque",
+            "op": "==",
+            "value": true
+          },
+          "target": "coffre_saisies"
+        },
+        {
+          "id": "acces",
+          "text": "door.quest.DOOR_Q02_ELIAS.preuves.acces",
+          "optional": true,
+          "target": "varen"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "DOOR_Q03_ARCHIVES"
+    }
+  ]
+}

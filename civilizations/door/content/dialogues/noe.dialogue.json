@@ -1,0 +1,335 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "noe",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "door.metNoe",
+              "op": "==",
+              "value": true
+            }
+          },
+          "next": "intro1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "door.metMira",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.noeCrateTold",
+                  "op": "==",
+                  "value": true
+                }
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "door.rankAtLeast",
+                  "rank": 1
+                }
+              }
+            ]
+          },
+          "next": "crate1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q02_ELIAS",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "door.foundTransferTrace",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.evidence.ordre",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "hint_patrol"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q02_ELIAS",
+            "status": "active"
+          },
+          "next": "hint_elias"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q03_ARCHIVES",
+                "status": "active"
+              },
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q04_PORTE_ABSENTE",
+                "status": "active"
+              }
+            ]
+          },
+          "next": "hint_archives"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q01_EMPREINTE",
+                "status": "active"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.metMira",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "hint_mira"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q01_EMPREINTE",
+            "status": "active"
+          },
+          "next": "hint_well"
+        }
+      ],
+      "next": "idle"
+    },
+    {
+      "id": "intro1",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro1",
+      "expression": "surprised",
+      "choices": [
+        {
+          "id": "from",
+          "text": "door.dlg.noe.intro1.from",
+          "next": "intro2a"
+        },
+        {
+          "id": "where",
+          "text": "door.dlg.noe.intro1.where",
+          "next": "intro2b"
+        }
+      ]
+    },
+    {
+      "id": "intro2a",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro2a",
+      "next": "intro3"
+    },
+    {
+      "id": "intro2b",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro2b",
+      "next": "intro3"
+    },
+    {
+      "id": "intro3",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro3",
+      "expression": "worried",
+      "next": "intro4"
+    },
+    {
+      "id": "intro4",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro4",
+      "animation": "interact",
+      "actions": [
+        {
+          "type": "core.giveItem",
+          "item": "door:plaque_r0",
+          "count": 1
+        },
+        {
+          "type": "door.setRank",
+          "rank": 0
+        },
+        {
+          "type": "core.setVar",
+          "var": "door.metNoe",
+          "value": true
+        },
+        {
+          "type": "core.setVar",
+          "var": "door.hasPlaque",
+          "value": true
+        },
+        {
+          "type": "core.setPlayerTitle",
+          "title": "door.title.stranger"
+        }
+      ],
+      "choices": [
+        {
+          "id": "why",
+          "text": "door.dlg.noe.intro4.why",
+          "next": "intro5a"
+        },
+        {
+          "id": "mark",
+          "text": "door.dlg.noe.intro4.mark",
+          "next": "intro5b",
+          "condition": {
+            "type": "core.var",
+            "var": "door.palmRevealed",
+            "op": "==",
+            "value": true
+          }
+        },
+        {
+          "id": "thanks",
+          "text": "door.dlg.noe.intro4.thanks",
+          "next": "intro6"
+        }
+      ]
+    },
+    {
+      "id": "intro5a",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro5a",
+      "next": "intro6"
+    },
+    {
+      "id": "intro5b",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro5b",
+      "expression": "worried",
+      "next": "intro6"
+    },
+    {
+      "id": "intro6",
+      "speaker": "noe",
+      "text": "door.dlg.noe.intro6",
+      "actions": [
+        {
+          "type": "core.completeObjective",
+          "quest": "DOOR_Q00_REVEIL",
+          "objective": "noe"
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "noe",
+          "target": "marque_noe_cour",
+          "wait": false
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "crate1",
+      "speaker": "noe",
+      "text": "door.dlg.noe.crate1",
+      "choices": [
+        {
+          "id": "yes",
+          "text": "door.dlg.noe.crate1.yes",
+          "next": "crate2"
+        },
+        {
+          "id": "no",
+          "text": "door.dlg.noe.crate1.no",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "crate2",
+      "speaker": "noe",
+      "text": "door.dlg.noe.crate2",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.noeCrateTold",
+          "value": true
+        },
+        {
+          "type": "core.notify",
+          "text": "door.notify.crateTold",
+          "kind": "discovery"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "hint_mira",
+      "speaker": "noe",
+      "text": "door.dlg.noe.hint_mira",
+      "end": true
+    },
+    {
+      "id": "hint_well",
+      "speaker": "noe",
+      "text": "door.dlg.noe.hint_well",
+      "end": true
+    },
+    {
+      "id": "hint_elias",
+      "speaker": "noe",
+      "text": "door.dlg.noe.hint_elias",
+      "end": true
+    },
+    {
+      "id": "hint_patrol",
+      "speaker": "noe",
+      "text": "door.dlg.noe.hint_patrol",
+      "end": true
+    },
+    {
+      "id": "hint_archives",
+      "speaker": "noe",
+      "text": "door.dlg.noe.hint_archives",
+      "end": true
+    },
+    {
+      "id": "idle",
+      "speaker": "noe",
+      "text": "door.dlg.noe.idle",
+      "end": true
+    }
+  ]
+}

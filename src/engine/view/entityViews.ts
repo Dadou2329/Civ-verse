@@ -70,6 +70,7 @@ interface EntityView {
   models: ModelInstance[];
   rig: CharacterRig | null;
   revision: number;
+  propsRevision: number;
   lightTimer: number;
   helper: ComponentVisual | null;
 }
@@ -89,13 +90,13 @@ export class EntityViewManager {
     readonly mode: 'game' | 'studio',
   ) {
     this.showHelpers = mode === 'studio';
-    const self = this;
+    const now = () => this.time;
     this.ctx = {
       scene,
       mode,
       quality: env.quality,
       get time() {
-        return self.time;
+        return now();
       },
       t: (k, p) => session.t(k, p),
       createModel: (id, name) => {
@@ -139,7 +140,12 @@ export class EntityViewManager {
       }
       for (const e of world.entities.values()) if (!this.views.has(e.id)) this.createView(e);
     }
-    for (const v of this.views.values()) this.updateView(v, dt);
+    const stale: string[] = [];
+    for (const v of this.views.values()) {
+      if (v.propsRevision !== v.entity.propsRevision) stale.push(v.entity.id);
+      else this.updateView(v, dt);
+    }
+    for (const id of stale) this.refresh(id);
   }
 
   /** Rebuilds an entity's visuals (after its components changed in the Studio). */
@@ -171,7 +177,7 @@ export class EntityViewManager {
   private createView(e: RuntimeEntity): void {
     const root = new TransformNode(`entité_${e.id}`, this.scene);
     root.metadata = { entityId: e.id };
-    const view: EntityView = { entity: e, root, visuals: new Map(), models: [], rig: null, revision: -1, lightTimer: 0, helper: null };
+    const view: EntityView = { entity: e, root, visuals: new Map(), models: [], rig: null, revision: -1, propsRevision: e.propsRevision, lightTimer: 0, helper: null };
     this.views.set(e.id, view);
     for (const [type, record] of e.components) {
       try {
@@ -359,20 +365,35 @@ export class EntityViewManager {
   private signVisual(v: EntityView, props: Record<string, unknown>): ComponentVisual {
     const e = v.entity;
     const [w, h, depth] = (props.size as [number, number, number]) ?? [1, 0.5, 0.05];
-    const board = MeshBuilder.CreateBox(`${e.id}_panneau`, { width: w, height: h, depth: Math.max(0.01, depth) }, this.scene);
+    const d = Math.max(0.01, depth);
+    // A plain board, and the text on both faces so it reads correctly from either side
+    // (front = local +Z, like every model).
+    const board = MeshBuilder.CreateBox(`${e.id}_panneau`, { width: w, height: h, depth: d }, this.scene);
     board.parent = v.root;
     board.position.y = h / 2;
+    const boardMat = new StandardMaterial(`${e.id}_panneau_bois`, this.scene);
+    const bgc = hexToRgb(String(props.background ?? '#d9c39a'));
+    boardMat.diffuseColor = new Color3(bgc.r * 0.7, bgc.g * 0.7, bgc.b * 0.7);
+    boardMat.specularColor = new Color3(0.03, 0.03, 0.03);
+    board.material = boardMat;
     const resolution = 256;
     const tex = new DynamicTexture(`${e.id}_texte`, { width: Math.round(resolution * (w / h)), height: resolution }, this.scene, true);
     const mat = new StandardMaterial(`${e.id}_panneau_mat`, this.scene);
     mat.diffuseTexture = tex;
     mat.specularColor = new Color3(0.05, 0.05, 0.05);
     const style = String(props.style ?? 'plaque');
-    if (style === 'glow') {
-      mat.emissiveTexture = tex;
-      this.env.addGlowMesh(board);
+    const faces: Mesh[] = [];
+    for (const side of [1, -1]) {
+      const face = MeshBuilder.CreatePlane(`${e.id}_texte_${side > 0 ? 'avant' : 'arrière'}`, { width: w * 0.98, height: h * 0.96 }, this.scene);
+      face.parent = board;
+      face.position.z = side * (d / 2 + 0.003);
+      if (side > 0) face.rotation.y = Math.PI;
+      face.material = mat;
+      face.isPickable = false;
+      faces.push(face);
+      if (style === 'glow') this.env.addGlowMesh(face);
     }
-    board.material = mat;
+    if (style === 'glow') mat.emissiveTexture = tex;
     const draw = () => {
       const ctx = tex.getContext() as CanvasRenderingContext2D;
       const size = tex.getSize();
@@ -397,11 +418,13 @@ export class EntityViewManager {
     if (typeof document !== 'undefined' && document.fonts) void document.fonts.ready.then(draw);
     return {
       dispose: () => {
+        for (const f of faces) f.dispose();
         board.dispose();
+        boardMat.dispose();
         mat.dispose();
         tex.dispose();
       },
-      meshes: () => [board],
+      meshes: () => [board, ...faces],
     };
   }
 

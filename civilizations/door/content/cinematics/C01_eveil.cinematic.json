@@ -1,0 +1,129 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C01_eveil",
+  "title": "C01 — Éveil",
+  "duration": 15,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            8.2,
+            8.45,
+            27.1
+          ],
+          "target": [
+            9.6,
+            10.6,
+            27.6
+          ],
+          "fov": 62
+        },
+        {
+          "t": 5,
+          "position": [
+            8.4,
+            9.3,
+            27.5
+          ],
+          "target": [
+            11.5,
+            9.2,
+            27.5
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 10,
+          "position": [
+            10.1,
+            9.4,
+            27.4
+          ],
+          "target": [
+            11.6,
+            9.1,
+            27.6
+          ],
+          "ease": "inOutSine",
+          "fov": 52
+        },
+        {
+          "t": 14.5,
+          "position": [
+            8.5,
+            9.620000000000001,
+            27.5
+          ],
+          "target": [
+            11.5,
+            9.4,
+            27.5
+          ],
+          "ease": "inOutSine",
+          "fov": 70
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 1.5,
+          "duration": 3.5,
+          "text": "door.cin.c01.1"
+        },
+        {
+          "t": 5.5,
+          "duration": 4.2,
+          "text": "door.cin.c01.2"
+        },
+        {
+          "t": 10.2,
+          "duration": 4.3,
+          "text": "door.cin.c01.3"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 3.5
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.4,
+          "sound": "core:door_locked",
+          "at": "cell_door"
+        },
+        {
+          "t": 9.8,
+          "sound": "core:heartbeat"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "DOOR_Q00_REVEIL"
+    }
+  ]
+}

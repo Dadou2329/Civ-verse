@@ -219,7 +219,7 @@ function emitFace(
   const base = b.count;
   for (let c = 0; c < 4; c++) {
     const corner = face.corners[c]!;
-    let cxw = corner[0];
+    const cxw = corner[0];
     let cyw = corner[1];
     const czw = corner[2];
     if (height < 1) cyw = cyw * height;
@@ -227,14 +227,15 @@ function emitFace(
     const sx = nx !== 0 ? 0 : corner[0] === 1 ? 1 : -1;
     const sy = ny !== 0 ? 0 : corner[1] === 1 ? 1 : -1;
     const sz = nz !== 0 ? 0 : corner[2] === 1 ? 1 : -1;
-    let ao = 3;
+    let ao: number;
     let light: readonly [number, number, number, number];
     if (fullBright) {
       ao = 3;
       light = FULL_BRIGHT;
     } else {
       // Two side neighbors and the diagonal, in the layer in front of the face.
-      let s1x = 0, s1y = 0, s1z = 0, s2x = 0, s2y = 0, s2z = 0;
+      let s1x = 0, s1y = 0, s2y = 0, s2z = 0;
+      const s1z = 0, s2x = 0;
       if (nx !== 0) {
         s1y = sy;
         s2z = sz;

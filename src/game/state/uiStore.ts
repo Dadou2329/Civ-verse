@@ -159,7 +159,13 @@ export function handlePresentationForUi(req: PresentationRequest): void {
   if (req.type === 'fx') {
     const p = req.params;
     if (req.fx === 'fade') {
-      useUi.setState({ fade: { opacity: Number(p.to ?? 1), seconds: Number(p.seconds ?? 1), color: String(p.color ?? '#000000') } });
+      const color = String(p.color ?? '#000000');
+      const to = { opacity: Number(p.to ?? 1), seconds: Number(p.seconds ?? 1), color };
+      if (p.from !== undefined) {
+        // Snap to the starting opacity first, then transition on the next frame.
+        useUi.setState({ fade: { opacity: Number(p.from), seconds: 0, color } });
+        requestAnimationFrame(() => requestAnimationFrame(() => useUi.setState({ fade: to })));
+      } else useUi.setState({ fade: to });
     } else if (req.fx === 'flash') {
       useUi.setState({ flash: { color: String(p.color ?? '#ffffff'), seconds: Number(p.seconds ?? 0.6), key: counter++ } });
     } else if (req.fx === 'tint') {

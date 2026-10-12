@@ -1,0 +1,36 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "garde_ronde",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.registryPass",
+            "op": "==",
+            "value": true
+          },
+          "next": "pass"
+        }
+      ],
+      "next": "warn"
+    },
+    {
+      "id": "warn",
+      "speaker": "garde_ronde",
+      "text": "door.dlg.garde_ronde.warn",
+      "end": true
+    },
+    {
+      "id": "pass",
+      "speaker": "garde_ronde",
+      "text": "door.dlg.garde_ronde.pass",
+      "end": true
+    }
+  ]
+}

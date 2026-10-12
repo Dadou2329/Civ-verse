@@ -1,0 +1,14 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "lavandiere",
+  "start": "l1",
+  "nodes": [
+    {
+      "id": "l1",
+      "speaker": "lavandiere",
+      "text": "door.dlg.lavandiere.l1",
+      "end": true
+    }
+  ]
+}

@@ -2,7 +2,7 @@
  * Per-palette-index block properties packed in typed arrays for the hot loops
  * (meshing, lighting, collision, raycasts).
  */
-import { BlockRegistry, type ResolvedBlockDef } from './blocks';
+import type { BlockRegistry, ResolvedBlockDef } from './blocks';
 import { hexToRgb } from '../util/color';
 import type { VoxelVolume } from './volume';
 

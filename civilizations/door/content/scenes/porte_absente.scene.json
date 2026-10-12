@@ -1,0 +1,670 @@
+{
+  "format": "civverse.scene",
+  "version": 1,
+  "id": "porte_absente",
+  "name": "door.scene.absente",
+  "environment": {
+    "sky": {
+      "top": "#05040a",
+      "horizon": "#120c22",
+      "bottom": "#020205",
+      "stars": 1,
+      "sunDisc": false
+    },
+    "sun": {
+      "direction": [
+        0.2,
+        -1,
+        0.3
+      ],
+      "color": "#6e64a8",
+      "intensity": 0.25
+    },
+    "ambient": {
+      "color": "#5a5480",
+      "intensity": 0.3
+    },
+    "hemi": {
+      "sky": "#6d68a0",
+      "ground": "#1d1a26",
+      "intensity": 0.35
+    },
+    "fog": {
+      "color": "#0d0a18",
+      "density": 0.03
+    },
+    "blockLight": 1.35,
+    "particles": {
+      "preset": "dust",
+      "density": 0.25
+    },
+    "music": "door:music.absente",
+    "ambience": "core:low_drone",
+    "post": {
+      "exposure": 1,
+      "contrast": 1.12,
+      "saturation": 0.9,
+      "bloom": 0.65,
+      "vignette": 0.55
+    }
+  },
+  "voxels": {
+    "size": [
+      40,
+      34,
+      64
+    ],
+    "palette": [
+      "core:air",
+      "door:void",
+      "door:erased_stone",
+      "door:erased_bricks",
+      "core:crystal_violet",
+      "door:mark_gray",
+      "door:light_seam"
+    ],
+    "encoding": "rle16-b64",
+    "data": "0AoCsAkB0AoCAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAdAKAgEBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQHQCgIBASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkB0AoCAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAdAKAgEBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQHQCgIBASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkBqQICBgNKAgYDSgIGA0oCBgNKAgYDSgIGA0oCBgNKAgYDSgIGA0oCBgNKAgYDSgIGA0oCBgNIAgoDDwIBARAABgIQAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApATkCBgMiAgYAIgIGACICBgMiAgYAIQIIAB8CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHQIBAwkAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwkAAQMdAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMdAgEDCQABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCQABAx0CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx0CAQMJAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMJAAEDHQIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgQDAgYEAw8CAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApATkCBgMiAgYAIgIGAyICBgAiAgYAIQIIAB8CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHQIBAwkAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwkAAQMdAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMdAgEDCQABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCQABAx0CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx0CAQMJAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMJAAEDHQIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgQDAgYEAw8CAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApATkCBgMiAgYDIgIGACICBgAiAgYAIQIIAB8CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBBQgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQUeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEFCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABBR4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQUIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEFHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgQDAgYEAw8CAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApATkCBgMiAgYAIgIGACICBgAiAgYAIQIIAB8CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgQDAQYFAw8CAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApATkCBgMiAgYAIgIGACICBgAiAgYAIQIIAB8CAQMIAAEDHgIBAwgAAQMeAgIDBgACAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgICAwYAAgMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAgMGAAIDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgIDBgACAx4CAQMIAAEDHgIBAwgAAQMeAgEDCAABAx4CAQMIAAEDHgICAwYAAgMeAgEDCAABAx4CAQMIAAEDHgIBAwgAAQMeAgUDAQYEAw8CAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApATkCBgMiAgYAIgIGACICBgAiAgYAIQIIAB8CAQMIAAEDHgIBAwgAAQMeAgoDHgIBAwgAAQMeAgEDAwACBAMAAQMeAgEDCAABAx4CAQMIAAEDHgIKAx4CAQMIAAEDHgIBAwMAAgQDAAEDHgIBAwgAAQMeAgEDCAABAx4CCgMeAgEDCAABAx4CAQMDAAIEAwABAx4CAQMIAAEDHgIBAwgAAQMeAgoDHgIBAwgAAQMeAgEDAwACBAMAAQMeAgEDCAABAx4CAQMIAAEDHgIKAx4CAQMIAAEDHgIBAwMAAgQDAAEDHgIBAwgAAQMeAgoDDwIBASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkBtwoCCgMPAgEBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQHQCgIBASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkB0AoCAQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAagKACkBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQGoCgApASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkBqAoAKQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAagKACkBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQGoCgApASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkBqAoAKQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAagKACkBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQGoCgApASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkBqAoAKQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAagKACkBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQGoCgApASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkBqAoAKQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAagKACkBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQGoCgApASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmACkBqAoAKQEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgApAagKACkBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAAgEmAAIBJgACASYAKQGoCgDYCQE="
+  },
+  "entities": [
+    {
+      "id": "spawn_arrivee",
+      "position": [
+        19.5,
+        8,
+        5.5
+      ],
+      "components": {
+        "core.spawn": {
+          "isDefault": true
+        }
+      }
+    },
+    {
+      "id": "couloir_porte_1",
+      "position": [
+        15.5,
+        8,
+        11.5
+      ],
+      "components": {
+        "core.door": {
+          "model": "door:door_rank0",
+          "name": "door.door.nowhere",
+          "open": true,
+          "closeSound": "door:slam"
+        },
+        "door.memory": {
+          "descriptions": [
+            "door.memory.nowhere.1",
+            "door.memory.nowhere.2"
+          ]
+        }
+      },
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "folder": "Couloir"
+    },
+    {
+      "id": "couloir_porte_2",
+      "position": [
+        24.5,
+        8,
+        14.5
+      ],
+      "components": {
+        "core.door": {
+          "model": "door:door_rank0",
+          "name": "door.door.nowhere",
+          "open": true,
+          "closeSound": "door:slam"
+        },
+        "door.memory": {
+          "descriptions": [
+            "door.memory.nowhere.1",
+            "door.memory.nowhere.2"
+          ]
+        }
+      },
+      "rotation": [
+        0,
+        270,
+        0
+      ],
+      "folder": "Couloir"
+    },
+    {
+      "id": "couloir_porte_3",
+      "position": [
+        15.5,
+        8,
+        18.5
+      ],
+      "components": {
+        "core.door": {
+          "model": "door:door_rank1",
+          "name": "door.door.nowhere",
+          "open": true,
+          "closeSound": "door:slam"
+        },
+        "door.memory": {
+          "descriptions": [
+            "door.memory.nowhere.1",
+            "door.memory.nowhere.2"
+          ]
+        }
+      },
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "folder": "Couloir"
+    },
+    {
+      "id": "couloir_porte_4",
+      "position": [
+        24.5,
+        8,
+        21.5
+      ],
+      "components": {
+        "core.door": {
+          "model": "door:door_rank1",
+          "name": "door.door.nowhere",
+          "open": true,
+          "closeSound": "door:slam"
+        },
+        "door.memory": {
+          "descriptions": [
+            "door.memory.nowhere.1",
+            "door.memory.nowhere.2"
+          ]
+        }
+      },
+      "rotation": [
+        0,
+        270,
+        0
+      ],
+      "folder": "Couloir"
+    },
+    {
+      "id": "couloir_porte_5",
+      "position": [
+        15.5,
+        8,
+        25.5
+      ],
+      "components": {
+        "core.door": {
+          "model": "door:door_rank2",
+          "name": "door.door.nowhere",
+          "open": true,
+          "closeSound": "door:slam"
+        },
+        "door.memory": {
+          "descriptions": [
+            "door.memory.nowhere.1",
+            "door.memory.nowhere.2"
+          ]
+        }
+      },
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "folder": "Couloir"
+    },
+    {
+      "id": "couloir_porte_6",
+      "position": [
+        24.5,
+        8,
+        28.5
+      ],
+      "components": {
+        "core.door": {
+          "model": "door:door_rank2",
+          "name": "door.door.nowhere",
+          "open": true,
+          "closeSound": "door:slam"
+        },
+        "door.memory": {
+          "descriptions": [
+            "door.memory.nowhere.1",
+            "door.memory.nowhere.2"
+          ]
+        }
+      },
+      "rotation": [
+        0,
+        270,
+        0
+      ],
+      "folder": "Couloir"
+    },
+    {
+      "id": "rai_lumiere",
+      "position": [
+        20,
+        9.5,
+        32.4
+      ],
+      "components": {
+        "core.particles": {
+          "preset": "motes",
+          "color": "#ffe2a8",
+          "rate": 2.2,
+          "size": [
+            2.5,
+            3,
+            1.5
+          ]
+        }
+      },
+      "folder": "Couloir"
+    },
+    {
+      "id": "porte_absente",
+      "position": [
+        20,
+        8,
+        33.5
+      ],
+      "components": {
+        "core.door": {
+          "model": "door:door_black",
+          "name": "door.door.absent",
+          "width": 2,
+          "height": 3,
+          "interactable": false,
+          "openSound": "door:palm_awaken"
+        },
+        "door.lock": {
+          "variant": "impossible"
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "door.absentDoorShown",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "folder": "Fin"
+    },
+    {
+      "id": "plaque_orig",
+      "position": [
+        20,
+        10.35,
+        34.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "door:plaque_orig",
+          "collider": "none"
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "door.absentDoorShown",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        },
+        "core.readable": {
+          "title": "door.doc.orig.title",
+          "pages": [
+            "door.doc.orig.1"
+          ],
+          "style": "plaque",
+          "size": [
+            0.9,
+            0.6,
+            0.3
+          ],
+          "offset": [
+            0,
+            -0.3,
+            0
+          ]
+        }
+      },
+      "folder": "Fin"
+    },
+    {
+      "id": "fragment_seuil",
+      "position": [
+        20,
+        9.3,
+        34.6
+      ],
+      "components": {
+        "core.model": {
+          "model": "door:fragment",
+          "collider": "none"
+        },
+        "core.pickup": {
+          "item": "door:fragment_seuil",
+          "prompt": "door.prompt.fragment",
+          "size": [
+            0.7,
+            0.7,
+            0.7
+          ],
+          "offset": [
+            0,
+            -0.35,
+            0
+          ],
+          "condition": {
+            "type": "core.var",
+            "var": "door.absentDoorShown",
+            "op": "==",
+            "value": true
+          }
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "door.absentDoorShown",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "folder": "Fin"
+    },
+    {
+      "id": "seuil_infranchissable",
+      "position": [
+        20,
+        8,
+        33.9
+      ],
+      "components": {
+        "core.collider": {
+          "size": [
+            4,
+            4,
+            0.4
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "solid": true,
+          "pickable": false
+        }
+      },
+      "folder": "Fin"
+    },
+    {
+      "id": "etoiles",
+      "position": [
+        20,
+        14,
+        48
+      ],
+      "components": {
+        "core.particles": {
+          "preset": "stars",
+          "color": "#e8e6ff",
+          "rate": 3,
+          "size": [
+            34,
+            26,
+            26
+          ]
+        }
+      },
+      "folder": "Fin"
+    },
+    {
+      "id": "lumiere_entree",
+      "position": [
+        19.5,
+        10.5,
+        4.5
+      ],
+      "components": {
+        "core.light": {
+          "color": "#8a7cc8",
+          "level": 7,
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "lumiere_seuil",
+      "position": [
+        20,
+        9.5,
+        31.8
+      ],
+      "components": {
+        "core.light": {
+          "color": "#ffe2a8",
+          "level": 13,
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "zone_couloir",
+      "position": [
+        20,
+        8,
+        20
+      ],
+      "components": {
+        "core.zone": {
+          "name": "door.zone.corridor",
+          "subtitle": "door.zone.corridor.subtitle",
+          "size": [
+            10,
+            8,
+            30
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "showTitle": true,
+          "music": "door:music.absente",
+          "ambience": ""
+        }
+      }
+    },
+    {
+      "id": "mira",
+      "position": [
+        18.5,
+        8,
+        8.5
+      ],
+      "components": {
+        "core.npc": {
+          "character": "door:mira",
+          "name": "door.npc.mira",
+          "dialogue": "confrontation",
+          "speed": 2.2,
+          "lookDistance": 8,
+          "interactable": false
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "door.alliesArrived",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "folder": "Personnages"
+    },
+    {
+      "id": "varen",
+      "position": [
+        21.5,
+        8,
+        8.5
+      ],
+      "components": {
+        "core.npc": {
+          "character": "door:varen",
+          "name": "door.npc.varen",
+          "dialogue": "confrontation",
+          "speed": 2.2,
+          "lookDistance": 8,
+          "interactable": false
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "door.alliesArrived",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "folder": "Personnages"
+    },
+    {
+      "id": "marque_mira_fond",
+      "position": [
+        18.5,
+        8,
+        27.5
+      ],
+      "components": {
+        "core.marker": {}
+      },
+      "folder": "Repères"
+    },
+    {
+      "id": "marque_varen_fond",
+      "position": [
+        21.5,
+        8,
+        26.5
+      ],
+      "components": {
+        "core.marker": {}
+      },
+      "folder": "Repères"
+    },
+    {
+      "id": "marque_joueur_fond",
+      "position": [
+        19.5,
+        8,
+        30.5
+      ],
+      "components": {
+        "core.marker": {}
+      },
+      "folder": "Repères"
+    },
+    {
+      "id": "trig_entree_couloir",
+      "position": [
+        19.5,
+        8,
+        9.5
+      ],
+      "components": {
+        "core.trigger": {
+          "size": [
+            8,
+            4,
+            2
+          ],
+          "once": true
+        }
+      },
+      "folder": "Déclencheurs"
+    },
+    {
+      "id": "trig_fond_couloir",
+      "position": [
+        19.5,
+        8,
+        29.5
+      ],
+      "components": {
+        "core.trigger": {
+          "size": [
+            8,
+            4,
+            3
+          ],
+          "once": true
+        }
+      },
+      "folder": "Déclencheurs"
+    }
+  ],
+  "editor": {
+    "camera": {
+      "position": [
+        20,
+        12,
+        2
+      ],
+      "target": [
+        20,
+        9,
+        30
+      ]
+    },
+    "notes": "Généré par civilizations/door/seed/absente.ts."
+  }
+}

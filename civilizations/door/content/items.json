@@ -1,0 +1,145 @@
+{
+  "format": "civverse.items",
+  "version": 1,
+  "items": [
+    {
+      "id": "door:plaque_r0",
+      "name": "door.item.plaque_r0",
+      "description": "door.item.plaque_r0.desc",
+      "icon": {
+        "shape": "plaque",
+        "color": "#8e8e8c",
+        "accent": "#5d5d5b"
+      },
+      "category": "key",
+      "questItem": true
+    },
+    {
+      "id": "door:plaque_r1",
+      "name": "door.item.plaque_r1",
+      "description": "door.item.plaque_r1.desc",
+      "icon": {
+        "shape": "plaque",
+        "color": "#a06c43",
+        "accent": "#e3b84d"
+      },
+      "category": "key",
+      "questItem": true
+    },
+    {
+      "id": "door:ressort",
+      "name": "door.item.ressort",
+      "description": "door.item.ressort.desc",
+      "icon": {
+        "shape": "spring",
+        "color": "#b8733f",
+        "accent": "#e0a070"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "door:goupille",
+      "name": "door.item.goupille",
+      "description": "door.item.goupille.desc",
+      "icon": {
+        "shape": "ingot",
+        "color": "#c49c46",
+        "accent": "#efd488"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "door:disque",
+      "name": "door.item.disque",
+      "description": "door.item.disque.desc",
+      "icon": {
+        "shape": "coin",
+        "color": "#b9bec6",
+        "accent": "#ffffff"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "door:ordre_transfert",
+      "name": "door.item.ordre_transfert",
+      "description": "door.item.ordre_transfert.desc",
+      "icon": {
+        "shape": "document",
+        "color": "#e8dfc8",
+        "accent": "#9a2f25"
+      },
+      "category": "document",
+      "questItem": true,
+      "actions": [
+        {
+          "id": "lire",
+          "label": "door.item.read",
+          "actions": [
+            {
+              "type": "core.showDocument",
+              "title": "door.doc.order.title",
+              "pages": [
+                "door.doc.order.1",
+                "door.doc.order.2",
+                "door.doc.order.3"
+              ],
+              "style": "register"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "door:plaque_elias",
+      "name": "door.item.plaque_elias",
+      "description": "door.item.plaque_elias.desc",
+      "icon": {
+        "shape": "plaque",
+        "color": "#8e8e8c",
+        "accent": "#9a2f25"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "door:rapport_falsifie",
+      "name": "door.item.rapport_falsifie",
+      "description": "door.item.rapport_falsifie.desc",
+      "icon": {
+        "shape": "document",
+        "color": "#e8dfc8",
+        "accent": "#3a5a9a"
+      },
+      "category": "document",
+      "questItem": true
+    },
+    {
+      "id": "door:sceau_eda",
+      "name": "door.item.sceau_eda",
+      "description": "door.item.sceau_eda.desc",
+      "icon": {
+        "shape": "letter",
+        "color": "#c2c9cf",
+        "accent": "#5d9eea"
+      },
+      "category": "key",
+      "questItem": true
+    },
+    {
+      "id": "door:fragment_seuil",
+      "name": "door.item.fragment_seuil",
+      "description": "door.item.fragment_seuil.desc",
+      "icon": {
+        "shape": "fragment",
+        "color": "#e9c46a",
+        "accent": "#fff4d8",
+        "glow": true
+      },
+      "category": "collectible",
+      "questItem": true
+    }
+  ]
+}

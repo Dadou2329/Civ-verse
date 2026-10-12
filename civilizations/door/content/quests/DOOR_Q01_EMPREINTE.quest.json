@@ -1,0 +1,117 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "DOOR_Q01_EMPREINTE",
+  "title": "door.quest.DOOR_Q01_EMPREINTE.title",
+  "summary": "door.quest.DOOR_Q01_EMPREINTE.summary",
+  "kind": "main",
+  "order": 1,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "galerie",
+      "description": "door.quest.DOOR_Q01_EMPREINTE.galerie",
+      "objectives": [
+        {
+          "id": "porte",
+          "text": "door.quest.DOOR_Q01_EMPREINTE.galerie.porte",
+          "target": "porte_galerie"
+        },
+        {
+          "id": "mira",
+          "text": "door.quest.DOOR_Q01_EMPREINTE.galerie.mira",
+          "target": "mira"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "pieces",
+      "description": "door.quest.DOOR_Q01_EMPREINTE.pieces",
+      "objectives": [
+        {
+          "id": "ressort",
+          "text": "door.quest.DOOR_Q01_EMPREINTE.pieces.ressort",
+          "completeWhen": {
+            "type": "core.hasItem",
+            "item": "door:ressort",
+            "count": 1
+          },
+          "target": "ressort_cuivre"
+        },
+        {
+          "id": "goupille",
+          "text": "door.quest.DOOR_Q01_EMPREINTE.pieces.goupille",
+          "completeWhen": {
+            "type": "core.hasItem",
+            "item": "door:goupille",
+            "count": 1
+          },
+          "target": "puits"
+        },
+        {
+          "id": "disque",
+          "text": "door.quest.DOOR_Q01_EMPREINTE.pieces.disque",
+          "completeWhen": {
+            "type": "core.hasItem",
+            "item": "door:disque",
+            "count": 1
+          },
+          "target": "caisse_noe"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "empreinte",
+      "description": "door.quest.DOOR_Q01_EMPREINTE.empreinte",
+      "objectives": [
+        {
+          "id": "empreinte",
+          "text": "door.quest.DOOR_Q01_EMPREINTE.empreinte.empreinte",
+          "completeOn": {
+            "event": "door.imprinted"
+          },
+          "target": "etabli_empreinte"
+        }
+      ],
+      "completion": "all",
+      "onComplete": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C02_rang1",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "id": "franchir",
+      "description": "door.quest.DOOR_Q01_EMPREINTE.franchir",
+      "objectives": [
+        {
+          "id": "franchir",
+          "text": "door.quest.DOOR_Q01_EMPREINTE.franchir.franchir",
+          "target": "porte_galerie"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.if",
+      "condition": {
+        "type": "core.questStatus",
+        "quest": "DOOR_Q02_ELIAS",
+        "status": "inactive"
+      },
+      "then": [
+        {
+          "type": "core.startQuest",
+          "quest": "DOOR_Q02_ELIAS"
+        }
+      ],
+      "else": []
+    }
+  ]
+}

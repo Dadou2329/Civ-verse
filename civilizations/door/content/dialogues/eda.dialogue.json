@@ -1,0 +1,146 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "eda",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "door.rankAtLeast",
+            "rank": 2
+          },
+          "next": "after"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.evidenceCount",
+            "op": ">=",
+            "value": 2
+          },
+          "next": "g1"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.evidenceCount",
+            "op": ">=",
+            "value": 1
+          },
+          "next": "one"
+        }
+      ],
+      "next": "first"
+    },
+    {
+      "id": "first",
+      "speaker": "eda",
+      "text": "door.dlg.eda.first",
+      "choices": [
+        {
+          "id": "who",
+          "text": "door.dlg.eda.first.who",
+          "next": "who"
+        },
+        {
+          "id": "elias",
+          "text": "door.dlg.eda.first.elias",
+          "next": "elias",
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q02_ELIAS",
+            "status": "active"
+          }
+        },
+        {
+          "id": "bye",
+          "text": "door.dlg.eda.first.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "who",
+      "speaker": "eda",
+      "text": "door.dlg.eda.who",
+      "next": "first"
+    },
+    {
+      "id": "elias",
+      "speaker": "eda",
+      "text": "door.dlg.eda.elias",
+      "end": true
+    },
+    {
+      "id": "one",
+      "speaker": "eda",
+      "text": "door.dlg.eda.one",
+      "end": true
+    },
+    {
+      "id": "g1",
+      "speaker": "eda",
+      "text": "door.dlg.eda.g1",
+      "next": "g2"
+    },
+    {
+      "id": "g2",
+      "speaker": "eda",
+      "text": "door.dlg.eda.g2",
+      "choices": [
+        {
+          "id": "where",
+          "text": "door.dlg.eda.g2.where",
+          "next": "g3"
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "speaker": "eda",
+      "text": "door.dlg.eda.g3",
+      "expression": "sad",
+      "next": "g4"
+    },
+    {
+      "id": "g4",
+      "speaker": "eda",
+      "text": "door.dlg.eda.g4",
+      "animation": "interact",
+      "actions": [
+        {
+          "type": "core.giveItem",
+          "item": "door:sceau_eda",
+          "count": 1
+        },
+        {
+          "type": "door.setRank",
+          "rank": 2,
+          "temporary": true
+        },
+        {
+          "type": "core.completeObjective",
+          "quest": "DOOR_Q03_ARCHIVES",
+          "objective": "eda"
+        }
+      ],
+      "next": "g5"
+    },
+    {
+      "id": "g5",
+      "speaker": "eda",
+      "text": "door.dlg.eda.g5",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "eda",
+      "text": "door.dlg.eda.after",
+      "end": true
+    }
+  ]
+}

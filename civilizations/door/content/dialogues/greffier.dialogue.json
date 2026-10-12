@@ -1,0 +1,68 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "greffier",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "door.foundTransferTrace",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.evidence.ordre",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "order"
+        },
+        {
+          "condition": {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "door.foundTransferTrace",
+              "op": "==",
+              "value": true
+            }
+          },
+          "next": "first"
+        }
+      ],
+      "next": "idle"
+    },
+    {
+      "id": "first",
+      "speaker": "greffier",
+      "text": "door.dlg.greffier.first",
+      "end": true
+    },
+    {
+      "id": "order",
+      "speaker": "greffier",
+      "text": "door.dlg.greffier.order",
+      "end": true
+    },
+    {
+      "id": "idle",
+      "speaker": "greffier",
+      "text": "door.dlg.greffier.idle",
+      "end": true
+    }
+  ]
+}

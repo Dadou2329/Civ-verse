@@ -1,0 +1,254 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C04b_porte",
+  "title": "C04 — La Porte Absente (ouverture)",
+  "duration": 22,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            19.6,
+            9.75,
+            29.2
+          ],
+          "target": [
+            20,
+            9.8,
+            33
+          ],
+          "fov": 62
+        },
+        {
+          "t": 5.5,
+          "position": [
+            20.2,
+            9.9,
+            30.6
+          ],
+          "target": [
+            20,
+            9.6,
+            33
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 10,
+          "position": [
+            20,
+            10.1,
+            31.4
+          ],
+          "target": [
+            20,
+            9.4,
+            40
+          ],
+          "ease": "inOutSine",
+          "fov": 72
+        },
+        {
+          "t": 15.5,
+          "position": [
+            20,
+            10.25,
+            32.6
+          ],
+          "target": [
+            20,
+            10.35,
+            34.5
+          ],
+          "ease": "inOutSine",
+          "fov": 46
+        },
+        {
+          "t": 21.5,
+          "position": [
+            19.5,
+            9.620000000000001,
+            30.5
+          ],
+          "target": [
+            20,
+            9.5,
+            34
+          ],
+          "ease": "inOutSine",
+          "fov": 70
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.6,
+          "duration": 4.6,
+          "speaker": "door.speaker.voice",
+          "text": "door.cin.c04b.voice"
+        },
+        {
+          "t": 6.4,
+          "duration": 4,
+          "text": "door.cin.c04b.1"
+        },
+        {
+          "t": 10.8,
+          "duration": 4.4,
+          "text": "door.cin.c04b.2"
+        },
+        {
+          "t": 15.6,
+          "duration": 4.4,
+          "text": "door.cin.c04b.3"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.2,
+          "sound": "door:voice"
+        },
+        {
+          "t": 5.8,
+          "sound": "door:palm_awaken"
+        },
+        {
+          "t": 9,
+          "music": "door:music.absente"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 5.8,
+          "fx": "flash",
+          "color": "#ffe2a8",
+          "seconds": 1.2
+        },
+        {
+          "t": 5.8,
+          "fx": "shake",
+          "intensity": 0.25,
+          "seconds": 1.2
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 6,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.setBlocks",
+              "from": [
+                19,
+                8,
+                33
+              ],
+              "to": [
+                20,
+                12,
+                33
+              ],
+              "block": ""
+            },
+            {
+              "type": "core.setVar",
+              "var": "door.absentDoorShown",
+              "value": true
+            },
+            {
+              "type": "core.setVar",
+              "var": "door.palmRevealed",
+              "value": true
+            }
+          ]
+        },
+        {
+          "t": 6.6,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.openDoor",
+              "entity": "porte_absente",
+              "silent": true
+            }
+          ]
+        },
+        {
+          "t": 7,
+          "actions": [
+            {
+              "type": "core.environment",
+              "patch": {
+                "fog": {
+                  "color": "#120c26",
+                  "density": 0.018
+                },
+                "ambient": {
+                  "color": "#7a70b8",
+                  "intensity": 0.45
+                }
+              },
+              "seconds": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "mira",
+      "keys": [
+        {
+          "t": 6.5,
+          "lookAt": [
+            20,
+            9.5,
+            34
+          ],
+          "expression": "surprised"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "varen",
+      "keys": [
+        {
+          "t": 6.8,
+          "lookAt": [
+            20,
+            9.5,
+            34
+          ],
+          "expression": "worried"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.completeObjective",
+      "quest": "DOOR_Q04_PORTE_ABSENTE",
+      "objective": "ouvrir"
+    }
+  ]
+}

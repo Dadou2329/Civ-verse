@@ -1,0 +1,32 @@
+{
+  "format": "civverse.pack",
+  "version": 1,
+  "id": "door",
+  "kind": "civilization",
+  "name": "door.name",
+  "description": "door.description",
+  "tagline": "door.tagline",
+  "packVersion": "0.1.0",
+  "engineApi": "^1.0.0",
+  "dependencies": ["core"],
+  "entry": { "scene": "verrou", "spawn": "spawn_cell" },
+  "scenes": ["verrou", "porte_absente"],
+  "stateVersion": 1,
+  "globalWrites": ["fragments.threshold", "flags.door.*"],
+  "fragments": [{ "id": "threshold", "name": "door.fragment.threshold", "hint": "door.fragment.threshold.hint", "icon": "fragment" }],
+  "theme": {
+    "accent": "#e3b84d",
+    "accentSoft": "#8fb3d9",
+    "panel": "rgba(20, 17, 14, 0.88)",
+    "panelBorder": "rgba(227, 184, 77, 0.38)",
+    "text": "#efe6d6",
+    "textDim": "#a89d8a",
+    "font": "\"Alegreya Sans\", system-ui, sans-serif",
+    "titleFont": "\"Cinzel\", Georgia, serif"
+  },
+  "cover": { "colors": ["#1d1712", "#5a3a22", "#e3b84d"], "motif": "door" },
+  "hud": { "hide": [] },
+  "order": 10,
+  "credits": ["Scénario : dossier narratif 001 — « La Porte qui n'existe pas ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
+  "tags": ["énigme", "société", "mystère"]
+}

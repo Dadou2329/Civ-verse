@@ -1,0 +1,93 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C04c_coupe",
+  "title": "C04 — La Porte Absente (coupe)",
+  "duration": 5,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "cut",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            20,
+            9.620000000000001,
+            32.7
+          ],
+          "target": [
+            20,
+            9.5,
+            36
+          ]
+        },
+        {
+          "t": 5,
+          "position": [
+            20,
+            9.620000000000001,
+            33.2
+          ],
+          "target": [
+            20,
+            9.5,
+            38
+          ],
+          "ease": "inSine"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.6,
+          "duration": 4.2,
+          "text": "door.cin.c04c.1"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 0,
+          "to": 1,
+          "seconds": 3.2
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0,
+          "music": null
+        },
+        {
+          "t": 0.2,
+          "sound": "door:voice"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.setVar",
+      "var": "door.epilogue",
+      "value": true
+    },
+    {
+      "type": "core.changeScene",
+      "scene": "verrou",
+      "spawn": "spawn_epilogue"
+    }
+  ]
+}

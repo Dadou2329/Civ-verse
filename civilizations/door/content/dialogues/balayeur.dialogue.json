@@ -1,0 +1,36 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "balayeur",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.palmRevealed",
+            "op": "==",
+            "value": true
+          },
+          "next": "b2"
+        }
+      ],
+      "next": "b1"
+    },
+    {
+      "id": "b1",
+      "speaker": "balayeur",
+      "text": "door.dlg.balayeur.b1",
+      "end": true
+    },
+    {
+      "id": "b2",
+      "speaker": "balayeur",
+      "text": "door.dlg.balayeur.b2",
+      "end": true
+    }
+  ]
+}

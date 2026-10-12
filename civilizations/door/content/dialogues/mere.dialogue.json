@@ -1,0 +1,54 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "mere",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.motherSceneDone",
+            "op": "==",
+            "value": true
+          },
+          "next": "after1"
+        }
+      ],
+      "next": "before"
+    },
+    {
+      "id": "before",
+      "speaker": "mere",
+      "text": "door.dlg.mere.before",
+      "expression": "worried",
+      "end": true
+    },
+    {
+      "id": "after1",
+      "speaker": "mere",
+      "text": "door.dlg.mere.after1",
+      "choices": [
+        {
+          "id": "son",
+          "text": "door.dlg.mere.after1.son",
+          "next": "after2"
+        },
+        {
+          "id": "bye",
+          "text": "door.dlg.mere.after1.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "after2",
+      "speaker": "mere",
+      "text": "door.dlg.mere.after2",
+      "end": true
+    }
+  ]
+}

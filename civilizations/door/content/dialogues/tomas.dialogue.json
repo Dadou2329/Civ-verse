@@ -1,0 +1,87 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "tomas",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "door.rankAtLeast",
+            "rank": 1
+          },
+          "next": "pass"
+        }
+      ],
+      "next": "t1"
+    },
+    {
+      "id": "t1",
+      "speaker": "tomas",
+      "text": "door.dlg.tomas.t1",
+      "choices": [
+        {
+          "id": "ranks",
+          "text": "door.dlg.tomas.t1.ranks",
+          "next": "t2"
+        },
+        {
+          "id": "who",
+          "text": "door.dlg.tomas.t1.who",
+          "next": "t3"
+        },
+        {
+          "id": "engraving",
+          "text": "door.dlg.tomas.t1.engraving",
+          "next": "t4",
+          "condition": {
+            "type": "core.var",
+            "var": "door.metMira",
+            "op": "==",
+            "value": true
+          }
+        },
+        {
+          "id": "bye",
+          "text": "door.dlg.tomas.t1.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "t2",
+      "speaker": "tomas",
+      "text": "door.dlg.tomas.t2",
+      "next": "t1"
+    },
+    {
+      "id": "t3",
+      "speaker": "tomas",
+      "text": "door.dlg.tomas.t3",
+      "next": "t1"
+    },
+    {
+      "id": "t4",
+      "speaker": "tomas",
+      "text": "door.dlg.tomas.t4",
+      "expression": "surprised",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.gateEngravingSeen",
+          "value": true
+        }
+      ],
+      "next": "t1"
+    },
+    {
+      "id": "pass",
+      "speaker": "tomas",
+      "text": "door.dlg.tomas.pass",
+      "end": true
+    }
+  ]
+}

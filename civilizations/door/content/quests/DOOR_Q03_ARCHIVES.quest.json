@@ -1,0 +1,82 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "DOOR_Q03_ARCHIVES",
+  "title": "door.quest.DOOR_Q03_ARCHIVES.title",
+  "summary": "door.quest.DOOR_Q03_ARCHIVES.summary",
+  "kind": "main",
+  "order": 3,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "eda",
+      "description": "door.quest.DOOR_Q03_ARCHIVES.eda",
+      "objectives": [
+        {
+          "id": "eda",
+          "text": "door.quest.DOOR_Q03_ARCHIVES.eda.eda",
+          "target": "eda"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "registre",
+      "description": "door.quest.DOOR_Q03_ARCHIVES.registre",
+      "objectives": [
+        {
+          "id": "registre",
+          "text": "door.quest.DOOR_Q03_ARCHIVES.registre.registre",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "door.registerRead",
+            "op": "==",
+            "value": true
+          },
+          "target": "registre_secret"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "DOOR_Q04_PORTE_ABSENTE"
+    },
+    {
+      "type": "core.setBlocks",
+      "from": [
+        57,
+        31,
+        103
+      ],
+      "to": [
+        61,
+        31,
+        105
+      ],
+      "block": ""
+    },
+    {
+      "type": "core.setVar",
+      "var": "door.passageOpen",
+      "value": true
+    },
+    {
+      "type": "core.playSound",
+      "sound": "core:mechanism",
+      "at": "roue_engrenage"
+    },
+    {
+      "type": "core.shake",
+      "intensity": 0.35,
+      "seconds": 1.4
+    },
+    {
+      "type": "core.notify",
+      "text": "door.notify.hatch",
+      "kind": "discovery"
+    }
+  ]
+}

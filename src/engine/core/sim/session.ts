@@ -47,7 +47,7 @@ import type {
   VisualDefinition,
 } from '../packs/definitions';
 import { type ContentProvider, type LoadedPack, loadPack, loadSceneDoc, validateManifest, type ContentIssue } from '../packs/pack';
-import type { PackManifest, SceneDoc, EntityDoc } from '../content/schemas';
+import type { PackManifest, SceneDoc, EntityDoc, CharacterDoc } from '../content/schemas';
 import type { CivContext, EntityApi, LifecyclePhase, RunMode, ViewBridge } from './api';
 import { normalizeProps, type PropSchema } from '../props/props';
 import {
@@ -320,7 +320,7 @@ export class GameSession {
   }
 
   /** Character appearance from any loaded pack (civilization first, then libraries). */
-  characterDoc(id: string): import('../content/schemas').CharacterDoc | undefined {
+  characterDoc(id: string): CharacterDoc | undefined {
     const own = this.civ?.pack.characters.get(id);
     if (own) return own;
     for (const p of this.loadedPacks.values()) {
@@ -357,6 +357,14 @@ export class GameSession {
         continue;
       }
       this.manifests.set(manifest.id, manifest);
+      // Names, descriptions and fragments must be readable before the pack itself is loaded
+      // (civilization selection, multiverse registry).
+      try {
+        const table = await this.provider.readJson(manifest.id, 'locales/fr-FR.json');
+        if (table && typeof table === 'object') this.i18n.addTable(`${manifest.id}#manifeste`, 'fr-FR', table as StringTable);
+      } catch {
+        this.log.warn(`Aucune table française pour « ${manifest.id} » (locales/fr-FR.json).`);
+      }
     }
   }
 

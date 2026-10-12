@@ -1,0 +1,234 @@
+{
+  "format": "civverse.logic",
+  "version": 1,
+  "id": "main",
+  "title": "Verrou — règles principales",
+  "rules": [
+    {
+      "id": "intro",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "civ.started"
+      },
+      "then": [
+        {
+          "type": "core.playCinematic",
+          "cinematic": "C01_eveil",
+          "wait": false
+        }
+      ],
+      "name": "Éveil : cinématique d'ouverture"
+    },
+    {
+      "id": "tutoriel",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "cinematic.ended",
+        "where": {
+          "cinematicId": "C01_eveil"
+        }
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "door.tuto.move",
+          "kind": "info"
+        },
+        {
+          "type": "core.wait",
+          "seconds": 5
+        },
+        {
+          "type": "core.notify",
+          "text": "door.tuto.interact",
+          "kind": "info"
+        }
+      ],
+      "name": "Tutoriel discret après le réveil"
+    },
+    {
+      "id": "varen_au_registre",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "door.rankChanged"
+      },
+      "then": [
+        {
+          "type": "core.teleportEntity",
+          "entity": "varen",
+          "target": "marque_bureau_varen",
+          "yaw": 180
+        }
+      ],
+      "name": "Varen rejoint son bureau du Registre (acte II)",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "door.rankAtLeast",
+            "rank": 1
+          },
+          {
+            "type": "core.inScene",
+            "scene": "verrou"
+          }
+        ]
+      }
+    },
+    {
+      "id": "varen_au_registre_reprise",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "scene.entered",
+        "where": {
+          "sceneId": "verrou"
+        }
+      },
+      "then": [
+        {
+          "type": "core.teleportEntity",
+          "entity": "varen",
+          "target": "marque_bureau_varen",
+          "yaw": 180
+        }
+      ],
+      "name": "Varen reste au Registre (rechargement)",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "door.rankAtLeast",
+            "rank": 1
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "door.epilogue",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "mira_temoin",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "var.changed",
+        "where": {
+          "name": "door.miraWillTestify"
+        }
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "door.notify.miraTestify",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "preuves_reunies",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "door.evidenceFound"
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "door.notify.evidenceDone",
+          "kind": "quest"
+        }
+      ],
+      "if": {
+        "type": "core.var",
+        "var": "door.evidenceCount",
+        "op": ">=",
+        "value": 2
+      }
+    },
+    {
+      "id": "seuil_temporaire_fin",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "quest.completed",
+        "where": {
+          "questId": "DOOR_Q03_ARCHIVES"
+        }
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "door.notify.sealFading",
+          "kind": "memory"
+        }
+      ]
+    },
+    {
+      "id": "epilogue",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "scene.entered",
+        "where": {
+          "sceneId": "verrou"
+        }
+      },
+      "then": [
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.var",
+            "var": "door.finalChoice",
+            "op": "==",
+            "value": "ecouter"
+          },
+          "then": [
+            {
+              "type": "core.playCinematic",
+              "cinematic": "C05_epilogue_ecoute",
+              "wait": false
+            }
+          ],
+          "else": [
+            {
+              "type": "core.playCinematic",
+              "cinematic": "C05_epilogue_ouvre",
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "name": "Épilogue au Faubourg",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "door.epilogue",
+            "op": "==",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "door.finished",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

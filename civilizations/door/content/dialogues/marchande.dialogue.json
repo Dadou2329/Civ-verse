@@ -1,0 +1,14 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "marchande",
+  "start": "m1",
+  "nodes": [
+    {
+      "id": "m1",
+      "speaker": "marchande",
+      "text": "door.dlg.marchande.m1",
+      "end": true
+    }
+  ]
+}

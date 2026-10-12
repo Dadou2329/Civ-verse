@@ -1,0 +1,135 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "confrontation",
+  "start": "c1",
+  "nodes": [
+    {
+      "id": "c1",
+      "speaker": "mira",
+      "text": "door.dlg.confrontation.c1",
+      "expression": "surprised",
+      "next": "c2"
+    },
+    {
+      "id": "c2",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.c2",
+      "expression": "determined",
+      "choices": [
+        {
+          "id": "why",
+          "text": "door.dlg.confrontation.c2.why",
+          "next": "c3"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.c3",
+      "next": "c4"
+    },
+    {
+      "id": "c4",
+      "speaker": "mira",
+      "text": "door.dlg.confrontation.c4",
+      "expression": "angry",
+      "next": "c5"
+    },
+    {
+      "id": "c5",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.c5",
+      "expression": "sad",
+      "next": "c6"
+    },
+    {
+      "id": "c6",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.c6",
+      "next": "c7"
+    },
+    {
+      "id": "c7",
+      "speaker": "mira",
+      "text": "door.dlg.confrontation.c7",
+      "expression": "worried",
+      "next": "c8"
+    },
+    {
+      "id": "c8",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.c8",
+      "choices": [
+        {
+          "id": "open",
+          "text": "door.dlg.confrontation.c8.open",
+          "next": "o1",
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "door.finalChoice",
+              "value": "ouvrir"
+            },
+            {
+              "type": "core.addVar",
+              "var": "door.varenTrust",
+              "amount": -1
+            }
+          ]
+        },
+        {
+          "id": "listen",
+          "text": "door.dlg.confrontation.c8.listen",
+          "next": "l1",
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "door.finalChoice",
+              "value": "ecouter"
+            },
+            {
+              "type": "core.addVar",
+              "var": "door.varenTrust",
+              "amount": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "o1",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.o1",
+      "expression": "angry",
+      "next": "o2"
+    },
+    {
+      "id": "o2",
+      "speaker": "mira",
+      "text": "door.dlg.confrontation.o2",
+      "end": true
+    },
+    {
+      "id": "l1",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.l1",
+      "next": "l2"
+    },
+    {
+      "id": "l2",
+      "speaker": "varen",
+      "text": "door.dlg.confrontation.l2",
+      "expression": "determined",
+      "next": "l3"
+    },
+    {
+      "id": "l3",
+      "speaker": "mira",
+      "text": "door.dlg.confrontation.l3",
+      "expression": "surprised",
+      "end": true
+    }
+  ]
+}

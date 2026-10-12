@@ -194,6 +194,8 @@ export interface WorldApi {
   getBlock(x: number, y: number, z: number): string;
   /** Runtime voxel edit (persisted in the save as a scene diff). */
   setBlock(x: number, y: number, z: number, blockId: string | null): void;
+  /** Fills a box (inclusive corners) in one batched edit (one light/mesh update). */
+  fillBlocks(from: [number, number, number], to: [number, number, number], blockId: string | null): void;
   raycast(origin: Vec3, dir: Vec3, maxDistance: number): RaycastResult | null;
   findPath(from: Vec3, to: Vec3): Vec3[] | null;
   /** Ground height below a point (feet position), or null. */

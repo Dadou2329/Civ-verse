@@ -8,6 +8,7 @@
  * - A failing action stops its list and is reported with its origin (never silently ignored).
  * - Every execution is traced in a ring buffer for the debug overlay and the Studio console.
  */
+import type { ActionDefinition, ConditionDefinition } from '../packs/definitions';
 import type { ActionData, ConditionData, EventMatch } from './types';
 import type { LogicRegistry } from './registry';
 import type { CivContext, LogicScope } from '../sim/api';
@@ -98,7 +99,7 @@ export class LogicInterpreter {
         this.log.error(`Action inconnue "${action.type}" (${origin}).`);
         return;
       }
-      const def = prepared.def as import('../packs/definitions').ActionDefinition;
+      const def = prepared.def as ActionDefinition;
       if (scope.skipping && def.essential === false) continue;
       try {
         await def.run(ctx, prepared.props as never, scope);
@@ -124,7 +125,7 @@ export class LogicInterpreter {
       return false;
     }
     try {
-      const def = prepared.def as import('../packs/definitions').ConditionDefinition;
+      const def = prepared.def as ConditionDefinition;
       return !!def.test(ctx, prepared.props as never, scope);
     } catch (err) {
       const e = toError(err);

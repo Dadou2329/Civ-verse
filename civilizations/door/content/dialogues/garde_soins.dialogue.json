@@ -1,0 +1,36 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "garde_soins",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "door.motherSceneDone",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        }
+      ],
+      "next": "before"
+    },
+    {
+      "id": "before",
+      "speaker": "garde_soins",
+      "text": "door.dlg.garde_soins.before",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "garde_soins",
+      "text": "door.dlg.garde_soins.after",
+      "end": true
+    }
+  ]
+}

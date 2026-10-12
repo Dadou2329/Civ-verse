@@ -1,0 +1,123 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C03_registre",
+  "title": "C03 — Révélation du registre",
+  "duration": 14,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            40.5,
+            33.95,
+            107.25
+          ],
+          "target": [
+            40.5,
+            33.1,
+            108.6
+          ],
+          "fov": 50
+        },
+        {
+          "t": 7,
+          "position": [
+            40.55,
+            33.55,
+            107.95
+          ],
+          "target": [
+            40.5,
+            33.12,
+            108.6
+          ],
+          "ease": "inOutSine",
+          "fov": 40
+        },
+        {
+          "t": 13.5,
+          "position": [
+            40.5,
+            33.62,
+            106.9
+          ],
+          "target": [
+            40.5,
+            33.2,
+            108.7
+          ],
+          "ease": "inOutSine",
+          "fov": 70
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.5,
+          "duration": 3.8,
+          "text": "door.cin.c03.1"
+        },
+        {
+          "t": 4.6,
+          "duration": 4,
+          "text": "door.cin.c03.2"
+        },
+        {
+          "t": 9,
+          "duration": 4.6,
+          "text": "door.cin.c03.3"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.2,
+          "sound": "core:page"
+        },
+        {
+          "t": 8.9,
+          "sound": "door:palm_awaken"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 8.9,
+          "fx": "flash",
+          "color": "#ffd889",
+          "seconds": 0.9
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.setVar",
+      "var": "door.registerRead",
+      "value": true
+    },
+    {
+      "type": "core.setVar",
+      "var": "door.palmRevealed",
+      "value": true
+    },
+    {
+      "type": "core.completeQuest",
+      "quest": "DOOR_Q03_ARCHIVES"
+    }
+  ]
+}

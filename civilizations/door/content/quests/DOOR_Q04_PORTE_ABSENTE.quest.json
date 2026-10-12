@@ -1,0 +1,88 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "DOOR_Q04_PORTE_ABSENTE",
+  "title": "door.quest.DOOR_Q04_PORTE_ABSENTE.title",
+  "summary": "door.quest.DOOR_Q04_PORTE_ABSENTE.summary",
+  "kind": "main",
+  "order": 4,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "descendre",
+      "description": "door.quest.DOOR_Q04_PORTE_ABSENTE.descendre",
+      "objectives": [
+        {
+          "id": "descendre",
+          "text": "door.quest.DOOR_Q04_PORTE_ABSENTE.descendre.descendre",
+          "completeOn": {
+            "event": "scene.entered",
+            "where": {
+              "sceneId": "porte_absente"
+            }
+          },
+          "target": "passage_efface"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "couloir",
+      "description": "door.quest.DOOR_Q04_PORTE_ABSENTE.couloir",
+      "objectives": [
+        {
+          "id": "couloir",
+          "text": "door.quest.DOOR_Q04_PORTE_ABSENTE.couloir.couloir",
+          "completeOn": {
+            "event": "trigger.entered",
+            "where": {
+              "triggerId": "trig_fond_couloir"
+            }
+          },
+          "targetScene": "porte_absente"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "varen",
+      "description": "door.quest.DOOR_Q04_PORTE_ABSENTE.varen",
+      "objectives": [
+        {
+          "id": "varen",
+          "text": "door.quest.DOOR_Q04_PORTE_ABSENTE.varen.varen",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "door.finalChoice",
+            "op": "exists",
+            "value": true
+          },
+          "target": "varen"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "seuil",
+      "description": "door.quest.DOOR_Q04_PORTE_ABSENTE.seuil",
+      "objectives": [
+        {
+          "id": "ouvrir",
+          "text": "door.quest.DOOR_Q04_PORTE_ABSENTE.seuil.ouvrir"
+        },
+        {
+          "id": "fragment",
+          "text": "door.quest.DOOR_Q04_PORTE_ABSENTE.seuil.fragment",
+          "completeOn": {
+            "event": "item.acquired",
+            "where": {
+              "itemId": "door:fragment_seuil"
+            }
+          },
+          "target": "fragment_seuil"
+        }
+      ],
+      "completion": "all"
+    }
+  ]
+}

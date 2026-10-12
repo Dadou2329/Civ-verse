@@ -10,6 +10,7 @@ import {
   Mesh,
   StandardMaterial,
   TransformNode,
+  VertexBuffer,
   VertexData,
   type InstancedMesh,
   type Scene,
@@ -17,6 +18,8 @@ import {
 } from '@babylonjs/core';
 import type { ModelRegistry } from '../core/voxel/modelRegistry';
 import type { BuiltModel, ModelMeshArrays } from '../core/voxel/microModel';
+
+const INSTANCE_COLOR = VertexBuffer.ColorInstanceKind;
 
 interface SourcePart {
   name: string;
@@ -48,7 +51,7 @@ export class ModelInstance {
     this.brightness = k;
     for (const inst of this.instances) {
       if (inst.metadata?.layer === 'emissive') continue;
-      (inst.instancedBuffers.color as Color4).set(k, k, k, 1);
+      (inst.instancedBuffers[INSTANCE_COLOR] as Color4).set(k, k, k, 1);
     }
   }
 
@@ -108,7 +111,7 @@ export class ModelRenderer {
         i.parent = node;
         i.isPickable = false;
         i.metadata = { layer, entityModel: modelId };
-        i.instancedBuffers.color = new Color4(1, 1, 1, 1);
+        i.instancedBuffers[INSTANCE_COLOR] = new Color4(1, 1, 1, 1);
         if (layer === 'opaque') this.shadows?.addShadowCaster(i, false);
         if (layer === 'emissive') this.onEmissiveInstance?.(i, glow);
         inst.instances.push(i);
@@ -136,8 +139,10 @@ export class ModelRenderer {
         vd.applyToMesh(mesh, false);
         mesh.hasVertexAlpha = layer === 'transparent';
         mesh.material = layer === 'opaque' ? this.opaqueMaterial : layer === 'emissive' ? this.emissiveMaterial : this.transparentMaterial;
-        mesh.registerInstancedBuffer('color', 4);
-        mesh.instancedBuffers.color = new Color4(1, 1, 1, 1);
+        // Per-instance brightness: a dedicated kind ("instanceColor"), multiplied with the vertex
+        // colors by the shader. Registering a buffer named "color" would replace the vertex colors.
+        mesh.registerInstancedBuffer(INSTANCE_COLOR, 4);
+        mesh.instancedBuffers[INSTANCE_COLOR] = new Color4(1, 1, 1, 1);
         mesh.isVisible = false;
         mesh.isPickable = false;
         mesh.receiveShadows = layer !== 'emissive';

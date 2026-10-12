@@ -50,6 +50,7 @@ export type { Disposable } from '../engine/core/util/disposable';
 export type { JsonValue } from '../engine/core/util/json';
 export type { LocalCivState } from '../engine/core/save/saveFormat';
 export * as vec from '../engine/core/util/math';
+export type { Vec3 } from '../engine/core/util/math';
 export { ease, type EasingName } from '../engine/core/util/easing';
 export { hexToRgb, rgbToHex, mixRgb, shade, type RGB } from '../engine/core/util/color';
 export { Rng, hashString } from '../engine/core/util/rng';

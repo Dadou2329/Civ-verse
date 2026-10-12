@@ -1,0 +1,124 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C02_rang1",
+  "title": "C02 — Rang 1",
+  "duration": 12,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            48,
+            10.4,
+            43.5
+          ],
+          "target": [
+            48,
+            10.2,
+            50.5
+          ],
+          "fov": 58,
+          "cut": true
+        },
+        {
+          "t": 4,
+          "position": [
+            48,
+            10,
+            47.2
+          ],
+          "target": [
+            48,
+            10.6,
+            51
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 4.6,
+          "position": [
+            58,
+            28,
+            40
+          ],
+          "target": [
+            70,
+            21,
+            63
+          ],
+          "fov": 66,
+          "cut": true
+        },
+        {
+          "t": 11.5,
+          "position": [
+            80,
+            24.5,
+            52
+          ],
+          "target": [
+            57,
+            22,
+            67
+          ],
+          "ease": "inOutSine"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.4,
+          "duration": 3.8,
+          "text": "door.cin.c02.1"
+        },
+        {
+          "t": 5.2,
+          "duration": 5.6,
+          "text": "door.cin.c02.2"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 1.2,
+          "sound": "core:unlock",
+          "at": "porte_galerie"
+        },
+        {
+          "t": 4.6,
+          "music": "door:music.galerie"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 1.2,
+          "fx": "flash",
+          "color": "#f1d78a",
+          "seconds": 0.5
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.music",
+      "music": "door:music.faubourg",
+      "fade": 3
+    }
+  ]
+}

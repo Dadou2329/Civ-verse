@@ -1,0 +1,54 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "DOOR_Q00_REVEIL",
+  "title": "door.quest.DOOR_Q00_REVEIL.title",
+  "summary": "door.quest.DOOR_Q00_REVEIL.summary",
+  "kind": "main",
+  "order": 0,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "cellule",
+      "description": "door.quest.DOOR_Q00_REVEIL.cellule",
+      "objectives": [
+        {
+          "id": "sortir",
+          "text": "door.quest.DOOR_Q00_REVEIL.cellule.sortir",
+          "target": "cell_door"
+        },
+        {
+          "id": "plaque",
+          "text": "door.quest.DOOR_Q00_REVEIL.cellule.plaque",
+          "optional": true,
+          "completeWhen": {
+            "type": "core.var",
+            "var": "door.readCellPlaque",
+            "op": "==",
+            "value": true
+          },
+          "target": "cell_plaque"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "noe",
+      "description": "door.quest.DOOR_Q00_REVEIL.noe",
+      "objectives": [
+        {
+          "id": "noe",
+          "text": "door.quest.DOOR_Q00_REVEIL.noe.noe",
+          "target": "noe"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "DOOR_Q01_EMPREINTE"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "format": "civverse.rules",
+  "version": 1,
+  "settings": {
+    "door.keyImprint": {
+      "dial1": 2,
+      "dial2": 0,
+      "dial3": 4
+    },
+    "door.access": {
+      "permissionsKey": "KeyR"
+    }
+  }
+}

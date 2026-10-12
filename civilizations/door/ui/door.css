@@ -1,0 +1,301 @@
+/* Verrou — threshold plaque, refusal stamp, imprint dials, permission map. */
+
+.door-plaque {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.8rem 0.45rem 0.55rem;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(34, 28, 22, 0.86), rgba(20, 17, 14, 0.86));
+  border: 1px solid var(--civ-panel-border);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  font-family: var(--civ-font);
+  color: var(--civ-text);
+  pointer-events: none;
+  transform-origin: left center;
+}
+.door-plaque__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.door-plaque__label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--civ-text-dim);
+}
+.door-plaque strong {
+  font-family: var(--civ-title-font);
+  font-size: 1.02rem;
+  letter-spacing: 0.04em;
+}
+.door-plaque--r1 strong {
+  color: #f1d78a;
+}
+.door-plaque--r2 strong {
+  color: #a9cdf5;
+}
+.door-plaque__temp {
+  font-size: 0.75rem;
+  color: #a9cdf5;
+}
+.door-plaque__key {
+  margin-left: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--civ-text-dim);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  padding: 0 0.3rem;
+}
+.door-plaque.is-changing {
+  animation: door-rank-change 1.6s ease;
+}
+@keyframes door-rank-change {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(227, 184, 77, 0);
+  }
+  18% {
+    transform: scale(1.18) rotate(-2deg);
+    box-shadow: 0 0 34px rgba(241, 215, 138, 0.85);
+  }
+  40% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* Refusal stamp */
+.door-denied {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none !important;
+}
+.door-denied__stamp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem 1.6rem;
+  border: 4px double #c2412f;
+  border-radius: 8px;
+  color: #e8604d;
+  background: rgba(30, 10, 8, 0.55);
+  font-family: var(--civ-title-font);
+  transform: rotate(-6deg);
+  animation: door-stamp 1.8s ease forwards;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+.door-denied__stamp strong {
+  font-size: 2rem;
+  letter-spacing: 0.18em;
+}
+.door-denied__stamp span {
+  font-family: var(--civ-font);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+}
+@keyframes door-stamp {
+  0% {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1.8);
+  }
+  12% {
+    opacity: 1;
+    transform: rotate(-6deg) scale(0.96);
+  }
+  20% {
+    transform: rotate(-6deg) scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1);
+  }
+}
+
+/* Imprint workbench */
+.door-imprint {
+  width: min(760px, 94vw);
+  text-align: center;
+}
+.door-imprint__intro {
+  color: var(--civ-text-dim);
+}
+.door-imprint__dials {
+  display: flex;
+  justify-content: center;
+  gap: 1.4rem;
+  margin: 1.2rem 0 0.6rem;
+  flex-wrap: wrap;
+}
+.door-dial {
+  position: relative;
+  width: 168px;
+  padding: 0.6rem 0.4rem 0.5rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: radial-gradient(circle at 50% 38%, rgba(196, 156, 70, 0.22), rgba(20, 17, 14, 0.4) 70%);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.door-dial.is-selected {
+  border-color: var(--civ-accent);
+  box-shadow: 0 0 0 1px var(--civ-accent) inset;
+}
+.door-dial__face {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, #6b5636 0 30%, #3e3121 31% 64%, #2b2218 65%);
+  border: 3px solid #c49c46;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6);
+}
+.door-dial__face::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: calc(50% - 6px);
+  border: 6px solid transparent;
+  border-top-color: var(--civ-accent);
+}
+.door-dial__glyph {
+  position: absolute;
+  top: calc(50% - 15px);
+  left: calc(50% - 15px);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b9a581;
+  opacity: 0.55;
+  transition: transform 0.25s ease;
+}
+.door-dial__glyph.is-current {
+  color: #f6e3b0;
+  opacity: 1;
+}
+.door-dial__lamp {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.7rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3a3027;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.door-dial.is-set .door-dial__lamp {
+  background: #f1d78a;
+  box-shadow: 0 0 12px #f1d78a;
+}
+.door-dial__name {
+  margin-top: 0.4rem;
+  font-family: var(--civ-title-font);
+  letter-spacing: 0.08em;
+}
+.door-dial__buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.door-dial__buttons .cv-button {
+  min-width: 0;
+  padding: 0.2rem 0.8rem;
+}
+.door-imprint__hint {
+  font-style: italic;
+  color: var(--civ-text-dim);
+}
+.door-imprint__fail {
+  color: #e8604d;
+  animation: door-shake 0.35s ease;
+}
+.door-imprint__ok {
+  color: #f1d78a;
+  font-family: var(--civ-title-font);
+  letter-spacing: 0.06em;
+}
+.door-imprint.is-done .door-dial__face {
+  border-color: #f1d78a;
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.6),
+    0 0 26px rgba(241, 215, 138, 0.6);
+}
+.door-imprint__keys {
+  font-size: 0.8rem;
+}
+@keyframes door-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+/* Permission map */
+.door-perms__list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.door-perms__rank {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+.door-perms__rank > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.door-perms__rank span {
+  color: var(--civ-text-dim);
+  font-size: 0.92rem;
+}
+.door-perms__rank.is-locked {
+  opacity: 0.55;
+}
+.door-perms__rank.is-current {
+  border-color: var(--civ-accent);
+}
+.door-perms__state {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.door-perms__rank.is-granted .door-perms__state {
+  color: #8fd18a;
+}
+.door-perms__palm {
+  font-style: italic;
+  color: #f1d78a;
+}

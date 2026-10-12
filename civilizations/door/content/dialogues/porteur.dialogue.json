@@ -1,0 +1,14 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "porteur",
+  "start": "p1",
+  "nodes": [
+    {
+      "id": "p1",
+      "speaker": "porteur",
+      "text": "door.dlg.porteur.p1",
+      "end": true
+    }
+  ]
+}

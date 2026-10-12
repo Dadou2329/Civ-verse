@@ -85,11 +85,12 @@ export const pickupBehavior = defineBehavior({
     condition: prop.condition({ label: 'Disponible si' }),
     size: prop.vec3({ label: 'Zone de visée (m)', default: [0.6, 0.6, 0.6] }),
     offset: prop.vec3({ label: 'Décalage', default: [0, 0.3, 0] }),
+    hideOnTake: prop.boolean({ label: "Disparaît une fois pris (décocher pour un coffre, une armoire…)", default: true }),
   },
   state: { version: 1, initial: () => ({ taken: false }) },
   create(ctx) {
     pickBox(ctx);
-    if (ctx.state.taken) ctx.entity.visible = false;
+    if (ctx.state.taken && ctx.props.hideOnTake) ctx.entity.visible = false;
     return {
       onPropsChanged: () => pickBox(ctx),
       interaction: () => {
@@ -102,7 +103,7 @@ export const pickupBehavior = defineBehavior({
         ctx.state.taken = true;
         ctx.inventory.add(ctx.props.item, ctx.props.count);
         ctx.audio.play('core:pickup', { at: ctx.entity.id });
-        ctx.entity.visible = false;
+        if (ctx.props.hideOnTake) ctx.entity.visible = false;
         void ctx.logic.run(ctx.props.actions, { self: ctx.entity.id, origin: `ramassage ${ctx.entity.id}` });
       },
     };

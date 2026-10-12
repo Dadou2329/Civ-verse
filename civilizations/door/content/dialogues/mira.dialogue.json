@@ -1,0 +1,439 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "mira",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "door.metMira",
+              "op": "==",
+              "value": true
+            }
+          },
+          "next": "intro1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "door.rankAtLeast",
+                "rank": 1
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.miraAfterRank",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "rank1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q02_ELIAS",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "door.foundTransferTrace",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.registryPass",
+                  "op": "==",
+                  "value": true
+                }
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.evidence.ordre",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "reg1"
+        },
+        {
+          "condition": {
+            "type": "core.any",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q03_ARCHIVES",
+                "status": "active"
+              },
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q04_PORTE_ABSENTE",
+                "status": "active"
+              }
+            ]
+          },
+          "next": "archives"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q02_ELIAS",
+            "status": "active"
+          },
+          "next": "elias"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q01_EMPREINTE",
+                "status": "active"
+              },
+              {
+                "type": "door.imprintReady"
+              }
+            ]
+          },
+          "next": "ready"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q01_EMPREINTE",
+            "status": "active"
+          },
+          "next": "parts"
+        }
+      ],
+      "next": "idle"
+    },
+    {
+      "id": "intro1",
+      "speaker": "mira",
+      "text": "door.dlg.mira.intro1",
+      "choices": [
+        {
+          "id": "what",
+          "text": "door.dlg.mira.intro1.what",
+          "next": "intro2"
+        },
+        {
+          "id": "rank",
+          "text": "door.dlg.mira.intro1.rank",
+          "next": "intro2b"
+        }
+      ]
+    },
+    {
+      "id": "intro2",
+      "speaker": "mira",
+      "text": "door.dlg.mira.intro2",
+      "choices": [
+        {
+          "id": "rank",
+          "text": "door.dlg.mira.intro2.rank",
+          "next": "intro3"
+        }
+      ]
+    },
+    {
+      "id": "intro2b",
+      "speaker": "mira",
+      "text": "door.dlg.mira.intro2b",
+      "next": "intro3"
+    },
+    {
+      "id": "intro3",
+      "speaker": "mira",
+      "text": "door.dlg.mira.intro3",
+      "expression": "determined",
+      "next": "intro4"
+    },
+    {
+      "id": "intro4",
+      "speaker": "mira",
+      "text": "door.dlg.mira.intro4",
+      "animation": "point",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.metMira",
+          "value": true
+        },
+        {
+          "type": "core.completeObjective",
+          "quest": "DOOR_Q01_EMPREINTE",
+          "objective": "mira"
+        }
+      ],
+      "next": "intro5"
+    },
+    {
+      "id": "intro5",
+      "speaker": "mira",
+      "text": "door.dlg.mira.intro5",
+      "choices": [
+        {
+          "id": "why",
+          "text": "door.dlg.mira.intro5.why",
+          "next": "intro6"
+        },
+        {
+          "id": "ok",
+          "text": "door.dlg.mira.intro5.ok",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "intro6",
+      "speaker": "mira",
+      "text": "door.dlg.mira.intro6",
+      "expression": "sad",
+      "end": true
+    },
+    {
+      "id": "parts",
+      "speaker": "mira",
+      "text": "door.dlg.mira.parts",
+      "end": true
+    },
+    {
+      "id": "ready",
+      "speaker": "mira",
+      "text": "door.dlg.mira.ready",
+      "choices": [
+        {
+          "id": "engraving",
+          "text": "door.dlg.mira.ready.engraving",
+          "next": "ready2"
+        },
+        {
+          "id": "go",
+          "text": "door.dlg.mira.ready.go",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "ready2",
+      "speaker": "mira",
+      "text": "door.dlg.mira.ready2",
+      "end": true
+    },
+    {
+      "id": "rank1",
+      "speaker": "mira",
+      "text": "door.dlg.mira.rank1",
+      "animation": "nod",
+      "next": "rank1b"
+    },
+    {
+      "id": "rank1b",
+      "speaker": "mira",
+      "text": "door.dlg.mira.rank1b",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.miraAfterRank",
+          "value": true
+        },
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q02_ELIAS",
+            "status": "inactive"
+          },
+          "then": [
+            {
+              "type": "core.startQuest",
+              "quest": "DOOR_Q02_ELIAS"
+            }
+          ],
+          "else": []
+        }
+      ],
+      "next": "after_rank"
+    },
+    {
+      "id": "after_rank",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "DOOR_Q02_ELIAS",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "door.foundTransferTrace",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.registryPass",
+                  "op": "==",
+                  "value": true
+                }
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.evidence.ordre",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "reg1"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "DOOR_Q02_ELIAS",
+            "status": "active"
+          },
+          "next": "elias"
+        }
+      ]
+    },
+    {
+      "id": "elias",
+      "speaker": "mira",
+      "text": "door.dlg.mira.elias",
+      "end": true
+    },
+    {
+      "id": "reg1",
+      "speaker": "mira",
+      "text": "door.dlg.mira.reg1",
+      "choices": [
+        {
+          "id": "testify",
+          "text": "door.dlg.mira.reg1.testify",
+          "next": "testify",
+          "condition": {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "door.miraWillTestify",
+              "op": "==",
+              "value": true
+            }
+          }
+        },
+        {
+          "id": "forge",
+          "text": "door.dlg.mira.reg1.forge",
+          "next": "forge",
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.hasItem",
+                  "item": "door:rapport_falsifie",
+                  "count": 1
+                }
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "door.usedForgedReport",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "sneak",
+          "text": "door.dlg.mira.reg1.sneak",
+          "next": "sneak"
+        }
+      ]
+    },
+    {
+      "id": "testify",
+      "speaker": "mira",
+      "text": "door.dlg.mira.testify",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "door.miraWillTestify",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "forge",
+      "speaker": "mira",
+      "text": "door.dlg.mira.forge",
+      "animation": "interact",
+      "actions": [
+        {
+          "type": "core.giveItem",
+          "item": "door:rapport_falsifie",
+          "count": 1
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "sneak",
+      "speaker": "mira",
+      "text": "door.dlg.mira.sneak",
+      "end": true
+    },
+    {
+      "id": "archives",
+      "speaker": "mira",
+      "text": "door.dlg.mira.archives",
+      "end": true
+    },
+    {
+      "id": "idle",
+      "speaker": "mira",
+      "text": "door.dlg.mira.idle",
+      "end": true
+    }
+  ]
+}

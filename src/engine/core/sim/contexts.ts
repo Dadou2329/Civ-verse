@@ -192,6 +192,7 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
     despawn: (id) => session.despawnEntity(id),
     getBlock: (x, y, z) => session.world?.volume.get(x, y, z) ?? 'core:air',
     setBlock: (x, y, z, id) => session.world?.setBlock(x, y, z, id),
+    fillBlocks: (from, to, id) => session.world?.fillBlocks(from, to, id),
     raycast(origin, dir, maxDistance): RaycastResult | null {
       const w = session.world;
       if (!w) return null;

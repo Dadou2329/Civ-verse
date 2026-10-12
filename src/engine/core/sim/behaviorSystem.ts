@@ -6,7 +6,7 @@ import type { GameSession } from './session';
 import type { RuntimeEntity, ComponentRecord } from '../world/entity';
 import type { EntityState } from '../save/saveFormat';
 import type { InteractionOffer } from './api';
-import { DisposableScope } from '../util/disposable';
+import type { DisposableScope } from '../util/disposable';
 import { normalizeProps } from '../props/props';
 import { migrateVersioned } from '../save/saveFormat';
 import { createBehaviorContext, dropMotor, motorOf } from './contexts';
@@ -151,6 +151,7 @@ export class BehaviorSystem {
       record.props = { ...record.baseProps, ...record.overrides };
     }
     e.revision++;
+    e.propsRevision++;
     try {
       record.instance?.onPropsChanged?.();
     } catch (err) {

@@ -13,7 +13,7 @@ import { ColliderSet } from '../physics/colliders';
 import { CollisionWorld } from '../physics/collision';
 import { rotatedBounds, type AABB } from '../physics/aabb';
 import { volumeFromDoc } from './sceneVoxels';
-import { RuntimeEntity, type ColliderPart } from './entity';
+import type { RuntimeEntity, ColliderPart } from './entity';
 import type { Vec3 } from '../util/math';
 import { hexToRgb } from '../util/color';
 
@@ -136,6 +136,19 @@ export class SceneWorld {
     if (!this.volume.inBounds(x, y, z)) return;
     const value = id === AIR_ID ? null : id;
     if (this.volume.set(x, y, z, value)) this.voxelEdits.set(this.volume.index(x, y, z), value);
+  }
+
+  /** Batched runtime edit of a box (inclusive corners). */
+  fillBlocks(from: readonly [number, number, number], to: readonly [number, number, number], id: string | null): void {
+    const x0 = Math.min(from[0], to[0]);
+    const x1 = Math.max(from[0], to[0]);
+    const y0 = Math.min(from[1], to[1]);
+    const y1 = Math.max(from[1], to[1]);
+    const z0 = Math.min(from[2], to[2]);
+    const z1 = Math.max(from[2], to[2]);
+    this.volume.batch(() => {
+      for (let y = y0; y <= y1; y++) for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++) this.setBlock(x, y, z, id);
+    });
   }
 
   addEntity(e: RuntimeEntity): void {

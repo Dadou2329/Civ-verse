@@ -61,6 +61,8 @@ export class RuntimeEntity {
   };
   /** Incremented when transform/visibility changes (view sync). */
   revision = 0;
+  /** Incremented when a component prop is overridden at runtime (visuals are rebuilt). */
+  propsRevision = 0;
 
   constructor(doc: EntityDoc, spawned = false, persistent = true) {
     this.id = doc.id;

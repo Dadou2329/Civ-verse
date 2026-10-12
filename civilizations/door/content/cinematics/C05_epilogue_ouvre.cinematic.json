@@ -1,0 +1,267 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "C05_epilogue_ouvre",
+  "title": "C05 — Épilogue (ouverture immédiate)",
+  "duration": 30,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            47,
+            16,
+            13
+          ],
+          "target": [
+            48,
+            9,
+            30
+          ],
+          "fov": 60
+        },
+        {
+          "t": 10,
+          "position": [
+            44,
+            11.2,
+            22.5
+          ],
+          "target": [
+            48,
+            9.4,
+            31
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 15,
+          "position": [
+            52.5,
+            10.4,
+            27
+          ],
+          "target": [
+            50.5,
+            9.4,
+            31.5
+          ],
+          "ease": "inOutSine",
+          "fov": 52
+        },
+        {
+          "t": 20.5,
+          "position": [
+            41.2,
+            10,
+            26.4
+          ],
+          "target": [
+            43.5,
+            9.3,
+            29.5
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 25,
+          "position": [
+            48,
+            17,
+            18
+          ],
+          "target": [
+            48,
+            14,
+            50
+          ],
+          "ease": "inOutSine",
+          "fov": 62
+        },
+        {
+          "t": 30,
+          "position": [
+            48,
+            22,
+            14
+          ],
+          "target": [
+            48,
+            20,
+            60
+          ],
+          "ease": "inOutSine"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 2.5,
+          "duration": 3.6,
+          "speaker": "door.npc.washer",
+          "text": "door.cin.c05.rumor1"
+        },
+        {
+          "t": 6.4,
+          "duration": 3.8,
+          "speaker": "door.npc.sweeper",
+          "text": "door.cin.c05.rumor2"
+        },
+        {
+          "t": 10.5,
+          "duration": 4.4,
+          "speaker": "door.npc.mira",
+          "text": "door.cin.c05.mira.open"
+        },
+        {
+          "t": 15.2,
+          "duration": 4.8,
+          "speaker": "door.npc.varen",
+          "text": "door.cin.c05.varen.open"
+        },
+        {
+          "t": 20.4,
+          "duration": 4.2,
+          "speaker": "door.npc.noe",
+          "text": "door.cin.c05.noe"
+        },
+        {
+          "t": 25,
+          "duration": 4.6,
+          "text": "door.cin.c05.final"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 2.5
+        },
+        {
+          "t": 28,
+          "fx": "fade",
+          "from": 0,
+          "to": 1,
+          "seconds": 2
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0,
+          "music": "door:music.fin"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 0,
+          "essential": true,
+          "actions": [
+            {
+              "type": "door.setRank",
+              "rank": 1,
+              "silent": true
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "mira",
+              "target": "marque_mira_epilogue",
+              "yaw": 200
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "noe",
+              "target": "marque_noe_epilogue",
+              "yaw": 120
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "varen",
+              "target": "marque_varen_epilogue",
+              "yaw": 180
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "varen",
+      "keys": [
+        {
+          "t": 15.5,
+          "animation": "kneel"
+        },
+        {
+          "t": 17.5,
+          "animation": "idle",
+          "lookAt": "player"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "mira",
+      "keys": [
+        {
+          "t": 10.6,
+          "lookAt": "player",
+          "animation": "talk"
+        },
+        {
+          "t": 15,
+          "animation": "idle"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "noe",
+      "keys": [
+        {
+          "t": 20.5,
+          "lookAt": "player",
+          "animation": "wave"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.showEndScreen",
+      "title": "door.end.title",
+      "subtitle": "door.end.subtitle",
+      "lines": [
+        "door.end.line1",
+        "door.end.line2"
+      ]
+    },
+    {
+      "type": "core.setVar",
+      "var": "door.finished",
+      "value": true
+    },
+    {
+      "type": "core.finishCivilization"
+    }
+  ]
+}
