@@ -1,9 +1,10 @@
 /**
- * Small building kit for Verrou's seed: houses, railings and the usual entity shapes.
- * Seeds are development tools (run with `npm run civ -- seed door`); the scene JSON they
- * produce is then edited in Civilization Studio.
+ * Building kit for world seeds: houses (walls, windows, doors, roofs), railings and the usual
+ * entity shapes (models, lights, signs, zones, characters). Shared by every civilization's seed.
  */
-import { type SceneBuilder, type VoxelVolume, fillBox, clearBox, gableRoof, type Vec3Tuple } from '@sdk/build';
+import type { SceneBuilder, Vec3Tuple } from './build';
+import type { VoxelVolume } from '../engine/core/voxel/volume';
+import { fillBox, clearBox, gableRoof } from '../engine/core/voxel/construct';
 
 export type Side = 'n' | 's' | 'e' | 'w';
 

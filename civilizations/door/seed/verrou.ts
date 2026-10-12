@@ -2,9 +2,8 @@
  * Seed of the scene "verrou": the vertical city of Verrou (Faubourg Bas, Galerie des Métiers,
  * Archives du Haut). Generates the first version of content/scenes/verrou.scene.json.
  */
-import { SceneBuilder, fillBox, clearBox, stairs, cylinder, cone, pyramidRoof, scatter, type SceneDoc, type EnvironmentDoc, type Vec3Tuple } from '@sdk/build';
+import { SceneBuilder, fillBox, clearBox, stairs, cylinder, cone, pyramidRoof, scatter, house, doorSpot, railing, deco, light, sign, zone, npc, type SceneDoc, type EnvironmentDoc, type Vec3Tuple, type HouseStyle, type HouseOptions } from '@sdk/build';
 import { SIZE, G0, G1, G2, L, at } from './layout.ts';
-import { house, doorSpot, railing, deco, light, sign, zone, npc, type HouseStyle, type HouseOptions } from './kit.ts';
 
 export const VERROU_ENV: EnvironmentDoc = {
   sky: { top: '#34435a', horizon: '#c4a07f', bottom: '#2a2b30', stars: 0.12, sunDisc: true, discColor: '#ffd9a6' },

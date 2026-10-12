@@ -2,9 +2,8 @@
  * Seed of the scene "porte_absente": the erased corridor under the Archives and the starry void
  * behind the absent door.
  */
-import { SceneBuilder, fillBox, clearBox, stairs, type SceneDoc, type EnvironmentDoc } from '@sdk/build';
+import { SceneBuilder, fillBox, clearBox, stairs, light, zone, type SceneDoc, type EnvironmentDoc } from '@sdk/build';
 import { A, at } from './layout.ts';
-import { light, zone } from './kit.ts';
 
 export const ABSENTE_ENV: EnvironmentDoc = {
   sky: { top: '#05040a', horizon: '#120c22', bottom: '#020205', stars: 1, sunDisc: false },
