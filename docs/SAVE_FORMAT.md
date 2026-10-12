@@ -356,6 +356,8 @@ The values come from `GameSession.snapshotCivState()`.
 | `player.yaw`, `player.pitch` | Look angles in radians (`PlayerController`). Entity yaws in scene states are in degrees. |
 | `player.abilities` | Granted ability ids. |
 | `player.title` | Localization key set with `ctx.player.identity.setTitle()` (action `core.setPlayerTitle`), or `null`. |
+| `player.equipment` | Optional: `{ hotbar: (itemId \| null)[6], selected, worn: { slot: itemId } }` (`EquipmentSystem.snapshot`). Items no longer in the inventory are dropped on load; abilities granted only by worn items are not in `player.abilities` and come back with the item. |
+| `player.combat` | Optional, civilizations with combat only: `{ health }`, restored after the civilization's `enablePlayer` (clamped to 1…max). |
 | `vars` | `VariableStore.snapshot(civId)`: only the variables named `<civId>.*`. |
 | `inventory` | Item stacks in insertion order. |
 | `quests.states` | One `QuestState` per quest that has state. `done` holds `"<stageId>/<objectiveId>"`; objectives completed before a quest starts are kept in an `inactive` state. `history` holds localization keys, translated when displayed. |

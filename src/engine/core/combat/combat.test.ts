@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { MemoryContentProvider, type MemoryPack } from '../packs/memoryProvider';
 import { definePack } from '../packs/pack';
-import { defineAbility, defineMechanic } from '../packs/definitions';
+import { defineAbility, defineMechanic, defineMusic } from '../packs/definitions';
 import { VoxelVolume } from '../voxel/volume';
 import { fillBox } from '../voxel/construct';
 import { volumeToDoc } from '../world/sceneVoxels';
@@ -36,7 +36,7 @@ const fightSetup = defineMechanic({
   id: 'fight.setup',
   label: 'Combat de test',
   setup(ctx) {
-    ctx.combat.enablePlayer({ maxHealth: 100, regenDelay: 4, regenRate: 10, respawnDelay: 2 });
+    ctx.combat.enablePlayer({ maxHealth: 100, regenDelay: 4, regenRate: 10, respawnDelay: 2, music: 'fight:combat' });
     ctx.equipment.guardSwitch((change) => {
       if (change.to === 'fight:interdit') return { allow: false, reason: 'Trop chaud pour le prendre.' };
       if (change.to === 'fight:masque_outil') return { drawTime: 1.2 };
@@ -53,6 +53,10 @@ const elan = defineAbility({
   icon: { shape: 'feather', color: '#88ccff' },
   activate: () => true,
 });
+
+const music = (id: string) =>
+  defineMusic({ id, label: id, recipe: { bpm: 120, loop: true, tracks: [{ instrument: { wave: 'square', attack: 0.01, decay: 0.2, sustain: 0.3, release: 0.2, gain: 0.05 }, notes: 'C4:1 G4:1' }] } });
+const musics = { combat: music('fight:combat'), boss: music('fight:boss') };
 
 function arenaScene() {
   const v = new VoxelVolume(48, 16, 48);
@@ -97,6 +101,20 @@ function arenaScene() {
       { id: 'pompe', position: [6.5, 1, 8.5], components: { 'core.toolTarget': { tool: 'cle', holdSeconds: 1, label: 'fight.repair', onUse: [{ type: 'core.setVar', var: 'fight.repaired', value: true }] } } },
       { id: 'arene_auto', position: [20.5, 1, 18.5], components: { 'core.encounter': { startOn: 'manual', waves: [{ enemies: ['automate'], delay: 0 }] } } },
       { id: 'repere', position: [12.5, 1, 12.5], rotation: [0, 90, 0], components: { 'core.checkpoint': { size: [2, 3, 2] } } },
+      {
+        id: 'contremaitre',
+        position: [40.5, 1, 8.5],
+        components: {
+          'core.health': { max: 60 },
+          'core.combatant': { engageOn: 'manual', speed: 0, attacks: [{ id: 'coup', kind: 'melee', range: 2, windup: 3, damage: 1 }] },
+          'core.boss': {
+            name: 'fight.boss',
+            title: 'fight.bossTitle',
+            music: 'fight:boss',
+            phases: [{ at: 0.5, shield: 1, actions: [{ type: 'core.setVar', var: 'fight.phase2', value: true }] }],
+          },
+        },
+      },
     ],
   };
 }
@@ -152,7 +170,7 @@ function fightPack(): MemoryPack {
     module: definePack({
       modules: {
         './mechanics/blocks.ts': { blocks: [{ __kind: 'block', id: 'fight:sol', label: 'Sol', textures: { all: { gen: 'stone', colors: ['#777777'] } } }] },
-        './mechanics/fight.ts': { fightSetup, elan },
+        './mechanics/fight.ts': { fightSetup, elan, ...musics },
       },
     }),
     files: {
@@ -171,6 +189,8 @@ function fightPack(): MemoryPack {
         'fight.item.masque': 'Masque',
         'fight.item.desc': 'Un objet de test.',
         'fight.ability.elan': 'Élan',
+        'fight.boss': 'Le Contremaître',
+        'fight.bossTitle': 'Gardien de l’atelier',
         'fight.ability.elan.desc': 'Un bond en avant.',
       },
     },
@@ -410,6 +430,50 @@ describe('combat : adversaires, garde et parade', () => {
     session.combat.spawnWave({ center: { x: 37.5, y: 1, z: 40.9 }, speed: 8, maxRadius: 6, damage: 20, knockback: 0 });
     await advance(session, 0.8);
     expect(session.combat.player.health).toBe(80);
+  });
+});
+
+describe('combat : boss et musique', () => {
+  it('affiche la barre du boss, change de phase sous le seuil (protection, actions) et la retire après la défaite', async () => {
+    const session = await start();
+    const seen = events(session, ['combat.bossPhase']);
+    session.player.teleport({ x: 40.5, y: 1, z: 4.5 });
+    session.presentation.clearHistory();
+    session.combat.combatantOf('contremaitre')!.engage();
+    await advance(session, 0.1);
+    // The boss music wins over the generic combat music, whatever the order they start in.
+    expect(session.presentation.currentMusic).toBe('fight:boss');
+    expect(session.combat.bossBar).toMatchObject({ entityId: 'contremaitre', name: 'Le Contremaître', title: 'Gardien de l’atelier', health: 60, max: 60, phase: 0 });
+    session.combat.damage('contremaitre', { amount: 35, source: 'player' });
+    await advance(session, 0.05);
+    expect(seen.map((e) => e.payload.phase)).toEqual([1]);
+    expect(session.vars.get('fight.phase2')).toBe(true);
+    // Shielded while the phase changes.
+    expect(session.combat.damage('contremaitre', { amount: 5, source: 'player' }).outcome).toBe('immune');
+    await advance(session, 1.1);
+    expect(session.combat.damage('contremaitre', { amount: 50, source: 'player' }).outcome).toBe('defeated');
+    await advance(session, 0.1);
+    expect(session.combat.bossBar?.health).toBe(0);
+    await advance(session, 1.6);
+    expect(session.combat.bossBar).toBe(null);
+  });
+
+  it('joue la musique de combat pendant l’affrontement puis revient à la musique d’avant', async () => {
+    const session = await start();
+    const musics = () => session.presentation.history().filter((r) => r.type === 'music').map((r) => (r as { id: string | null }).id);
+    session.presentation.clearHistory();
+    session.player.teleport({ x: 20.5, y: 1, z: 18.8 });
+    session.combat.combatantOf('automate')!.engage();
+    await advance(session, 0.2);
+    expect(session.combat.inCombat).toBe(true);
+    expect(musics()).toEqual(['fight:combat']);
+    session.combat.combatantOf('automate')!.disengage();
+    // Calm comes back a few seconds after the last blow (no music flip-flop).
+    await advance(session, 2);
+    expect(session.combat.inCombat).toBe(true);
+    await advance(session, 2.5);
+    expect(session.combat.inCombat).toBe(false);
+    expect(musics()).toEqual(['fight:combat', null]);
   });
 });
 

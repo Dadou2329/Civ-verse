@@ -389,6 +389,7 @@ events are `Record<string, unknown>` in TypeScript.
 |---|---|---|
 | `defineItem` | `id`, `name`, `description` (localization keys), `icon` (`IconSpec`), `category` (`'key' \| 'quest' \| 'document' \| 'tool' \| 'consumable' \| 'equipment' \| 'collectible' \| 'misc'`), `stackable?`, `maxStack?`, `questItem?`, `tags?`, `actions?` (`{ id, label, condition?, actions }[]`), `slot?` | Door and Memory declare their items in `content/items.json` instead (same shape, loaded by `loadPack`). |
 | `defineAbility` | `id`, `name`, `description` (keys), `key` (`KeyboardEvent.code`), `icon`, `cooldown?`, `autoGrant?`, `canActivate?(ctx)`, `activate(ctx)` (returns `false` when nothing happened: no cooldown) | Activated by `GameSession.handleKey` for granted abilities; emits `ability.used`. Not used by Door or Memory. |
+| `defineItemUse` | `id`, `label`, `category?`, `description?`, `props`, `mode` (`'press' \| 'hold' \| 'charge'`), `hint?` (key), `cooldown?(props)`, `aim?(use)`, `start?(use)`, `update?(use, dt)`, `stop?(use)` | What a mouse button does with an item in hand; referenced by `held.primary` / `held.secondary`. See [COMBAT_AND_EQUIPMENT.md](COMBAT_AND_EQUIPMENT.md). |
 | `defineBlock` | `BlockDef` (`src/engine/core/voxel/blocks.ts`) | e.g. `civilizations/door/assets/blocks.ts`. |
 | `defineModel` | `id`, `label`, `category?`, `build`, model options | e.g. `civilizations/memory/assets/models.ts`. |
 | `defineSound` | `id`, `label`, `category` (`'sfx' \| 'ui' \| 'ambience' \| 'voice'`), `recipe` | Procedural recipes, e.g. `civilizations/door/assets/sounds.ts`. |
@@ -670,7 +671,9 @@ and `fillBlocks(from, to, blockId | null)` (saved as voxel edits); `raycast(orig
 `moveTo(target, opts?)` (resolves `true` on arrival and emits `npc.arrived`), `stop()`, `moving`,
 `playAnimation(name, opts?)`, `setExpression(expression)`, `say(textOrKey, seconds?)`,
 `setCollider(part, box | null, opts?)`, `setLights(lights)`, `emit(event, payload?)` (adds
-`entityId`).
+`entityId`), `steer(direction | null, speed?)` (walks this frame without pathfinding; cancels a
+`moveTo`), `push(velocity)` (impulse), `setViewFlag(key, value)` / `viewFlag(key)` (presentation
+flags read by visuals, not saved).
 
 `setProp` is how a behavior changes what another component shows. From
 `civilizations/memory/mechanics/recollection.ts`:
@@ -688,8 +691,14 @@ resolves to an entity of the current scene, throws when missing); `setLook(yaw, 
 `addMovementModifier(mod)` (`MovementModifier`: `id`, `priority?`, `modifyParams?`,
 `modifyVelocity?`, `canJump?`, `onJump?`, `onLand?`); `setBaseMovement(patch)`; `abilities`
 (`grant` throws for an ability the civilization does not define, `revoke`, `has`, `list`,
-`cooldown`); `identity` (`title`, `setTitle(locKey | null)`); `box()`. Base movement, modifiers,
-locks, abilities and title are reset at unload (`PlayerController.resetCivilizationState`).
+`cooldown`); `identity` (`title`, `setTitle(locKey | null)`); `box()`; `forceMove(velocity,
+seconds, { gravity? })`, `forcedMoving`, `cancelForcedMove()` (dashes, grapple pulls: input is
+ignored while it lasts); `impulse(velocity)`. Base movement, modifiers, locks, abilities, title and
+forced moves are reset at unload (`PlayerController.resetCivilizationState`).
+
+`ctx.equipment` (hotbar, item in hand, worn items, item uses) and `ctx.combat` (player health,
+guard, dodge, damage, projectiles, checkpoints, combat music) are described in
+[COMBAT_AND_EQUIPMENT.md](COMBAT_AND_EQUIPMENT.md).
 
 ### 7.4 Inventory (`ctx.inventory`)
 
@@ -1168,6 +1177,7 @@ has elapsed.
 | Persistent spawned entities, removed scene entities, voxel edits | `scenes[sceneId].spawned`, `removed`, `voxelEdits` | — |
 | Variables of the civilization | `vars` | — |
 | Inventory, quests, dialogue history, fired `once` rules, player state | `inventory`, `quests`, `dialogue`, `rulesFired`, `player` | — |
+| Hotbar, item in hand, worn items; player health | `player.equipment`, `player.combat` (optional) | — |
 | Whole local state | `stateVersion` (manifest) | `definePack({ migrations })`; after each step the engine sets `stateVersion` to n + 1 itself; a missing step, or a save from a newer `stateVersion`, aborts the load with an error. |
 
 Not saved: `ctx.ui.store`, closures and local variables of `setup`/`create`, non-persistent spawned
@@ -1269,7 +1279,7 @@ Verified against the current code:
   `useVar`/`useUiStore` values instead.
 - **`useT()`** does not subscribe to locale changes (its comment says it re-renders on locale
   change). French is the only locale shipped.
-- **`VisualEntity.flags`** has no writer in the SDK: no context API sets an entity's view flags.
+- **`VisualEntity.flags`** are written by behaviors with `entity.setViewFlag` and are not saved.
 - **Input labels** given to `ctx.input.bind` are stored but not displayed, and civilization keys
   cannot be rebound in the game settings.
 - **Event payload types**: typed only for `CivEventMap` names; packs emit untyped payloads.

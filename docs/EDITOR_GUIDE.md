@@ -801,7 +801,16 @@ item on the right.
 - « Identifiant » (free text; references elsewhere are not updated), « Nom », « Description »,
   « Catégorie » (« Clé », « Objet de quête », « Document », « Outil », « Consommable »,
   « Équipement », « À collectionner », « Divers »), « Icône » (« Forme », « Couleur », « Accent »,
-  « Lumineux »), « Objet de quête (ne se jette pas) », « Empilable », « Pile maximale », « Étiquettes ».
+  « Lumineux »), « Objet de quête (ne se jette pas) », « Empilable », « Pile maximale », « Étiquettes »,
+  « Emplacement où il se porte » (a worn item: « masque », « gants »…) and « Capacités accordées
+  tant qu’il est porté ».
+- « En main »: the box « Se tient en main (barre d’objets, clics de la souris) » makes the item
+  holdable; then « Modèle en main », « Position à l’écran (droite, haut, avant) », « Rotation
+  (degrés) », « Échelle », « Temps pour le sortir (s) », and one block per mouse button
+  (« ＋ Que fait le clic gauche ? », « ＋ Que fait le clic droit ? ») listing the item uses of the
+  engine and the pack (« Frapper », « Parer », « Utiliser l’outil sur une cible », « Tirer /
+  lancer », « Exécuter des actions »…) with their fields. See
+  [COMBAT_AND_EQUIPMENT.md](COMBAT_AND_EQUIPMENT.md).
 - « Supprimer l’objet ». Without items: « Aucun objet. ».
 
 ### 7.6 Characters editor

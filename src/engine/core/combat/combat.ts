@@ -283,7 +283,7 @@ export class CombatSystem {
   private nextId = 1;
   private engagedUntil = new Map<string, number>();
   private calmTimer = 0;
-  private musicStack: { token: number; id: string }[] = [];
+  private musicStack: { token: number; id: string; priority: number }[] = [];
   private musicToken = 0;
   private musicBefore: string | null | undefined = undefined;
   private combatMusicToken: number | null = null;
@@ -897,34 +897,45 @@ export class CombatSystem {
   private setInCombat(v: boolean): void {
     this.inCombat = v;
     this.session.bus.emit('combat.engaged', { engaged: v });
-    if (v && this.combatMusic && this.combatMusicToken === null) this.combatMusicToken = this.pushMusic(this.combatMusic);
+    // The generic combat music yields to encounter and boss musics.
+    if (v && this.combatMusic && this.combatMusicToken === null) this.combatMusicToken = this.pushMusic(this.combatMusic, 0);
     if (!v && this.combatMusicToken !== null) {
       this.popMusic(this.combatMusicToken);
       this.combatMusicToken = null;
     }
   }
 
-  /** Plays a music over the current one until `popMusic` (the latest pushed wins). */
-  pushMusic(id: string): number {
+  private topMusic(): string | null {
+    return this.musicStack[this.musicStack.length - 1]?.id ?? null;
+  }
+
+  /**
+   * Plays a music over the current one until `popMusic`. The highest priority wins (combat 0,
+   * encounters 1, bosses 2), then the latest pushed.
+   */
+  pushMusic(id: string, priority = 1): number {
     if (this.musicBefore === undefined) this.musicBefore = this.session.presentation.currentMusic;
+    const before = this.topMusic();
     const token = ++this.musicToken;
-    this.musicStack.push({ token, id });
-    this.session.presentation.emit({ type: 'music', id, fade: 1.2 });
+    this.musicStack.push({ token, id, priority });
+    this.musicStack.sort((a, b) => a.priority - b.priority || a.token - b.token);
+    const top = this.topMusic();
+    if (top !== before) this.session.presentation.emit({ type: 'music', id: top, fade: 1.2 });
     return token;
   }
 
   popMusic(token: number): void {
     const i = this.musicStack.findIndex((m) => m.token === token);
     if (i < 0) return;
-    const wasTop = i === this.musicStack.length - 1;
+    const before = this.topMusic();
     this.musicStack.splice(i, 1);
-    if (!wasTop) return;
-    const next = this.musicStack[this.musicStack.length - 1];
-    if (next) this.session.presentation.emit({ type: 'music', id: next.id, fade: 1.5 });
-    else {
+    if (this.musicStack.length === 0) {
       this.session.presentation.emit({ type: 'music', id: this.musicBefore ?? null, fade: 2.5 });
       this.musicBefore = undefined;
+      return;
     }
+    const top = this.topMusic();
+    if (top !== before) this.session.presentation.emit({ type: 'music', id: top, fade: 1.5 });
   }
 
   // -------------------------------------------------------------------------------------------

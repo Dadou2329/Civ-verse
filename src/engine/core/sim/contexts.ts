@@ -474,8 +474,8 @@ export function createCivContext(session: GameSession, civ: ActiveCiv, scope: Di
     hostilesNear: (point, radius, toward) => cb.hostilesNear(point, radius, toward).map((h) => session.entityApi(h.entity.id)!),
     lineOfSight: (a, b) => cb.lineOfSight(a, b),
     reportEngaged: (id) => cb.reportEngaged(id),
-    pushMusic(id) {
-      const token = cb.pushMusic(id);
+    pushMusic(id, priority) {
+      const token = cb.pushMusic(id, priority);
       const d = scope.add(toDisposable(() => cb.popMusic(token)));
       return () => d.dispose();
     },

@@ -460,8 +460,11 @@ export interface CombatApi {
   lineOfSight(from: Vec3, to: Vec3): boolean;
   /** Declares that an entity fights the player this frame (combat music, regeneration). */
   reportEngaged(entityId: string): void;
-  /** Plays a music over the current one until the returned function is called. */
-  pushMusic(musicId: string): () => void;
+  /**
+   * Plays a music over the current one until the returned function is called. The highest
+   * priority wins: 0 generic combat music, 1 encounters (default), 2 bosses.
+   */
+  pushMusic(musicId: string, priority?: number): () => void;
   /** Boss health bar shown at the top of the screen (null hides it). */
   setBossBar(bar: { entityId: string; name: string; title?: string; health: number; max: number; phase?: number } | null): void;
 }

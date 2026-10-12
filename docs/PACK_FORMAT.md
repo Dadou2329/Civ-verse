@@ -720,7 +720,10 @@ Both civilizations keep one `main` file plus one file for their second scene
 `{ "format": "civverse.items", "version": 1, "items": [...] }`. Item: `id`, `name`, `description`
 (keys), `icon { shape, color, accent?, glow? }`, `category` (`key`, `quest`, `document`, `tool`,
 `consumable`, `equipment`, `collectible`, `misc`), `stackable?`, `maxStack?`, `questItem?`,
-`tags?`, `slot?`, `actions? [{ id, label (key), condition?, actions }]`. Icon shapes
+`tags?`, `slot?` (worn there), `grants?` (abilities while worn), `held?` (holdable: model,
+placement, draw time and the uses of the two mouse buttons, see
+[COMBAT_AND_EQUIPMENT.md](COMBAT_AND_EQUIPMENT.md)), `actions? [{ id, label (key), condition?,
+actions }]`. Icon shapes
 (`ICON_SHAPES` in `src/engine/core/inventory/items.ts`): `key`, `document`, `scroll`, `letter`,
 `plaque`, `shard`, `gem`, `coin`, `gear`, `flask`, `book`, `fragment`, `box`, `ring`, `eye`,
 `hand`, `note`, `bell`, `cup`, `kite`, `dial`, `ingot`, `spring`, `feather`, `star`, `circle`.
@@ -749,9 +752,11 @@ Items of `items.json` are added to those created with `defineItem`. From Door:
 short, long, bun, ponytail, curly, bald, braids, mohawk, swept, bob; color }`, `face { brows?,
 beard?, mustache?, freckles?, blush?, scar?, wrinkles? }`, `outfit { style: tunic, coat, robe,
 dress, vest, uniform, rags, shirt; top, bottom, shoes, accent, trim? }`, `accessories [{ type,
-color, accent? }]` (types: `hat`, `cap`, `hood`, `goggles`, `glasses`, `scarf`, `satchel`, `cape`,
+color, accent?, pattern? }]` (types: `hat`, `cap`, `hood`, `goggles`, `glasses`, `scarf`, `satchel`, `cape`,
 `plaque`, `apron`, `badge`, `gloves`, `pendant`, `helmet`, `epaulettes`, `belt`, `bandana`,
-`flower`, `veil`, `keyring`), `idle` (`calm` default, `nervous`, `proud`, `tired`, `playful`),
+`flower`, `veil`, `keyring`, `mask` (whole face), `halfmask` (eyes and nose); `pattern` paints a
+mask: `plain`, `ember`, `threads`, `rivets`, `lens`, `ornate`, `mirror` (no eye holes), `split`),
+`idle` (`calm` default, `nervous`, `proud`, `tired`, `playful`),
 `voicePitch` (0.5..2, default 1; stored but not used: dialogues have no voice, only subtitles).
 Appearances are looked up in the civilization first, then in every loaded pack
 (`GameSession.characterDoc`), so `core:citizen_a` is usable everywhere. The renderer draws a

@@ -12,6 +12,14 @@ played from the first cinematic to the end screen, on every branch, and this is 
 automatically by headless playthroughs. All ten acceptance tests of the master prompt (A–J) have
 an automated test that passes. The player-facing game is entirely in French.
 
+Door and Memory are **finished prototypes** and are no longer modified (instruction of
+2026-10-12, [`docs/narrative/FUTURE_CIVILIZATIONS_GUIDELINES.md`](docs/narrative/FUTURE_CIVILIZATIONS_GUIDELINES.md)).
+The first large civilization, **Mask Civilization** (« Les Cent Visages », scenario in
+[`docs/narrative/MASK_CIVILIZATION_SCENARIO.md`](docs/narrative/MASK_CIVILIZATION_SCENARIO.md)), is
+being built chapter by chapter. Its engine foundations are done: items held in hand and really
+used, worn items, combat with enemies, bosses and encounters, all part of the SDK and the Studio
+([`docs/COMBAT_AND_EQUIPMENT.md`](docs/COMBAT_AND_EQUIPMENT.md)). Its chapters are not written yet.
+
 What is not done is listed honestly in [Outstanding bugs and limitations](#outstanding-bugs-and-limitations)
 and [In progress and partial](#in-progress-and-partial): mostly Studio comfort features, the
 versioning features that have nothing to migrate yet, seven scenario details marked *Partial* in
@@ -50,14 +58,24 @@ the traceability matrix, and measurements that need real hardware (frame rate on
   voxel characters with walk cycles and expressions, collider debug view (F4), four quality
   levels; procedural sound synthesis (no audio files).
 - **Input**: physical key positions (ZQSD on AZERTY = WASD on QWERTY), key labels shown for the
-  player's layout, rebindable game keys, pointer-lock mouse look.
+  player's layout, rebindable game keys and mouse buttons, pointer-lock mouse look.
+- **Equipment and combat** (inactive unless a civilization uses them;
+  [`docs/COMBAT_AND_EQUIPMENT.md`](docs/COMBAT_AND_EQUIPMENT.md)): six-slot hotbar and item in hand
+  with a first-person view and hand animations, item uses on the mouse buttons (`defineItemUse`;
+  strike and charged strike, guard with parry and riposte, tool on a target, shot, actions), worn
+  items granting abilities, switch rules (attunement); player health, dodge, knockback, stagger,
+  defeat and return to the last checkpoint, an « Indulgente » difficulty; components
+  `core.health`, `core.combatant` (telegraphed melee, lunge, slam, shockwave and projectile
+  attacks), `core.encounter`, `core.boss`, `core.checkpoint`, `core.toolTarget`; combat music;
+  character masks and combat gestures.
 
 ### Game interface (`src/game`, French)
 
 Main menu (*Continuer*, *Nouvelle partie*, *Civilisations*, *Registre des éveils*, *Paramètres*,
 *Crédits*, and *Studio des civilisations* when the Studio is part of the build), civilization
 selection with themed covers, loading screen, HUD (crosshair, interaction prompt, objective tracker, **objective markers with
-distance**, notifications, location titles, ability bar, civilization HUD slots), dialogue panel
+distance**, notifications, location titles, ability bar, hotbar, health, boss bar, mouse-button
+verbs, hit marker and defeat screen when a civilization uses them, civilization HUD slots), dialogue panel
 with typewriter text and numbered replies, journal, inventory, documents, pause menu, save/load
 slots, settings (controls and rebinding, mouse, field of view, quality, head bob, five volumes,
 subtitle and dialogue text size, text speed, objective markers, frame counter), end screens, and
@@ -74,8 +92,11 @@ traces in development).
 | Interface | rank plaque HUD, refusal stamp, imprint and permission panels, brass theme | chamber HUD and panel, echo overlay, shard captions, offering panel, amber theme |
 | Multiverse | grants fragment `threshold`, writes flag `door.finalChoice` | grants fragment `remanence`; reads whether Door was completed (different vision) |
 
-`civilizations/core` is a library pack of shared blocks, models, sounds and character looks.
-All assets are original and generated in code.
+`civilizations/core` is a library pack of shared blocks, models, sounds (now also combat sounds)
+and character looks. All assets are original and generated in code.
+
+**Mask Civilization**: in development; its pack is not written yet, see
+[In progress and partial](#in-progress-and-partial).
 
 ### Civilization Studio (`src/studio`, French interface)
 
@@ -88,7 +109,8 @@ Opened at `/studio.html?pack=<id>` with `npm run dev`:
   fields, French texts created as localization keys), entity templates, prefabs.
 - Document editors: dialogue graph, quests, cinematics (timeline and live camera preview), logic
   rules (visual blocks for every registered action, condition and event, with designer notes),
-  items, characters (3D preview), mechanic settings, French texts, civilization manifest
+  items (with their worn slot and their in-hand settings: model, placement and one block per
+  mouse button), characters (3D preview, masks), mechanic settings, French texts, civilization manifest
   (identity, entry point, state version, theme, HUD, multiverse), prefabs.
 - Scripts: TypeScript in Monaco, type-checked by the development server, written through a
   scoped file API, compiled and hot-reloaded by Vite — never `eval`.
@@ -108,6 +130,12 @@ scaffolding, hot reload of packs).
 
 ## In progress and partial
 
+- **Mask Civilization**: scenario received (7 chapters, epilogue, 5 side quests). Built one
+  finished, tested chapter at a time (scenario §11.4). Done: the engine foundations it needs
+  (equipment, item uses, combat, enemies, bosses, encounters, masks on characters, combat music),
+  with headless tests and a visual check in the browser. Not done yet: the Mask pack itself (city
+  of Viremasque, masks and their powers, overload, characters, the seven zones) and every chapter.
+- **Door and Memory are frozen**: the *Partial* rows below stay as they are, by decision.
 - **Scenario details marked *Partial*** in [`docs/narrative/TRACEABILITY.md`](docs/narrative/TRACEABILITY.md) §3
   (seven of the scenario requirements; everything else is *Implemented*):
   D-W3 (the Archive towers are closed decorations), D-W4 and D-M2 (the `item` and `condition`
@@ -153,8 +181,8 @@ Measured on 2026-10-12 on this tree:
 |---|---|---|
 | Type checking (strict, app and tools) | `npm run typecheck` | no error |
 | Lint | `npm run lint` | no error, no warning |
-| Unit, integration, playthrough and acceptance tests | `npm test` | 20 files, 97 tests, all pass (~24 s) |
-| Browser tests (game and Studio) | `npm run test:e2e` | 6 tests (A, B, C, E, H, I), all pass (~2.6 min) |
+| Unit, integration, playthrough and acceptance tests | `npm test` | 21 files, 113 tests, all pass (~24 s), including 16 equipment and combat tests (`src/engine/core/combat/combat.test.ts`) |
+| Browser tests (game and Studio) | `npm run test:e2e` | 6 tests (A, B, C, E, H, I), all pass (~2.8 min) |
 | Content validation | `npm run validate` | 0 errors, 0 warnings (door 503 texts checked, memory 567, core library 0 issues) |
 | Production build | `npm run build` | builds; `dist/` holds `index.html` and assets only — no `studio.html`, no Monaco, no file-API code in the JavaScript; Vite warns about one 5 MB chunk (Babylon.js and React, 1.1 MB gzipped) |
 
@@ -220,7 +248,7 @@ None of these breaks a playthrough of Door or Memory.
 - An invalid dialogue node id typed in the editor is silently reverted.
 - The variable picker lists variables used in content, not those only declared in code.
 - Prop `group` is not used to lay out the inspector; `visibleWhen` is re-evaluated only when the
-  inspector re-renders; `VisualEntity.flags` has no writer.
+  inspector re-renders.
 - Files created by the Studio skip the stale-write check on their first save; `.civ-backups/`
   (backups of overwritten and deleted files) grows without pruning.
 - Playtests use the game's settings and start with an empty multiverse.
@@ -228,10 +256,9 @@ None of these breaks a playthrough of Door or Memory.
 
 ## Next priorities
 
-1. Close the seven *Partial* scenario rows: put the `item` and `condition` lock variants on real
-   doors and make the absent door react to a failed check (D-W4, D-M2, D-M5); make later Act II
-   scenes reflect the route taken and add a test for the sneaking route (D-N9); open one Archive
-   tower (D-W3); animate a few shop signs (D-A1); lengthen or merge the C04 cinematics (D-K4).
+1. Mask Civilization, chapter by chapter: the pack (Viremasque, masks, powers, overload,
+   characters) with Rives Basses and the Prologue, then Chapters I to VI, the Epilogue and the
+   side quests — each one playable, tested by a headless playthrough, committed and published.
 2. Measure the frame rate on real GPUs (F3 overlay, `npm run bench` for CPU) and apply
    `viewDistance` per quality level.
 3. Studio: id renames that update references, a delete button, refreshing open scripts changed

@@ -1040,7 +1040,7 @@ export const bossBehavior = defineBehavior({
           if (shown) hide();
           return;
         }
-        if (!shown && ctx.props.music) releaseMusic = ctx.combat.pushMusic(ctx.props.music);
+        if (!shown && ctx.props.music) releaseMusic = ctx.combat.pushMusic(ctx.props.music, 2);
         shown = true;
         const ratio = h.health / h.max;
         const phases = ctx.props.phases;
