@@ -1,0 +1,57 @@
+{
+  "civilization_id": "tide-civilization-concept-example",
+  "display_name_fr": "Exemple fictif — La cité des Marées",
+  "concept_fr": "Les marchés et transports obéissent aux marées magiques : des quartiers flottants changent de voisinage avec les courants.",
+  "map_identity_sentence_fr": "Une multitude d'îles basses et de marchés flottants se déploient dans un delta labyrinthique, reliés par des ponts mobiles et des barges.",
+  "geography": {
+    "macroform": "delta-d-iles-basses",
+    "verticality": "aucune-hierarchie-verticale-quartiers-par-eau",
+    "water_logic": "marées-magiques-canaux-fluctuants-et-courants",
+    "terrain_features": ["bras de delta", "îlots sableux", "lagunes", "berges végétales"],
+    "landmark_locations": ["grand pont tournant", "temple-marée", "phare des barges"]
+  },
+  "urban_plan": {
+    "street_pattern": "sentiers-de-quai-et-ponts-mobiles",
+    "district_arrangement": "archipel-de-hubs-commercial-et-artisanal",
+    "districts": [
+      {"id": "quai", "function": "logements et embarcadères", "spatial_character": "petites îles avec pilotis", "landmark": "phare en bois"},
+      {"id": "marche", "function": "échange et restauration", "spatial_character": "plateformes flottantes colorées", "landmark": "halles flottantes"},
+      {"id": "temple", "function": "rituels de marée et écoles de navigation", "spatial_character": "anneau d'îlots sacrés et placettes", "landmark": "temple des eaux"},
+      {"id": "chantier", "function": "réparations et construction de ponts", "spatial_character": "hangars ouverts sur canaux", "landmark": "grand pont tournant"}
+    ],
+    "connections": [["quai", "marche"], ["marche", "temple"], ["temple", "chantier"], ["chantier", "quai"]]
+  },
+  "design_language": {
+    "terrain_materials": ["vase", "sable", "bois humide"],
+    "building_materials": ["bois flotté", "pierre saline", "toiles colorées"],
+    "architectural_motifs": ["pilotis", "barques-toits", "passerelles de corde", "pavillons sur pontons"],
+    "palette": ["vert d'eau", "corail", "ocre", "bleu profond"],
+    "landmark_style": "delta artisanal avec temples et ponts tournants"
+  },
+  "navigation_and_gameplay": {
+    "starting_location": "quai",
+    "primary_route": ["quai", "marche", "temple", "chantier"],
+    "secondary_loops": ["quai → chantier → temple → marche → quai"],
+    "setpieces": ["course de barges", "pont mobile en panne", "inondation d'un marché"],
+    "vista_points": ["depuis le phare", "au centre du grand pont", "depuis le temple à marée basse"]
+  },
+  "fingerprint": {
+    "macroform": "delta-d-iles-basses",
+    "city_pattern": "sentiers-de-quai-et-ponts-mobiles",
+    "district_relations": "iles-reliees-par-eau",
+    "elevation_logic": "bas-et-flottant",
+    "landmark_type": "pont-tournant-et-phare",
+    "movement_signature": "barge-et-passerelles-mobiles",
+    "water_role": "transport-et-rythme-des-marees",
+    "first_impression": "quai-flottant-parmi-les-iles"
+  },
+  "anti_repetition": {
+    "compared_against": ["mask-civilization", "door-civilization", "memory-civilization"],
+    "differentiators": ["archipel connecté", "transport par barge", "ville sur pilotis", "marée déterminant les routes", "aucun mur de niveau"],
+    "forbidden_shortcuts": ["rue droite avec alignement de maisons", "mur géant et quartier supérieur", "pont fixe partout"]
+  },
+  "visual_review": {
+    "required_screenshots": ["top-down delta", "depuis quai", "sur barge", "depuis pont", "depuis temple"],
+    "checks": ["eau visible comme infrastructure", "routes fluctuant selon marée", "pas d'alignements clonés"]
+  }
+}

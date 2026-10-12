@@ -1,0 +1,58 @@
+{
+  "civilization_id": "power-civilization",
+  "display_name_fr": "Power Civilization — Cité d'Arcadia",
+  "concept_fr": "Une mégapole de pouvoirs organisée par les transports, les arènes et les équipements de régulation énergétique, et non par des quartiers superposés.",
+  "map_identity_sentence_fr": "Une ville en éventail s'étend à plat entre le lac énergétique et le littoral, parcourue de tramways rapides reliant plusieurs pôles sportifs et industriels.",
+  "geography": {
+    "macroform": "plaine-cotiere-eventail",
+    "verticality": "terrain-globalement-plat-verticalite-reserve-aux-tours",
+    "water_logic": "lac-de-refroidissement-central-et-canaux-techniques",
+    "terrain_features": ["plaine côtière", "lac artificiel", "promenade littorale", "zones de parcs", "ancienne carrière transformée en arène"],
+    "landmark_locations": ["centrale au bord du lac", "gare sur le grand boulevard", "arène centrale des champions"]
+  },
+  "urban_plan": {
+    "street_pattern": "boulevards-radiaux-et-liaisons-circulaires",
+    "district_arrangement": "poles-urbains-polycentriques-le-long-du-transit",
+    "districts": [
+      {"id": "fret", "function": "petits logements, commerce de rue, ateliers et gare de marchandises", "spatial_character": "îlots serrés, ruelles latérales et petite place", "landmark": "ancienne horloge de la gare"},
+      {"id": "esplanade", "function": "évaluations et services publics", "spatial_character": "esplanade arborée au débouché de grands boulevards", "landmark": "statue du premier champion"},
+      {"id": "arenes", "function": "compétitions et entraînement", "spatial_character": "complexe ovale d'arènes et de salles d'entraînement", "landmark": "stade du tonnerre"},
+      {"id": "lac", "function": "centrale énergétique et promenade publique", "spatial_character": "grandes berges, conduites visibles, terrasses de promenade", "landmark": "réacteur à anneaux"},
+      {"id": "skyline", "function": "tours d'entreprises, logements de prestige, penthouse", "spatial_character": "tours éparses autour de places et jardins", "landmark": "tour du Titan"}
+    ],
+    "connections": [["fret", "esplanade"], ["esplanade", "arenes"], ["arenes", "lac"], ["lac", "skyline"], ["esplanade", "skyline"], ["fret", "arenes"]]
+  },
+  "design_language": {
+    "terrain_materials": ["pierre claire de berge", "béton urbain stylisé", "terre de parc"],
+    "building_materials": ["béton teinté", "verre énergisé", "tôle peinte", "brique utilitaire", "métal brossé"],
+    "architectural_motifs": ["tours élancées", "passerelles de tramway", "structures annulaires", "auvents sportifs"],
+    "palette": ["ivoire", "bleu azur", "jaune signalétique", "gris chaud"],
+    "landmark_style": "métropole sportive et énergétique à skyline ouverte"
+  },
+  "navigation_and_gameplay": {
+    "starting_location": "fret",
+    "primary_route": ["fret", "esplanade", "arenes", "lac", "skyline"],
+    "secondary_loops": ["fret → arenes → esplanade → fret", "esplanade → skyline → lac → arenes → esplanade"],
+    "setpieces": ["première course sur un boulevard interrompu", "sauvetage à la centrale", "duel sur plateformes autour de l'arène"],
+    "vista_points": ["depuis la gare vers le stade", "depuis le lac vers le réacteur", "depuis le penthouse vers le studio initial"]
+  },
+  "fingerprint": {
+    "macroform": "plaine-cotiere-eventail",
+    "city_pattern": "boulevards-radiaux-et-liaisons-circulaires",
+    "district_relations": "poles-autour-des-transports",
+    "elevation_logic": "plat-avec-tours-isolees",
+    "landmark_type": "reacteur-annulaire-et-arene",
+    "movement_signature": "tram-rapide-et-combat-acrobatique",
+    "water_role": "lac-technique-et-promenade",
+    "first_impression": "studio-pres-de-la-gare-dans-une-metropole-ouverte"
+  },
+  "anti_repetition": {
+    "compared_against": ["mask-civilization", "door-civilization", "memory-civilization"],
+    "differentiators": ["pas de mur séparant deux niveaux urbains", "morphologie plate en éventail", "arènes dispersées près des transports", "skyline de tours et centrale", "quartiers reliés par tramway et boulevards"],
+    "forbidden_shortcuts": ["grand mur de soutènement habituel", "alignements de maisons identiques", "tous les riches sur une terrasse unique"]
+  },
+  "visual_review": {
+    "required_screenshots": ["vue d'ensemble top-down", "depuis le studio", "depuis le stade", "depuis le lac", "depuis la tour"],
+    "checks": ["silhouette différente de Mask", "absence de terrasse-mur clonée", "les parcours sont jouables à pied", "intérieurs et extérieurs raccordés"]
+  }
+}
