@@ -10,6 +10,7 @@ import { ACCESSORY_TYPES } from '@engine/core/content/schemas';
 import { ICON_SHAPES } from '@engine/core/inventory/items';
 import { CharacterRig } from '@engine/view/characters/rig';
 import type { StringTable } from '@engine/core/i18n/localizer';
+import { frenchApostrophes } from '@engine/core/i18n/typography';
 import type { z } from 'zod';
 import { PropFields } from '../fields/PropField';
 import { freeId, removeAt, replaceAt, Row, useDoc } from './common';
@@ -406,7 +407,7 @@ export function LocaleEditor({ path }: { path: string }) {
   const f = filter.trim().toLowerCase();
   const shown = keys.filter((k) => !f || k.toLowerCase().includes(f) || (data[k] ?? '').toLowerCase().includes(f)).slice(0, 400);
   const setText = (k: string, v: string) => {
-    edit('Modifier un texte', (d) => ({ ...d, [k]: v }), `texte:${k}`);
+    edit('Modifier un texte', (d) => ({ ...d, [k]: frenchApostrophes(v) }), `texte:${k}`);
     studio.syncLocales(doc.pack);
   };
   return (

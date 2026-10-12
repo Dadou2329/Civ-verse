@@ -1,0 +1,12 @@
+{
+  "format": "civverse.pack",
+  "version": 1,
+  "id": "lanterne",
+  "kind": "civilization",
+  "name": "lanterne.name",
+  "description": "lanterne.description",
+  "packVersion": "1.0.0",
+  "engineApi": "^1.0.0",
+  "entry": { "scene": "crypte", "spawn": "depart" },
+  "scenes": ["crypte"]
+}

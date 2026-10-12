@@ -149,7 +149,7 @@ async function actOne(game: HeadlessGame, honest: boolean): Promise<void> {
   expect(chamber(s).anchor('ambre')).toBe(true);
   await advance(s, 0.6);
   expect(await interact(s, 'stele_lea', 'observe')).toBe(true);
-  expect(notified(game, "Avec l'éclat ambré, les lettres remontent à la surface : « LÉA ».")).toBe(true);
+  expect(notified(game, "Avec l’éclat ambré, les lettres remontent à la surface : « LÉA ».")).toBe(true);
   expect(s.vars.get('memory.steleRead')).toBe(true);
   await advance(s, 3);
   const echoes = s.civ!.mechanics.get('memory.echoes')!.api as { played(id: string): boolean };
@@ -353,7 +353,7 @@ async function denouement(game: HeadlessGame, decision: Decision, doorCompleted 
   await skipCinematics(s);
   await advance(s, 0.5);
   const end = game.ui.endScreens[0]!;
-  expect(norm(end.title)).toBe("FIN DU PROLOGUE — LE NOM QU'ON T'A VOLÉ");
+  expect(norm(end.title)).toBe("FIN DU PROLOGUE — LE NOM QU’ON T’A VOLÉ");
   expect(norm(end.subtitle)).toBe('Un souvenir attend ailleurs.');
   expect(end.lines?.map(norm)).toContain('Rémanence obtenue.');
   expect(end.lines?.some((l) => l.includes('seuil se souvient'))).toBe(doorCompleted);

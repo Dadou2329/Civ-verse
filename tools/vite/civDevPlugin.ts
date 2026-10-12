@@ -8,6 +8,8 @@
  * Safety rules (see docs/DECISIONS.md, ADR-006):
  * - every request must carry the `x-civ-studio: 1` header (blocks simple cross-site requests);
  * - the Host header must be a loopback address (DNS-rebinding protection);
+ * - when the browser sends an Origin, it must be this server itself, and Sec-Fetch-Site may not
+ *   be same-site or cross-site (another local web page cannot drive the API);
  * - paths are repository-relative, must live under `civilizations/<pack>/<allowed dir>/` (or be
  *   the pack's manifest.json), must
  *   use an allowed extension, and must resolve (after symlinks) inside the repository;
@@ -15,7 +17,7 @@
  * - deletes move the file to `.civ-backups/` instead of destroying it.
  */
 import type { Plugin } from 'vite';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
@@ -25,8 +27,17 @@ import { scaffoldScript, type ScaffoldRequest } from './scaffold.ts';
 
 const API_PREFIX = '/__civ/api/';
 const MAX_BODY_BYTES = 32 * 1024 * 1024;
-const CIV_ROOT = path.join(repoRoot, 'civilizations');
-const BACKUP_ROOT = path.join(repoRoot, '.civ-backups');
+
+/** Where the API reads and writes: the repository (tests pass a temporary directory). */
+interface DevRoots {
+  repo: string;
+  civ: string;
+  backups: string;
+}
+
+function rootsOf(repo: string): DevRoots {
+  return { repo, civ: path.join(repo, 'civilizations'), backups: path.join(repo, '.civ-backups') };
+}
 
 /** Directories inside a pack that the Studio may write to. */
 const WRITABLE_PACK_DIRS = ['content', 'mechanics', 'ui', 'locales', 'scripts'] as const;
@@ -44,7 +55,7 @@ export class CivApiError extends Error {
 }
 
 /** Validates and resolves a repository-relative pack path. Exported for unit tests. */
-export function resolvePackPath(relPath: string, mode: 'read' | 'write'): string {
+export function resolvePackPath(relPath: string, mode: 'read' | 'write', root: string = repoRoot): string {
   if (typeof relPath !== 'string' || relPath.length === 0 || relPath.length > 512) {
     throw new CivApiError(400, 'Chemin manquant ou trop long.');
   }
@@ -77,19 +88,19 @@ export function resolvePackPath(relPath: string, mode: 'read' | 'write'): string
   for (const segment of parts) {
     if (segment.startsWith('.')) throw new CivApiError(400, 'Les fichiers cachés ne sont pas accessibles.');
   }
-  const abs = path.resolve(repoRoot, normalized);
-  if (!abs.startsWith(CIV_ROOT + path.sep)) throw new CivApiError(403, 'Chemin hors de civilizations/.');
+  const abs = path.resolve(root, normalized);
+  if (!abs.startsWith(path.join(root, 'civilizations') + path.sep)) throw new CivApiError(403, 'Chemin hors de civilizations/.');
   return abs;
 }
 
 /** Ensures that the real (symlink-resolved) location of `abs` stays inside civilizations/. */
-async function assertRealPathInside(abs: string): Promise<void> {
+async function assertRealPathInside(abs: string, civRoot: string): Promise<void> {
   let probe = abs;
   // Walk up to the first existing ancestor and resolve it.
   for (;;) {
     try {
       const real = await fsp.realpath(probe);
-      const realRoot = await fsp.realpath(CIV_ROOT);
+      const realRoot = await fsp.realpath(civRoot);
       if (real !== realRoot && !real.startsWith(realRoot + path.sep)) {
         throw new CivApiError(403, 'Lien symbolique sortant de civilizations/ refusé.');
       }
@@ -107,6 +118,24 @@ function isLoopbackHost(host: string | undefined): boolean {
   if (!host) return false;
   const name = host.replace(/:\d+$/, '').replace(/^\[|\]$/g, '');
   return name === 'localhost' || name === '127.0.0.1' || name === '::1';
+}
+
+/** Rejects requests that do not come from a page of this dev server. Exported for unit tests. */
+export function checkRequestOrigin(headers: IncomingHttpHeaders): void {
+  if (headers['x-civ-studio'] !== '1') throw new CivApiError(403, 'En-tête x-civ-studio requis.');
+  if (!isLoopbackHost(headers.host)) throw new CivApiError(403, 'Hôte non local refusé.');
+  const origin = headers.origin;
+  if (origin !== undefined) {
+    let originHost: string | null;
+    try {
+      originHost = new URL(origin).host;
+    } catch {
+      originHost = null;
+    }
+    if (originHost !== headers.host) throw new CivApiError(403, 'Origine étrangère refusée.');
+  }
+  const site = headers['sec-fetch-site'];
+  if (site === 'cross-site' || site === 'same-site') throw new CivApiError(403, 'Requête venant d’un autre site refusée.');
 }
 
 async function readBody(req: IncomingMessage): Promise<string> {
@@ -129,14 +158,14 @@ function send(res: ServerResponse, status: number, body: unknown): void {
   res.end(payload);
 }
 
-async function backupFile(abs: string, reason: 'write' | 'delete'): Promise<string | null> {
+async function backupFile(abs: string, reason: 'write' | 'delete', roots: DevRoots): Promise<string | null> {
   if (!fs.existsSync(abs)) return null;
-  const rel = path.relative(repoRoot, abs);
+  const rel = path.relative(roots.repo, abs);
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const dest = path.join(BACKUP_ROOT, `${rel}.${stamp}.${reason}.bak`);
+  const dest = path.join(roots.backups, `${rel}.${stamp}.${reason}.bak`);
   await fsp.mkdir(path.dirname(dest), { recursive: true });
   await fsp.copyFile(abs, dest);
-  return path.relative(repoRoot, dest);
+  return path.relative(roots.repo, dest);
 }
 
 async function atomicWrite(abs: string, content: string): Promise<void> {
@@ -151,9 +180,9 @@ interface PackListing {
   files: string[];
 }
 
-async function listPackFiles(): Promise<PackListing[]> {
+async function listPackFiles(roots: DevRoots): Promise<PackListing[]> {
   const out: PackListing[] = [];
-  const entries = await fsp.readdir(CIV_ROOT, { withFileTypes: true });
+  const entries = await fsp.readdir(roots.civ, { withFileTypes: true });
   for (const entry of entries) {
     if (!entry.isDirectory() || !PACK_ID_RE.test(entry.name)) continue;
     const files: string[] = [];
@@ -163,11 +192,11 @@ async function listPackFiles(): Promise<PackListing[]> {
         const abs = path.join(dir, child.name);
         if (child.isDirectory()) await walk(abs);
         else if ((READABLE_EXTENSIONS as readonly string[]).includes(path.extname(child.name))) {
-          files.push(path.relative(repoRoot, abs).split(path.sep).join('/'));
+          files.push(path.relative(roots.repo, abs).split(path.sep).join('/'));
         }
       }
     };
-    await walk(path.join(CIV_ROOT, entry.name));
+    await walk(path.join(roots.civ, entry.name));
     files.sort();
     out.push({ id: entry.name, files });
   }
@@ -177,24 +206,24 @@ async function listPackFiles(): Promise<PackListing[]> {
 /** Recently written paths, used to tag the HMR notification as coming from the Studio. */
 const recentStudioWrites = new Map<string, number>();
 
-export function civDevPlugin(): Plugin {
+export function civDevPlugin(opts: { root?: string } = {}): Plugin {
+  const roots = rootsOf(opts.root ?? repoRoot);
   let typecheck: TypecheckService | null = null;
 
   const handle = async (req: IncomingMessage, res: ServerResponse, route: string, query: URLSearchParams) => {
-    if (req.headers['x-civ-studio'] !== '1') throw new CivApiError(403, 'En-tête x-civ-studio requis.');
-    if (!isLoopbackHost(req.headers.host)) throw new CivApiError(403, 'Hôte non local refusé.');
+    checkRequestOrigin(req.headers);
     const method = req.method ?? 'GET';
 
     if (route === 'packs' && method === 'GET') {
-      send(res, 200, { packs: await listPackFiles() });
+      send(res, 200, { packs: await listPackFiles(roots) });
       return;
     }
 
     if (route === 'file') {
       const rel = query.get('path') ?? '';
       if (method === 'GET') {
-        const abs = resolvePackPath(rel, 'read');
-        await assertRealPathInside(abs);
+        const abs = resolvePackPath(rel, 'read', roots.repo);
+        await assertRealPathInside(abs, roots.civ);
         if (!fs.existsSync(abs)) throw new CivApiError(404, `Fichier introuvable : ${rel}`);
         const stat = await fsp.stat(abs);
         const content = await fsp.readFile(abs, 'utf8');
@@ -202,8 +231,8 @@ export function civDevPlugin(): Plugin {
         return;
       }
       if (method === 'PUT') {
-        const abs = resolvePackPath(rel, 'write');
-        await assertRealPathInside(abs);
+        const abs = resolvePackPath(rel, 'write', roots.repo);
+        await assertRealPathInside(abs, roots.civ);
         const raw = await readBody(req);
         let parsed: { content: string; expectedMtimeMs?: number | null };
         try {
@@ -226,7 +255,7 @@ export function civDevPlugin(): Plugin {
             throw new CivApiError(409, 'Le fichier a été modifié sur le disque depuis son ouverture.');
           }
         }
-        const backup = await backupFile(abs, 'write');
+        const backup = await backupFile(abs, 'write', roots);
         recentStudioWrites.set(abs, Date.now());
         await atomicWrite(abs, parsed.content);
         const stat = await fsp.stat(abs);
@@ -235,10 +264,10 @@ export function civDevPlugin(): Plugin {
         return;
       }
       if (method === 'DELETE') {
-        const abs = resolvePackPath(rel, 'write');
-        await assertRealPathInside(abs);
+        const abs = resolvePackPath(rel, 'write', roots.repo);
+        await assertRealPathInside(abs, roots.civ);
         if (!fs.existsSync(abs)) throw new CivApiError(404, `Fichier introuvable : ${rel}`);
-        const backup = await backupFile(abs, 'delete');
+        const backup = await backupFile(abs, 'delete', roots);
         await fsp.unlink(abs);
         typecheck?.invalidate(abs);
         send(res, 200, { path: rel, backup });
@@ -249,10 +278,10 @@ export function civDevPlugin(): Plugin {
     if (route === 'typecheck' && method === 'POST') {
       const body = JSON.parse((await readBody(req)) || '{}') as { paths?: string[] };
       const files = (body.paths ?? []).map((p) => {
-        const abs = resolvePackPath(p, 'read');
+        const abs = resolvePackPath(p, 'read', roots.repo);
         return abs;
       });
-      typecheck ??= createTypecheckService(repoRoot);
+      typecheck ??= createTypecheckService(roots.repo);
       const started = Date.now();
       const diagnostics = typecheck.check(files);
       send(res, 200, { diagnostics, ms: Date.now() - started });
@@ -261,7 +290,7 @@ export function civDevPlugin(): Plugin {
 
     if (route === 'scaffold' && method === 'POST') {
       const body = JSON.parse((await readBody(req)) || '{}') as ScaffoldRequest;
-      const result = await scaffoldScript(body, (rel) => resolvePackPath(rel, 'write'));
+      const result = await scaffoldScript(body, (rel) => resolvePackPath(rel, 'write', roots.repo));
       send(res, 200, result);
       return;
     }
@@ -296,7 +325,7 @@ export function civDevPlugin(): Plugin {
     hotUpdate: {
       order: 'post',
       handler(options) {
-        const rel = path.relative(repoRoot, options.file).split(path.sep).join('/');
+        const rel = path.relative(roots.repo, options.file).split(path.sep).join('/');
         // Content files (scenes, dialogues, quests, locales...) are loaded by the Studio through
         // this API and by the game through lazy imports. Pack scripts (mechanics, UI, views,
         // assets) are re-imported by the Studio. Neither may force-reload the Studio: Vite's

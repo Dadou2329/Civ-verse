@@ -1,0 +1,9 @@
+{
+  "lanterne.name": "La Crypte à la lanterne",
+  "lanterne.description": "Une civilisation d’essai pour le test d’extensibilité.",
+  "lanterne.scene.crypte": "La Crypte",
+  "lanterne.empty": "La lanterne n’a plus d’huile.",
+  "lanterne.tooDark": "Il fait trop sombre pour trouver la serrure.",
+  "lanterne.altarDark": "Dans le noir, l’autel reste muet.",
+  "lanterne.input.toggle": "Allumer ou éteindre la lanterne"
+}

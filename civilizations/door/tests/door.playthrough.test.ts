@@ -212,8 +212,8 @@ async function actThree(game: HeadlessGame, answer: 'listen' | 'open'): Promise<
   expect(session.cinematics.current?.id).toBe(answer === 'listen' ? 'C05_epilogue_ecoute' : 'C05_epilogue_ouvre');
   await skipCinematics(session);
   await advance(session, 0.5);
-  expect(game.ui.endScreens.map((e) => e.title)).toContain("FIN DU PROLOGUE — LA PORTE QUI N'EXISTE PAS");
-  expect(game.ui.endScreens[0]!.subtitle).toBe("D'autres seuils attendent.");
+  expect(game.ui.endScreens.map((e) => e.title)).toContain("FIN DU PROLOGUE — LA PORTE QUI N’EXISTE PAS");
+  expect(game.ui.endScreens[0]!.subtitle).toBe("D’autres seuils attendent.");
   expect(finished).toBe(true);
   expect(session.multiverse.progress('door').completed).toBe(true);
   expect(session.multiverse.getFlag('door.finalChoice')).toBe(answer === 'listen' ? 'ecouter' : 'ouvrir');

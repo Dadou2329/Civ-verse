@@ -12,6 +12,7 @@ import type { SceneWorld } from '@engine/core/world/sceneWorld';
 import { volumeToDoc } from '@engine/core/world/sceneVoxels';
 import { normalizeProps } from '@engine/core/props/props';
 import type { StringTable } from '@engine/core/i18n/localizer';
+import { frenchApostrophes } from '@engine/core/i18n/typography';
 import { History } from './history';
 import { StudioProject, packPath, type DocKind, type ProjectIO, type StudioDoc } from './project';
 import { addEntities, changeDoc, clone, removeEntities, uniqueEntityId, updateEntities, voxelCommand, type VoxelChange } from './edits';
@@ -380,15 +381,16 @@ export class Studio {
     const base = `${pack}.${suffix}`.replace(/[^A-Za-z0-9_.-]+/g, '_');
     let key = base;
     for (let i = 2; table[key] !== undefined; i++) key = `${base}_${i}`;
-    this.editDoc<StringTable>(path, 'Nouveau texte', (t) => ({ ...t, [key]: text }));
+    this.editDoc<StringTable>(path, 'Nouveau texte', (t) => ({ ...t, [key]: frenchApostrophes(text) }));
     this.syncLocales(pack);
     return key;
   }
 
   /** Changes the French text of a key of the active pack (merging successive keystrokes). */
-  setText(key: string, text: string): void {
+  setText(key: string, raw: string): void {
     const pack = this.packId;
     if (!pack) return;
+    const text = frenchApostrophes(raw);
     const path = this.localePath(pack);
     if (!this.project.doc(path)) this.project.create(pack, 'locales/fr-FR.json', {});
     this.editDoc<StringTable>(path, 'Modifier un texte', (t) => (t[key] === text ? t : { ...t, [key]: text }), `texte:${key}`);

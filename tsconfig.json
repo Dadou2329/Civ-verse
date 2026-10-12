@@ -29,6 +29,6 @@
       "@civs/*": ["./civilizations/*"]
     }
   },
-  "include": ["src", "civilizations", "tests/unit"],
+  "include": ["src", "civilizations", "tests/unit", "tests/acceptance"],
   "exclude": ["node_modules", "dist", "civilizations/*/seed"]
 }

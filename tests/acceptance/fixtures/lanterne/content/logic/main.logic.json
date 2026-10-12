@@ -1,0 +1,19 @@
+{
+  "format": "civverse.logic",
+  "version": 1,
+  "id": "main",
+  "rules": [
+    {
+      "id": "obscurite",
+      "when": { "event": "lanterne.extinguished" },
+      "then": [{ "type": "core.setVar", "var": "lanterne.darkness", "value": true }]
+    },
+    {
+      "id": "autel",
+      "when": { "event": "trigger.entered", "where": { "triggerId": "autel" } },
+      "if": { "type": "lanterne.isLit" },
+      "then": [{ "type": "core.setVar", "var": "lanterne.altarSeen", "value": true }],
+      "else": [{ "type": "core.notify", "text": "lanterne.altarDark" }]
+    }
+  ]
+}
