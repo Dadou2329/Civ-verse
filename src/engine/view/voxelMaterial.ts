@@ -128,7 +128,9 @@ export function createVoxelMaterials(scene: Scene, texture: RawTexture): VoxelMa
   };
   const opaque = make('voxels-opaques');
   const cutout = make('voxels-découpe');
-  cutout.useAlphaFromDiffuseTexture = false;
+  // The alpha test runs on the final alpha (explicit transparency mode): it must include the
+  // atlas alpha, or the transparent texels of leaves, grilles and plants would be drawn black.
+  cutout.useAlphaFromDiffuseTexture = true;
   cutout.transparencyMode = Material.MATERIAL_ALPHATEST;
   cutout.alphaCutOff = 0.5;
   (cutout.diffuseTexture as RawTexture).hasAlpha = true;

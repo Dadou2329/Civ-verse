@@ -145,6 +145,10 @@ export class CharacterRig {
     this.material = new StandardMaterial(`${name}_matière`, scene);
     this.material.diffuseTexture = this.texture;
     this.material.specularColor = new Color3(0.04, 0.04, 0.04);
+    // With an explicit transparency mode, Babylon tests the final alpha, which only includes the
+    // texture's alpha when this flag is set: without it, transparent texels (around hair, hats,
+    // accessories) would be drawn black over the face instead of being cut out.
+    this.material.useAlphaFromDiffuseTexture = true;
     this.material.transparencyMode = Material.MATERIAL_ALPHATEST;
     this.material.alphaCutOff = 0.5;
 
