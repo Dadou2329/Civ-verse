@@ -8,6 +8,7 @@ import { fillBox } from '../voxel/construct';
 import { volumeToDoc } from '../world/sceneVoxels';
 import { createHeadlessGame, advance, flush, skipCinematics, talk, walkTo } from '../testing/headless';
 import { parseSave } from '../save/saveFormat';
+import { validateCivilization } from '../packs/validate';
 import type { SceneDoc } from '../content/schemas';
 
 const ENV = {
@@ -402,5 +403,18 @@ describe('GameSession (headless integration)', () => {
     ctx.multiverse.setFlag('testciv.done', true);
     expect(session.multiverse.getFlag('testciv.done')).toBe(true);
     expect(session.vars.get('global.flags.testciv.done')).toBe(true);
+  });
+
+  it('validation reports the problems found while loading the civilization it checks', async () => {
+    const pack = testPack();
+    pack.files['content/dialogues/broken.dialogue.json'] = { format: 'civverse.dialogue', version: 1, id: 'broken', nodes: 'pas une liste' };
+    const { session } = await createHeadlessGame(new MemoryContentProvider({ testciv: pack, other: otherPack() }));
+    // A fresh session, as for « Valider » in the Studio and `npm run validate`.
+    const report = await validateCivilization(session, 'testciv');
+    const broken = (r: typeof report) => r.issues.filter((i) => i.severity === 'error' && i.file === 'content/dialogues/broken.dialogue.json');
+    const first = broken(report);
+    expect(first.map((i) => i.message)).toContain('nodes : Entrée invalide : tableau attendu, chaîne de caractères reçu');
+    // Validating again in the same session (the civilization is loaded anew) lists them once.
+    expect(broken(await validateCivilization(session, 'testciv'))).toEqual(first);
   });
 });

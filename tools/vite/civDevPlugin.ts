@@ -275,6 +275,7 @@ export function civDevPlugin(opts: { root?: string } = {}): Plugin {
         await assertRealPathInside(abs, roots.civ);
         if (!fs.existsSync(abs)) throw new CivApiError(404, `Fichier introuvable : ${rel}`);
         const backup = await backupFile(abs, 'delete', roots);
+        recentStudioWrites.set(abs, Date.now());
         await fsp.unlink(abs);
         typecheck?.invalidate(abs);
         send(res, 200, { path: rel, backup });
@@ -302,7 +303,12 @@ export function civDevPlugin(opts: { root?: string } = {}): Plugin {
       const body = await readJsonBody<ScaffoldRequest>(req);
       let result: Awaited<ReturnType<typeof scaffoldScript>>;
       try {
-        result = await scaffoldScript(body, (rel) => resolvePackPath(rel, 'write', roots.repo));
+        result = await scaffoldScript(body, async (rel) => {
+          const abs = resolvePackPath(rel, 'write', roots.repo);
+          // Like every write: a symlinked folder may not lead outside civilizations/.
+          await assertRealPathInside(abs, roots.civ);
+          return abs;
+        });
       } catch (err) {
         if (err instanceof CivApiError) throw err;
         throw new CivApiError(400, (err as Error).message);

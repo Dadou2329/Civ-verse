@@ -6,7 +6,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import type { CinematicDoc, CinematicTrackDoc } from '@engine/core/content/schemas';
-import { evaluateCameraTrack } from '@engine/core/story/cinematics';
+import { cameraKeyFov, evaluateCameraTrack, sortedTracks } from '@engine/core/story/cinematics';
 import { EASING_NAMES } from '@engine/core/util/easing';
 import { viewportRef } from '../hooks';
 import { ActionsEditor } from '../fields/LogicEditors';
@@ -61,6 +61,12 @@ function withItemTime(track: Track, index: number, t: number): Track {
   }
 }
 
+/** Field of view the game uses for a camera key: its own, or the one it inherits in time order. */
+function inheritedFov<K extends { t: number; fov?: number }>(keys: readonly K[], key: K): number {
+  const ordered = [...keys].sort((a, b) => a.t - b.t);
+  return cameraKeyFov(ordered, ordered.indexOf(key));
+}
+
 export function CinematicEditor({ path }: { path: string }) {
   const h = useDoc<CinematicDoc>(path);
   const [time, setTime] = useState(0);
@@ -76,7 +82,8 @@ export function CinematicEditor({ path }: { path: string }) {
   // playhead changes, so that the editor camera stays free during other edits.
   useEffect(() => {
     if (!data || !editorStudio) return;
-    const pose = evaluateCameraTrack(data, time, (id) => {
+    // Same key order as the game (keys may be stored out of time order).
+    const pose = evaluateCameraTrack(sortedTracks(data), time, (id) => {
       const e = editorStudio.entity(id);
       return e ? { x: e.position[0], y: e.position[1] + 1.5, z: e.position[2] } : null;
     });
@@ -192,7 +199,7 @@ export function CinematicEditor({ path }: { path: string }) {
         </div>
         {subtitle && (
           <div style={{ padding: '0.3rem 0.6rem', marginBottom: 6, background: 'rgba(0,0,0,0.4)', borderRadius: 6, fontStyle: 'italic' }}>
-            {subtitle.speaker && <strong style={{ color: 'var(--st-accent)' }}>{studio.t(subtitle.speaker)} : </strong>}
+            {subtitle.speaker && <strong style={{ color: 'var(--st-accent)' }}>{`${studio.t(subtitle.speaker)}\u00a0: `}</strong>}
             {studio.t(subtitle.text)}
           </div>
         )}
@@ -386,8 +393,8 @@ function ItemInspector({
           <Row label="Ou suit l’entité">
             <RefInput kind="entity" value={k.lookAt ?? ''} env={env} onChange={(v, m) => set({ ...k, lookAt: v || undefined }, 'Suivi', m)} />
           </Row>
-          <Row label="Champ (°)">
-            <NumberInput value={k.fov ?? 70} min={10} max={120} step={1} slider onChange={(n, m) => set({ ...k, fov: n }, 'Champ', m)} />
+          <Row label="Champ (°)" help={k.fov === undefined ? 'Hérité de la clé précédente (70° pour la première).' : undefined}>
+            <NumberInput value={inheritedFov(track.keys, k)} min={10} max={120} step={1} slider onChange={(n, m) => set({ ...k, fov: n }, 'Champ', m)} />
           </Row>
           <Row label="Courbe">
             <select className="st-select" value={k.ease ?? 'inOutSine'} onChange={(e) => set({ ...k, ease: e.target.value }, 'Courbe')}>

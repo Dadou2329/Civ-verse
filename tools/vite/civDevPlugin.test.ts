@@ -188,6 +188,10 @@ describe('file API middleware (temporary repository)', () => {
     // Symlinks leading out of civilizations/: a file and a directory.
     await fsp.symlink(path.join(root, 'secret.json'), pack('content/lien.json'));
     await fsp.symlink(root, pack('content/dehors'));
+    // A second pack whose mechanics/ folder leads outside (script scaffolding).
+    await fsp.mkdir(path.join(root, 'civilizations', 'lien'), { recursive: true });
+    await fsp.writeFile(path.join(root, 'civilizations', 'lien', 'pack.ts'), 'export default {};\n');
+    await fsp.symlink(root, path.join(root, 'civilizations', 'lien', 'mechanics'));
     mw = mountApi(root);
   });
 
@@ -268,6 +272,9 @@ describe('file API middleware (temporary repository)', () => {
     expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: '../x', kind: 'behavior', name: 'a' } })).status).toBe(400);
     expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: 'demo', kind: 'exec', name: 'a' } })).status).toBe(400);
     expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: 'pas du json' })).status).toBe(400);
+    // Through a symlinked mechanics/ folder that leads outside civilizations/: refused, nothing created.
+    expect((await call(mw, 'POST', '/__civ/api/scaffold', { body: { pack: 'lien', kind: 'behavior', name: 'Évasion' } })).status).toBe(403);
+    expect(fs.readdirSync(root).filter((f) => f.endsWith('.ts'))).toEqual([]);
     expect((await call(mw, 'POST', '/__civ/api/typecheck', { body: 'pas du json' })).status).toBe(400);
     expect((await call(mw, 'POST', '/__civ/api/typecheck', { body: { paths: ['../../etc/passwd'] } })).status).toBe(400);
     expect((await call(mw, 'POST', '/__civ/api/typecheck', { body: { paths: ['civilizations/demo/content/dehors/secret.json'] } })).status).toBe(403);

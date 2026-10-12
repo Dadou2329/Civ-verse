@@ -159,14 +159,15 @@ export const ${camel} = defineMechanic({
 
 export async function scaffoldScript(
   req: ScaffoldRequest,
-  resolveWritable: (rel: string) => string,
+  /** Absolute path of a file the Studio may create (throws when it is not allowed). */
+  resolveWritable: (rel: string) => string | Promise<string>,
 ): Promise<ScaffoldResult> {
   if (!req || typeof req.pack !== 'string' || !PACK_RE.test(req.pack)) throw new Error('Pack invalide.');
   if (!['behavior', 'action', 'condition', 'mechanic'].includes(req.kind)) throw new Error('Type de script invalide.');
   const label = String(req.name ?? '').trim();
   const camel = toCamelIdentifier(label);
   const rel = `civilizations/${req.pack}/mechanics/${camel}.ts`;
-  const abs = resolveWritable(rel);
+  const abs = await resolveWritable(rel);
   // civilizations/<pack>/mechanics/<file> → civilizations/<pack>/pack.ts
   if (!fs.existsSync(path.join(path.dirname(path.dirname(abs)), 'pack.ts'))) {
     throw new Error(`Le pack « ${req.pack} » n’existe pas.`);

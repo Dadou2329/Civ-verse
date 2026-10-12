@@ -21,11 +21,19 @@ import { extractCodeKeys, validateCivilization } from '@engine/core/packs/valida
 import { ENGINE_VERSION } from '@engine/core/version';
 import pkg from '../../package.json';
 
-const packSources = import.meta.glob(['/civilizations/*/{mechanics,ui,view,assets}/**/*.{ts,tsx}', '!**/*.test.ts'], {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>;
+// Pack code, as scanned by `npm run validate`: everything but seeds, tests and content.
+const packSources = import.meta.glob(
+  ['/civilizations/*/**/*.{ts,tsx}', '!**/*.test.ts', '!/civilizations/*/seed/**', '!/civilizations/*/tests/**', '!/civilizations/*/content/**'],
+  { query: '?raw', import: 'default', eager: true },
+) as Record<string, string>;
+
+/** Every bundled civilization (new packs are picked up automatically). */
+const CIVILIZATIONS = Object.values(
+  import.meta.glob('/civilizations/*/manifest.json', { import: 'default', eager: true }) as Record<string, { id: string; kind: string }>,
+)
+  .filter((m) => m.kind === 'civilization')
+  .map((m) => m.id)
+  .sort();
 
 function codeKeysOf(packId: string): { key: string; file: string }[] {
   return Object.entries(packSources)
@@ -44,7 +52,7 @@ const BASELINE: Record<string, { scenes: number; entities: number; dialogues: nu
   memory: { scenes: 2, entities: 173, dialogues: 12, quests: 5, cinematics: 8, rules: 16, keysChecked: 567 },
 };
 
-const REQUIRED = {
+const REQUIRED: Record<string, { quests: readonly string[]; cinematics: readonly string[]; fragment: string }> = {
   door: {
     quests: ['DOOR_Q00_REVEIL', 'DOOR_Q01_EMPREINTE', 'DOOR_Q02_ELIAS', 'DOOR_Q03_ARCHIVES', 'DOOR_Q04_PORTE_ABSENTE'],
     cinematics: ['C01_eveil', 'C02_rang1', 'C03_registre', 'C04b_porte', 'C04c_coupe'],
@@ -55,7 +63,7 @@ const REQUIRED = {
     cinematics: ['M01_marche', 'M02_premier_echo', 'M03_chambre_blanche', 'M04_sujet_zero'],
     fragment: 'remanence',
   },
-} as const;
+};
 
 describe('Test J — existing content and features are preserved', () => {
   it('keeps the engine version and the package version in step', () => {
@@ -69,20 +77,27 @@ describe('Test J — existing content and features are preserved', () => {
     expect(session.civilizations().map((c) => c.id)).toEqual(expect.arrayContaining(['door', 'memory']));
   });
 
-  for (const civId of ['door', 'memory'] as const) {
-    it(`${civId}: boots and validates without errors or warnings, with its scenario content intact`, async () => {
+  it('finds the bundled civilizations', () => {
+    expect(CIVILIZATIONS).toEqual(expect.arrayContaining(['door', 'memory']));
+  });
+
+  for (const civId of CIVILIZATIONS) {
+    it(`${civId}: boots and validates without errors or warnings, with its required content intact`, async () => {
       const { session } = await createHeadlessGame(new GlobContentProvider());
       const report = await validateCivilization(session, civId, { codeKeys: codeKeysOf(civId) });
       expect(report.issues).toEqual([]);
       const base = BASELINE[civId];
-      for (const k of Object.keys(base) as (keyof typeof base)[]) expect(report.stats[k], k).toBeGreaterThanOrEqual(base[k]);
+      if (base) for (const k of Object.keys(base) as (keyof typeof base)[]) expect(report.stats[k], k).toBeGreaterThanOrEqual(base[k]);
 
       await session.loadCivilization(civId, { fresh: true });
       const pack = session.civ!.pack;
-      for (const q of REQUIRED[civId].quests) expect(pack.quests.has(q), q).toBe(true);
-      for (const c of REQUIRED[civId].cinematics) expect(pack.cinematics.has(c), c).toBe(true);
-      expect(pack.manifest.fragments.map((f) => f.id)).toContain(REQUIRED[civId].fragment);
-      // Every cinematic of the scenario can be skipped (section 8 of both scenarios).
+      const required = REQUIRED[civId];
+      if (required) {
+        for (const q of required.quests) expect(pack.quests.has(q), q).toBe(true);
+        for (const c of required.cinematics) expect(pack.cinematics.has(c), c).toBe(true);
+        expect(pack.manifest.fragments.map((f) => f.id)).toContain(required.fragment);
+      }
+      // Every cinematic can be skipped (section 8 of both scenarios).
       for (const c of pack.cinematics.values()) expect(c.skippable, c.id).not.toBe(false);
     });
   }

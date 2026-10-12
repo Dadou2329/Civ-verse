@@ -61,6 +61,8 @@ export async function runValidation(only: string[] = []): Promise<ValidationSumm
   // Library packs (loaded as dependencies above): their own content issues.
   for (const m of session.manifests.values()) {
     if (m.kind !== 'library' || (only.length > 0 && !only.includes(m.id))) continue;
+    // Loaded as a dependency above, or on its own here, so that its issues were really collected.
+    await session.loadPackDefinitions(m.id);
     const libIssues = session.contentIssues.filter((i) => i.pack === m.id);
     for (const i of libIssues) {
       if (i.severity === 'error') errors++;

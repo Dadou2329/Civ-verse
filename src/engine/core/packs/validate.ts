@@ -44,11 +44,17 @@ export async function validateCivilization(session: GameSession, civId: string, 
   const issues: ValidationIssue[] = [];
   const stats = { scenes: 0, entities: 0, dialogues: 0, quests: 0, cinematics: 0, rules: 0, keysChecked: 0 };
   const report: ValidationReport = { civId, issues, stats };
-  for (const ci of session.contentIssues.filter((c) => c.pack === civId)) issues.push({ pack: ci.pack, file: ci.file, severity: ci.severity, message: ci.message });
+  let loadError: unknown = null;
   try {
     await session.loadCivilization(civId, { fresh: true });
   } catch (err) {
-    issues.push({ pack: civId, file: 'manifest.json', severity: 'error', message: `La civilisation ne démarre pas : ${toError(err).message}` });
+    loadError = err;
+  }
+  // Issues found while loading the pack (schemas, ids, texts table): in a fresh session they are
+  // only known once the civilization has been loaded above.
+  for (const ci of session.contentIssues.filter((c) => c.pack === civId)) issues.push({ pack: ci.pack, file: ci.file, severity: ci.severity, message: ci.message });
+  if (loadError !== null) {
+    issues.push({ pack: civId, file: 'manifest.json', severity: 'error', message: `La civilisation ne démarre pas : ${toError(loadError).message}` });
     return report;
   }
   const civ = session.civ!;

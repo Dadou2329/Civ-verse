@@ -276,6 +276,16 @@ export class CinematicSystem {
 }
 
 /**
+ * Field of view of camera key `index` (keys in time order): its own `fov`, else the last one set
+ * by a key before it, else 70°. Shared by the game and the Studio's cinematic editor.
+ */
+export function cameraKeyFov(keys: readonly { fov?: number }[], index: number): number {
+  let fov = DEFAULT_FOV;
+  for (let j = 0; j <= index && j < keys.length; j++) fov = keys[j]!.fov ?? fov;
+  return fov;
+}
+
+/**
  * Camera pose of a cinematic at a given time (keys interpolated with their easing; `cut` keys
  * jump). Shared by the player and by Civilization Studio's timeline preview.
  */
@@ -287,10 +297,8 @@ export function evaluateCameraTrack(doc: CinematicDoc, time: number, lookAtTarge
   while (i + 1 < keys.length && keys[i + 1]!.t <= time) i++;
   const k0 = keys[i]!;
   const k1 = keys[i + 1];
-  // A key without a field of view keeps the one of the key before it (the first defaults to 70°).
-  let fov0 = DEFAULT_FOV;
-  for (let j = 0; j <= i; j++) fov0 = keys[j]!.fov ?? fov0;
-  const fov1 = k1?.fov ?? fov0;
+  const fov0 = cameraKeyFov(keys, i);
+  const fov1 = k1 ? cameraKeyFov(keys, i + 1) : fov0;
   const targetOf = (k: typeof k0): Vec3 => {
     if (k.lookAt) {
       const p = lookAtTarget(k.lookAt);

@@ -27,6 +27,6 @@
   "cover": { "colors": ["#1d1712", "#5a3a22", "#e3b84d"], "motif": "door" },
   "hud": { "hide": [] },
   "order": 10,
-  "credits": ["Scénario : dossier narratif 001 — « La Porte qui n'existe pas ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
+  "credits": ["Scénario : dossier narratif 001 — « La Porte qui n’existe pas ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
   "tags": ["énigme", "société", "mystère"]
 }

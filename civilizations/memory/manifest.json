@@ -27,6 +27,6 @@
   "cover": { "colors": ["#14242c", "#3e2a50", "#f0a040"], "motif": "memory" },
   "hud": { "hide": [] },
   "order": 20,
-  "credits": ["Scénario : dossier narratif 002 — « Le Nom qu'on t'a volé ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
+  "credits": ["Scénario : dossier narratif 002 — « Le Nom qu’on t’a volé ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
   "tags": ["mémoire", "consentement", "mélancolie"]
 }

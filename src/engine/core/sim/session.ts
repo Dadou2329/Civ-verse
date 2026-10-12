@@ -411,7 +411,6 @@ export class GameSession {
     const reloadDependents = [...new Set(dependents(id))];
     for (const dep of reloadDependents) this.unregisterPack(dep);
     this.unregisterPack(id);
-    this.contentIssues.splice(0, this.contentIssues.length, ...this.contentIssues.filter((i) => i.pack !== id));
     this.adoptPack(fresh);
     for (const dep of reloadDependents) await this.ensurePack(dep);
     return fresh;
@@ -429,8 +428,10 @@ export class GameSession {
     return pack;
   }
 
-  /** Reports a loaded pack's content issues and registers its definitions. */
+  /** Reports a loaded pack's content issues (replacing those of an earlier load) and registers its definitions. */
   private adoptPack(pack: LoadedPack): void {
+    const id = pack.manifest.id;
+    this.contentIssues.splice(0, this.contentIssues.length, ...this.contentIssues.filter((i) => i.pack !== id));
     for (const issue of pack.issues) {
       this.contentIssues.push(issue);
       const line = `${issue.pack}/${issue.file} : ${issue.message}`;
