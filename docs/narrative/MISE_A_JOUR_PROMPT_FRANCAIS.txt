@@ -1,0 +1,29 @@
+CIVILIZATIONVERSE — UPDATE PROMPT FOR CLAUDE CODE
+
+IMPORTANT ADDITION TO THE MASTER DEVELOPMENT PROMPT
+
+The entire PLAYER-FACING GAME MUST BE IN FRENCH (France / fr-FR), from the very first playable version.
+
+This is a hard requirement, not an optional localization stretch goal.
+
+- All dialogues, stories, quests, objectives, narration, cinematics, on-screen text, tutorials, menus, gameplay HUDs, settings, tooltips, item names, rank names, notifications, error messages and subtitles must appear in natural, fluent French.
+- The player should never encounter leftover English placeholders or untranslated interface strings. Do not ship English text in fallback UI states.
+- Civilization-specific UIs must also be fully in French, even when their appearance and mechanics differ radically.
+- If voices are added, use French voice performances; if recorded French voice audio is unavailable, use readable French subtitles rather than fabricated or low-quality speech.
+- Use centralized localization keys with French as the default and required language (fr-FR). Additional languages may be added later, but French must always be complete.
+- Technical code, TypeScript identifiers, filenames, engine APIs and developer documentation can remain in English for maintainability. The editor may use technical English terminology internally, but prefer a French interface for tools used by the player or nonprogrammer creators.
+- Validate localization completeness and avoid hardcoded English UI messages.
+
+TWO ATTACHED NARRATIVE SPECIFICATIONS MUST ALSO BE USED:
+1. DOOR_CIVILIZATION_SCENARIO.txt — "La Porte qui n'existe pas".
+2. MEMORY_CIVILIZATION_SCENARIO.txt — "Le Nom qu'on t'a volé".
+
+Read both files before implementing the two playable prototype civilizations. They define their narrative identities, character arcs, world locations, unique mechanics, quest flow, important dialogue, endings, and acceptance tests. Implement both as distinct, playable, French-language mini-adventures, not theme-swapped reskins.
+
+Place the two scenario files in the repository, preferably under docs/narrative/ or a similarly clear content-specification directory, and maintain traceability between their requirements and the implemented content.
+
+Preserve the existing engine, project structure, completed functionality, and saved civilizations. Inspect before editing, integrate through the Civilization Pack format and Mechanics SDK, and verify both prototypes independently.
+
+When resources are limited, create the minimum fully playable story path for each scenario rather than superficially implementing every optional decoration. Be honest about omitted content and record it in PROJECT_STATUS.md.
+
+Proceed with implementation instead of only planning.

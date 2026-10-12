@@ -1,0 +1,58 @@
+{
+  "name": "civilizationverse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CIVILIZATIONVERSE — moteur d'aventures narratives voxel multivers, Civilization Studio et packs de civilisations.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "build:with-studio": "npm run typecheck && cross-env CIV_BUILD_STUDIO=1 vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "civ": "tsx tools/cli/civ.ts",
+    "validate": "tsx tools/cli/civ.ts validate",
+    "check": "npm run typecheck && npm run lint && npm run validate && npm run test"
+  },
+  "dependencies": {
+    "@babylonjs/core": "9.30.0",
+    "@fontsource/alegreya-sans": "5.3.0",
+    "@fontsource/cinzel": "5.3.0",
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/im-fell-english": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "idb-keyval": "6.3.0",
+    "monaco-editor": "0.57.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.6",
+    "zustand": "5.0.15"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.64.0",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "cross-env": "10.1.0",
+    "eslint": "10.12.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.13.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vite": "8.3.4",
+    "vitest": "5.0.3"
+  },
+  "overrides": {
+    "dompurify": "3.4.16"
+  }
+}

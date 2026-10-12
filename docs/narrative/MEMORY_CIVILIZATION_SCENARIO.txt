@@ -1,0 +1,118 @@
+CIVILIZATIONVERSE — DOSSIER NARRATIF 002
+MEMORY CIVILIZATION : LE NOM QU'ON T'A VOLÉ
+Version : prototype narratif 1.0 | Langue du jeu : français (fr-FR)
+
+STATUT ET PÉRIMÈTRE
+Spécification jouable destinée à Claude Code : mini-civilisation de 25 à 40 minutes, autonome et différente de Door Civilization. Créer un arc dramatique complet avec son propre langage visuel et ses propres règles. Ne pas reprendre la progression par portes et niveaux d'accès.
+
+1. PROMESSE ET THÈME
+Dans la ville de Réminence, on peut vendre un souvenir pour payer le pain, le logement ou une dette. Les riches possèdent des vies entières qu'ils n'ont pas vécues ; les pauvres ne savent parfois plus qui ils aiment. Le protagoniste découvre qu'il possède le souvenir d'une personne encore vivante, qui jure ne l'avoir jamais rencontré. Thème : nos souvenirs nous définissent-ils ou est-ce ce que nous choisissons de faire ?
+
+2. RÈGLES DU MONDE
+- Les souvenirs sont matérialisés en « éclats » colorés contenant une scène subjective (image, son, émotion et une information concrète).
+- Trois états : ancré (souvenir possédé), cédé (souvenir perdu, mais trace émotionnelle), restauré (souvenir réinscrit).
+- Une personne privée de souvenir peut parfois reconnaître une sensation sans en connaître la cause.
+- Les éclats se manipulent dans un dispositif public, « le Métier des souvenirs », et dans quelques instruments portables.
+- Les souvenirs contiennent des vérités partielles, des perceptions, jamais une preuve absolue sans contexte.
+- Le joueur possède une « chambre mnésique » de trois emplacements pour le prototype, non un inventaire classique.
+- La mémoire peut modifier des répliques, la façon dont un PNJ reconnaît le joueur, la perception d'un lieu ou une énigme, mais ne doit pas déclencher des modifications incohérentes du monde.
+
+3. CARTE ET DIRECTION ARTISTIQUE
+Palette bleu pétrole, mauve et ambre, avec fragments lumineux flottant entre les toitures voxel. Architecture en verre dépoli, bois peint et pierre noire ; plaques portant les noms que des habitants ont oubliés. Atmosphère mélancolique mais vivante. Éviter les mêmes silhouettes de villes que Door Civilization.
+Zones :
+A. Marché des Éclats : place triangulaire, étals, file de citoyens, un musicien qui répète une mélodie dont il ne connaît plus l'origine.
+B. Maison des Absences : petit refuge d'habitants qui ont vendu trop de souvenirs ; trois conversations signifiantes.
+C. Atelier d'Oriane : lieu de manipulation des éclats, table des trois emplacements, lampe à résonance.
+D. Jardin des Noms : espace de stèles où des prénoms s'effacent, énigme mémorielle douce.
+E. Salle de Vente : théâtre administratif et machine d'extraction, décor central du climax.
+F. Chambre Blanche : intérieur mental minimaliste utilisé pour la scène finale, sans obliger à bâtir un niveau très grand.
+
+4. PERSONNAGES
+LE PROTAGONISTE : arrive avec un éclat inconnu dans la main et aucun souvenir de son arrivée. En touchant l'éclat, il entend une voix féminine dire « Ne me laisse pas me vendre une deuxième fois ».
+ORIANE, 31 ans, restauratrice de souvenirs, patiente mais peu confiante : a autrefois travaillé pour la Salle de Vente et sait que certains souvenirs sont copiés avant d'être effacés. Elle aide le joueur mais cache sa responsabilité dans une ancienne vente.
+SILAS, 29 ans, musicien de rue : a vendu le souvenir de sa sœur, LÉA, pour sauver un ami. Il continue de jouer leur chanson sans comprendre ses larmes. Son arc est le cœur émotionnel du prototype.
+LÉA, 27 ans, archiviste de la Salle de Vente : se souvient de Silas et croit qu'il l'a volontairement abandonnée. On ne la présente pas comme un simple objet à sauver ; elle refuse qu'on réécrive la mémoire de force.
+MADAME VEL, 52 ans, directrice de la Salle de Vente : défend la vente de souvenirs comme un choix économique. Elle a accepté un contrat secret de reproduction des souvenirs avant vente, ce qui bafoue le consentement.
+UN ÉCHO : entité indistincte entendue dans la Chambre Blanche ; ne donne pas l'explication du multivers. Peut réutiliser très brièvement un motif sonore associé au Fragment du Seuil si l'autre mini-civilisation a été terminée.
+
+5. MÉCANIQUES ORIGINALES À CODER
+- MemoryShard : donnée structurée (id, propriétaire d'origine, représentation sensorielle, drapeaux, séquence, contexte).
+- MemorySlots : trois emplacements dédiés ; interface « Souvenirs » avec visualisation et opération d'ancrage/retrait.
+- RecollectionTrigger : certaines phrases, chansons et objets réagissent au souvenir actuellement ancré ; les changements doivent être observables et réversibles quand cela a du sens.
+- NPCRecognition : différents états de reconnaissance et de liens ; ne pas remplacer les PNJ par des dialogues toujours identiques.
+- MemoryEcho : lorsqu'on observe un lieu avec un éclat associé, afficher une brève surimpression translucide, un son et une courte scène (sans générer des vidéos IA).
+- ConsentCheck : restauration offerte à un PNJ uniquement après qu'il l'a acceptée. Le choix de refuser doit être respecté.
+- MemoryTrade : proposer une petite transaction dramatique, pas une économie infinie ; renoncer à un souvenir affecte une information disponible temporairement.
+- Memory UI : indicateur distinctif « Chambre mnésique 0/3 », portraits abstraits, prévisualisation des échos ; éviter tout HUD de rang/autorisation de Door Civilization.
+
+6. STRUCTURE NARRATIVE JOUABLE
+PROLOGUE — « Un souvenir qui n'est pas le tien » (3–5 min)
+Le joueur s'éveille sur un banc du marché, un éclat ambré dans la paume. Des passants vendent calmement le souvenir d'un anniversaire ; un jeune homme hésite à vendre son premier baiser. Lorsque le joueur approche une enseigne, un écho lui montre une silhouette traversant le marché à reculons, comme si la scène était rembobinée. Oriane remarque l'éclat et avertit que celui-ci n'a pas de propriétaire identifié.
+Dialogue clé :
+ORIANE : « Ici, rien ne se perd. On oublie seulement qui l'a payé. »
+JOUEUR : « Et si je ne me souviens de rien ? »
+ORIANE : « Alors on va commencer par vérifier ce qui te manque... et ce qui ne t'appartient pas. »
+Tutoriel : examiner un éclat, entrer dans l'atelier, ancrer/désancrer un souvenir.
+
+ACTE I — « La chanson sans visage » (7–10 min)
+Silas répète toujours six notes sur la place. Quand le joueur équipe l'éclat initial, la mélodie provoque une image de deux enfants dans le Jardin des Noms. Sans l'éclat, la stèle porte une inscription illisible ; avec, on distingue « LÉA ». Le joueur explore le jardin et récupère un second éclat grâce à une énigme d'association : trois objets d'enfance doivent être placés dans l'ordre où ils apparaissent dans l'écho (cerf-volant, tasse ébréchée, clochette). Ne pas exiger d'une seule lecture une mémorisation arbitraire : écho rejouable.
+Dialogue clé :
+SILAS : « Je connais cette chanson depuis toujours. Mais dès que je la finis... quelqu'un me manque. »
+JOUEUR : « Et tu sais qui ? »
+SILAS : « C'est justement ce que j'ai vendu. »
+Le deuxième éclat révèle le prénom de la sœur et la date d'une transaction à la Salle de Vente.
+
+ACTE II — « La valeur d'une absence » (8–12 min)
+À la Maison des Absences, une habitante explique qu'elle a vendu un mauvais souvenir et qu'elle refuse de le récupérer : tout souvenir perdu n'est pas à restituer. Oriane dévoile qu'elle avait mis en place le système de duplication « à des fins de sauvegarde » ; Vel l'a ensuite utilisé pour reproduire et commercialiser la vie des pauvres. Le joueur doit choisir comment obtenir la piste de Léa : négocier un petit souvenir autobiographique temporaire (il perd alors l'indice visuel d'un chemin, mais gagne l'accès à la fiche de vente) OU aider un employé à retrouver un document dans l'atelier, ce qui évite la transaction. Les deux voies mènent à la Salle de Vente ; le choix produit une réplique différente d'Oriane.
+Dialogue clé :
+VEL : « Ici, chacun vend ce qu'il accepte de perdre. »
+ORIANE : « Alors pourquoi gardez-vous une copie de ce qu'ils ont vendu ? »
+VEL : « Parce que l'oubli, lui, ne rapporte rien. »
+Léa est retrouvée vivante, travaillant aux archives. Elle refuse immédiatement que le joueur rende son souvenir à Silas sans l'avoir consultée.
+
+ACTE III — « Se souvenir n'est pas revenir » (7–10 min)
+Le joueur reconstruit le troisième éclat à partir du registre de vente et de la chanson de Silas. Dans la Chambre Blanche, l'écho rejoue une scène : Silas n'a pas vendu le souvenir par indifférence mais pour payer un traitement à un ami. La scène ne prouve pas que ce choix était juste : elle prouve seulement qu'il avait une raison. Face à Léa et Silas, le joueur propose la restauration. Léa consent à lui montrer l'éclat, sans être contrainte de pardonner. Silas accepte ou refuse selon un dialogue construit sur l'honnêteté du joueur : dans les deux cas, son autonomie doit rester cohérente, et la quête se conclut. L'état « accepté/refusé » est enregistré.
+Scène clé :
+LÉA : « Je ne veux pas que tu me reconnaisses parce qu'une machine te l'ordonne. »
+SILAS : « Alors laisse-moi apprendre à te connaître, même si je dois recommencer. »
+Si restauration consentie, Silas se souvient de la chanson et du sacrifice ; ils ne redeviennent pas automatiquement proches. Si refus, ils décident de se rencontrer comme des inconnus, sans effacer les blessures.
+
+DÉNOUEMENT — « Le nom qu'on t'a volé » (2–3 min)
+Oriane ouvre le registre des copies illégales et remet une preuve aux habitants ; Vel perd le monopole des duplications, sans que toute la société change instantanément. L'éclat initial du joueur n'appartenait ni à Silas ni à Léa : c'est une copie impossible étiquetée « SUJET ZÉRO — TRANSFERT INTERMONDE ». En le touchant, la caméra affiche une pièce blanche avec plusieurs silhouettes de portes, puis une brève voix : « Chaque oubli est une arrivée. » Le joueur conserve globalement une « Rémanence », indice multiversel qui n'altère pas la progression locale.
+Écran final : « FIN DU PROLOGUE — LE NOM QU'ON T'A VOLÉ » puis « Un souvenir attend ailleurs. »
+
+7. QUÊTES ET ÉTATS TECHNIQUES
+MEM_Q00_EVEIL : rencontrer Oriane, apprendre à ancrer un éclat.
+MEM_Q01_MELODIE : écouter Silas, inspecter stèle, résoudre l'énigme des trois objets.
+MEM_Q02_REGISTRE : choisir voie de transaction ou d'aide, consulter vente, rencontrer Léa.
+MEM_Q03_RECONSTRUCTION : combiner indices, déclencher Chambre Blanche, proposer restauration avec consentement.
+MEM_Q04_SUJET_ZERO : exposer copies, observer éclat initial, acquérir Rémanence.
+Variables : memory.shardsOwned, memory.shardsEquipped, memory.metOriane, memory.silasTrust, memory.leaConsent, memory.tradeChoice, memory.restorationOutcome, memory.illegalCopiesExposed, memory.finished, global.fragments.remanence.
+Sauvegarder : inventaire des éclats, contenu des emplacements, états de reconnaissance, objets d'énigme, choix de transaction, consentement et issue de la restauration.
+
+8. CINÉMATIQUES MINIMALES
+M01 Le marché des souvenirs (caméra proche d'une transaction, ≤20 s).
+M02 Premier écho (superposition de silhouettes, ≤15 s).
+M03 Chambre Blanche (scène silencieuse et reconstitution brève, 25–45 s).
+M04 Révélation « Sujet Zéro » (zoom sur registre puis vision fragmentaire, ≤20 s).
+Cinématiques skippables avec finalisation sûre des effets de quête.
+
+9. UX ET TEXTE FRANÇAIS
+Le joueur voit : « Examiner l'éclat », « Ancrer », « Retirer », « Chambre mnésique : 2/3 », « Souvenir retrouvé », « Léa refuse la restauration », « Rejouer l'écho ». Les dialogues doivent être vivants, sobres, naturels, en français. Ne jamais afficher les identifiants de variables ou les noms anglais de classes en jeu.
+
+10. CRITÈRES D'ACCEPTATION
+- L'équipement d'un éclat change réellement une perception ou un dialogue, pas uniquement une valeur numérique.
+- Le même lieu peut être observé avec ou sans souvenir et révéler des informations différentes.
+- L'énigme est résoluble sans deviner au hasard.
+- Le joueur rencontre au moins trois PNJ aux réactions distinctes.
+- L'histoire traite le consentement à la restauration avec sérieux.
+- La Salle de Vente n'est pas une copie d'une zone restreinte à rangs de Door Civilization.
+- Le pack n'utilise aucun système de rang comme mécanique centrale.
+- La Rémanence est persistée en global, et les états sociaux en local.
+- La fin est atteignable par les deux voies du deuxième acte et respecte les décisions finales.
+
+11. ARTICULATION ENTRE LES DEUX MINI-CIVILISATIONS
+Chaque histoire doit être jouable en premier. Ne pas exiger que Door Civilization soit terminée pour comprendre Memory Civilization, ni l'inverse. Si Door est terminée, un léger motif visuel peut apparaître dans l'écho final et une ligne alternative peut être affichée ; sinon, aucune incompréhension. Les deux fragments globaux (Fragment du Seuil et Rémanence) doivent être nommés dans un registre multiversel commun, sans révéler leur signification définitive.
+
+12. LIBERTÉS ET INTERDICTIONS
+Claude peut réduire le nombre de bâtiments secondaires, simplifier la visualisation des souvenirs ou la complexité des outils selon le moteur réellement disponible. Il doit préserver le gameplay des souvenirs, la progression émotionnelle, le consentement, le choix jouable et la révélation finale. Interdiction de remplacer le souvenir par une simple monnaie de quête ou la fin par un écran de texte non interactif.

@@ -1,0 +1,116 @@
+CIVILIZATIONVERSE — DOSSIER NARRATIF 001
+DOOR CIVILIZATION : LA PORTE QUI N'EXISTE PAS
+Version : prototype narratif 1.0 | Langue du jeu : français (fr-FR)
+
+STATUT ET PÉRIMÈTRE
+Ce document est une spécification jouable destinée à Claude Code. Créer une mini-civilisation de 25 à 40 minutes, avec un début, une montée dramatique et une conclusion forte. Ne pas la confondre avec la future civilisation complète. Préserver la possibilité d'étendre l'aventure sans contredire ce prototype.
+
+1. PROMESSE ET THÈME
+Dans la cité verticale de Verrou, les portes ne séparent pas seulement les pièces : elles décident de la valeur des personnes. La société prétend que chaque citoyen naît avec « la bonne clé ». En réalité, le Conseil distribue les accès pour empêcher les habitants d'atteindre un lieu effacé des plans. Thème : une permission n'est pas une légitimité.
+
+2. RÈGLES DU MONDE
+- Rang 0 (« Sans-Seuil ») : accès au Faubourg Bas ; portes de bois à marque grise.
+- Rang 1 (« Porteur ») : accès à la Galerie des Métiers ; portes gravées d'un trait doré.
+- Rang 2 (« Gardien ») : accès aux Archives et à l'escalier des tours ; portes à double sceau.
+- Le rang n'est pas une statistique de force : c'est une autorisation vérifiée par chaque serrure. Certaines portes vérifient aussi un secret ou une clé physique.
+- Une porte noire, effacée des registres, ne relève d'aucun rang. Elle reconnaît le protagoniste.
+- Les habitants portent une plaque de seuil visible ; l'interface indique le rang actuel et les accès autorisés.
+
+3. CARTE ET DIRECTION ARTISTIQUE
+Esthétique voxel fantasy originale. Quartier inférieur en bois et pierre humide, maisons serrées, enseignes mécaniques, ensevelissement vertical ; galerie médiane en brique chaude et cuivre ; Archives en pierre pâle, lanternes bleues, grand mécanisme à clés. La cité doit raconter l'inégalité par ses hauteurs, ses portes et ses espaces.
+Zones :
+A. Cour des Sans-Seuil : point de départ, 8 petits bâtiments visibles, 3 bâtiments réellement visitables, fontaine sèche, poste de garde ; circulation en boucle.
+B. Atelier de Mira : intérieur petit mais dense, établi, porte expérimentale, tiroir à clés ; connexion à A.
+C. Galerie des Métiers : rue marchande plus lumineuse, pont suspendu, deux lieux visitables ; accessible après le premier passage de rang.
+D. Poste du Registre : guichet, cache de documents et couloir contrôlé.
+E. Archives du Haut : salle des registres et salle aux engrenages, dimension raisonnable pour le prototype.
+F. La Porte Absente : corridor impossible de 15 à 25 mètres avec murs qui semblent ne mener nulle part ; scène finale.
+Le joueur ne doit pas traverser une grande ville vide : soigner la densité et les vues sur la cité inaccessible.
+
+4. PERSONNAGES
+LE PROTAGONISTE (« VOUS » dans les interfaces, jamais de prénom imposé) : se réveille sans mémoire, avec une marque de serrure sur la paume, ne sait pas pourquoi les portes paraissent l'observer. Ses réactions dialoguées doivent rester sobres.
+MIRA, 24 ans, réparatrice des verrous, ironique et courageuse. Objectif apparent : obtenir du métal rare pour réparer l'atelier. Objectif réel : trouver son frère disparu, Elias, après une arrestation pour « franchissement sans droit ». Relation : alliée prudente.
+CAPITAINE VAREN, 48 ans, responsable du poste de seuil. Ni caricature ni tyran jovial : il pense qu'un accès libre provoquerait une catastrophe qu'il a presque vécue. Fait respecter la loi mais hésite devant une preuve.
+NOÉ, 12 ans, coursier Sans-Seuil : connaît les interstices de la cité et appelle le joueur « l'étranger sans plaque ».
+L'ARCHIVISTE EDA, âge inconnu, gardienne des registres : parle peu et sait qu'il existe des portes retirées des plans. Son aide exige une preuve.
+UNE VOIX derrière la Porte Absente : ne révèle ni son nom ni l'explication globale du multivers ; prononce une phrase qui suggère une reconnaissance ancienne.
+
+5. MÉCANIQUES ORIGINALES À CODER
+- AccessRegistry : statut de rang et permissions par porte ; refus contextualisés (écran « Accès refusé — Rang 1 requis »).
+- LockVariants : serrure de rang, serrure à objet, serrure à condition narrative, serrure impossible ; même interface d'interaction mais règles distinctes.
+- KeyImprint : l'atelier permet d'empreindre une clé dans un métal vierge après un mini-jeu simple de trois cadrans à aligner ; ne pas réduire la progression à un simple bouton « passer rang 1 ».
+- DoorMemory : certaines portes enregistrent si le joueur les a déjà touchées et changent leurs descriptions ; la Porte Absente peut réagir même lorsque les vérifications classiques échouent.
+- Rang UI : petite plaque de seuil discrète, animation lors du changement de rang, carte des permissions et retours visuels spécifiques.
+- Suspicion localisée : si le joueur force un passage, un garde intervient verbalement puis le raccompagne ; ne pas demander de système policier global complexe pour ce prototype.
+- Séquences cinématiques déclenchées par événements et non par chronologie rigide.
+
+6. STRUCTURE NARRATIVE JOUABLE
+PROLOGUE — « Le mauvais côté » (3–5 min)
+Écran noir, grincement de serrure. Le joueur ouvre les yeux dans un petit réduit. La caméra révèle une porte fermée DE L'INTÉRIEUR, sans poignée. En touchant le panneau, la marque de sa paume l'ouvre. Une plaque officielle à l'extérieur dit pourtant : « Cellule jamais construite ». Noé l'aperçoit, surpris, et guide vers la cour. Objectif tutoriel : déplacer, observer, interagir, sortir.
+Dialogue clé :
+NOÉ : « Attends... Il n'y a pas de pièce derrière cette porte. »
+JOUEUR [choix] : « Pourtant, j'en viens. » / « Où suis-je ? »
+NOÉ : « Alors évite de le raconter au capitaine. Ici, même les murs ont besoin d'une autorisation. »
+Événement : le joueur reçoit une plaque provisoire Rang 0, tandis que son empreinte de paume demeure inexpliquée.
+
+ACTE I — « Le prix d'une poignée » (7–10 min)
+Le joueur découvre une galerie qu'il ne peut pas franchir. Un garde explique le classement des accès sans réciter une encyclopédie. Mira propose de réparer son mécanisme d'essai en échange d'une plaque de Porteur. Le joueur retrouve trois composants dans un atelier, un puits et une caisse remise par Noé ; courte exploration, petite énigme des trois cadrans. En parallèle, une affiche de disparu présente Elias, frère de Mira.
+Moment dramatique : une mère Rang 0 se voit refuser une porte derrière laquelle elle entend son enfant malade ; Varen lui ouvre lui-même le passage, puis ordonne d'effacer l'incident du registre. Le joueur comprend que la règle est humaine et arbitraire.
+Dialogue clé :
+MIRA : « Ils appellent ça une serrure. Moi, j'appelle ça une opinion fabriquée en cuivre. »
+Joueur : « Tu peux me donner un rang ? »
+MIRA : « Je peux fabriquer ce qu'ils reconnaissent. Ce n'est pas la même chose. »
+Récompense : Rang 1, accès à la Galerie des Métiers, nouvelle apparence de plaque et son bref de déverrouillage.
+
+ACTE II — « Les pages qui manquent » (8–12 min)
+Dans la galerie, le joueur trouve le dernier itinéraire connu d'Elias : un transfert vers les Archives, approuvé par Varen mais sans destination enregistrée. Un défi de patrouille léger demande d'attendre le passage du garde ou de convaincre Varen avec un rapport falsifié / un témoignage de Mira. Les deux méthodes mènent à la même scène principale, avec dialogue différent. Eda ne donne accès au registre secret que si le joueur réunit deux preuves (ordre de transfert et plaque d'Elias trouvée dans un coffre). Le joueur obtient un accès narratif temporaire Rang 2 pour les Archives : pas une promotion politique permanente.
+Dialogue clé :
+EDA : « Les registres ne mentent pas. Ils omettent. »
+JOUEUR : « Elias a été emmené où ? »
+EDA : « Vers une porte dont j'ai reçu l'ordre de supprimer le nom. »
+Le registre révèle que « la porte absente » a été condamnée il y a dix-sept ans. Or l'empreinte trouvée sur le document est exactement celle du joueur, qui n'a aucun souvenir de cette époque.
+
+ACTE III — « Une serrure sans clé » (7–10 min)
+Le joueur descend dans le couloir effacé, au lieu de grimper vers la tour. Les portes normales se ferment autour de lui dans une séquence scriptée, mais une seule paroi laisse échapper un rai de lumière impossible. Mira arrive, suivie de Varen. Confrontation : Varen révèle avoir enfermé Elias pour avoir tenté d'ouvrir ce passage, mais reconnaît qu'il n'a pas compris ce qu'il protégeait ; Elias n'est pas visible de l'autre côté. Le choix du joueur : ouvrir tout de suite ou écouter l'avertissement de Varen. Les deux choix se concluent par l'ouverture, mais un dialogue, un drapeau narratif et la relation avec Varen changent.
+Dialogue clé :
+VAREN : « Les portes ne tiennent pas les monstres dehors. Parfois, elles tiennent nos erreurs dedans. »
+MIRA : « Mon frère est de l'autre côté ? »
+VOIX, derrière la paroi : « Tu recommences toujours par oublier la première porte. »
+La marque sur la paume devient lumineuse ; la porte s'ouvre sur une étendue noire étoilée. Dans l'encadrement flotte une plaque identique à celle du joueur, avec la mention illisible « ORIG... ». Le joueur saisit un fragment métallique gravé d'un symbole de cercle fracturé. Coupe au noir avant de franchir le seuil.
+
+ÉPILOGUE — « Celui qui possède la clé » (1–2 min)
+Retour visuel au Faubourg. Les portes de rang ne sont pas toutes ouvertes : ne pas prétendre que le système social a été magiquement aboli. La rumeur d'une porte inconnue circule. Mira promet de retrouver Elias. Varen abandonne un registre qu'il contrôlait. Le joueur possède le Fragment du Seuil (indice multiversel global, non équipement de combat).
+Texte final à l'écran : « FIN DU PROLOGUE — LA PORTE QUI N'EXISTE PAS » puis « D'autres seuils attendent. »
+
+7. OBJECTIFS ET ÉTATS TECHNIQUES
+Quêtes (identifiants stables) :
+DOOR_Q00_REVEIL : sortir de la cellule, parler à Noé.
+DOOR_Q01_EMPREINTE : trouver les trois pièces, résoudre trois cadrans, obtenir rang 1.
+DOOR_Q02_ELIAS : inspecter affiche, récupérer ordre de transfert et plaque d'Elias.
+DOOR_Q03_ARCHIVES : obtenir accès temporisé Rang 2, consulter le registre.
+DOOR_Q04_PORTE_ABSENTE : atteindre corridor, choisir réponse à Varen, déclencher ouverture, acquérir Fragment du Seuil.
+Variables : door.rank (0/1/2 temporaire), door.metMira, door.foundEliasPoster, door.evidenceCount, door.varenTrust, door.finalChoice, door.finished, global.fragments.threshold.
+États sauvegardés : états de serrures, pièces recueillies, quête, dialogues clés, choix final, marque de paume révélée, fragment global.
+
+8. CINÉMATIQUES MINIMALES
+C01 Éveil (caméra depuis cellule vers porte sans poignée, ≤20 s).
+C02 Rang 1 (démonstration de la galerie, ≤12 s).
+C03 Révélation du registre (gros plan sur empreinte, ≤15 s).
+C04 Porte Absente (verrous qui se ferment, confrontation, lumière, coupe, 35–60 s).
+Tous les segments doivent être skippables sans briser les états de quête.
+
+9. UX ET TEXTE FRANÇAIS
+Toute l'interface du pack, quêtes, sous-titres, noms des rangs, notifications, aides et dialogues sont en français naturel. Exemples : « Examiner », « Parler à Mira », « Autorisation insuffisante », « Rang : Sans-Seuil », « Nouvelle piste découverte ». Éviter l'anglais dans les textes visibles. Les IDs techniques restent en anglais si souhaité.
+
+10. CRITÈRES D'ACCEPTATION
+- Un joueur comprend les règles sociales en les éprouvant, sans exposé de dix minutes.
+- Le rang 1 ouvre concrètement une zone auparavant interdite.
+- Les deux preuves peuvent être trouvées dans le monde et persistent après sauvegarde.
+- Le choix face à Varen change au moins une relation ou une réplique ultérieure.
+- La séquence finale est vécue en jeu avec caméra, personnages et interaction ; pas un simple écran narratif.
+- Le fragment global est enregistré sans contaminer la logique locale.
+- La fin est atteignable, sans impasse de quête.
+- Les objectifs optionnels ne bloquent pas la trame principale.
+
+11. LIBERTÉS ET INTERDICTIONS
+Claude peut adapter la taille de la carte, les méthodes d'animation ou la complexité des énigmes aux moyens réels. Il ne doit pas remplacer le mystère des portes par un simple parcours de combat, ni transformer le prototype en 40 pièces vides. Ne pas révéler qui parle derrière la porte, ni définir définitivement le destin d'Elias. Le prototype doit avoir une fin satisfaisante tout en ouvrant une piste pour la suite.
