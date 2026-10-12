@@ -1,0 +1,67 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "MEM_Q04_SUJET_ZERO",
+  "title": "memory.quest.MEM_Q04_SUJET_ZERO.title",
+  "summary": "memory.quest.MEM_Q04_SUJET_ZERO.summary",
+  "kind": "main",
+  "order": 4,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "copies",
+      "description": "memory.quest.MEM_Q04_SUJET_ZERO.copies",
+      "objectives": [
+        {
+          "id": "exposer",
+          "text": "memory.quest.MEM_Q04_SUJET_ZERO.copies.exposer",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.illegalCopiesExposed",
+            "op": "==",
+            "value": true
+          },
+          "target": "oriane"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "sujet",
+      "description": "memory.quest.MEM_Q04_SUJET_ZERO.sujet",
+      "objectives": [
+        {
+          "id": "observer",
+          "text": "memory.quest.MEM_Q04_SUJET_ZERO.sujet.observer",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.sujetZero",
+            "op": "==",
+            "value": true
+          },
+          "target": "armoire_copies"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "remanence",
+      "description": "memory.quest.MEM_Q04_SUJET_ZERO.remanence",
+      "objectives": [
+        {
+          "id": "remanence",
+          "text": "memory.quest.MEM_Q04_SUJET_ZERO.remanence.remanence",
+          "completeOn": {
+            "event": "item.acquired",
+            "where": {
+              "itemId": "memory:remanence"
+            }
+          },
+          "target": "remanence",
+          "targetScene": "chambre_blanche"
+        }
+      ],
+      "completion": "all"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "M04b_vision",
+  "title": "M04 — Vision",
+  "duration": 8,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            15.5,
+            7,
+            9.5
+          ],
+          "target": [
+            15.5,
+            3.5,
+            19.5
+          ],
+          "fov": 66
+        },
+        {
+          "t": 4,
+          "position": [
+            18.5,
+            4.4,
+            15.5
+          ],
+          "target": [
+            6,
+            3.4,
+            22
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 8,
+          "position": [
+            15.5,
+            3.62,
+            11.5
+          ],
+          "target": [
+            15.5,
+            3.6,
+            20.5
+          ],
+          "ease": "inOutSine",
+          "fov": 70
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.6,
+          "duration": 3.4,
+          "speaker": "memory.speaker.echo",
+          "text": "memory.cin.m04b.voice"
+        },
+        {
+          "t": 4.3,
+          "duration": 3.4,
+          "text": "memory.cin.m04b.1"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 1.5,
+          "color": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.4,
+          "sound": "memory:echo"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.setVar",
+      "var": "memory.visionSeen",
+      "value": true
+    }
+  ]
+}

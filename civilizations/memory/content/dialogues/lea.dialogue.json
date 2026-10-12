@@ -1,0 +1,537 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "lea",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "==",
+            "value": "acceptee"
+          },
+          "next": "after_ok"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "exists",
+            "value": true
+          },
+          "next": "after_no"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "MEM_Q03_RECONSTRUCTION",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "memory.whiteRoomSeen",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "next": "consent1"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.metLea",
+            "op": "==",
+            "value": true
+          },
+          "next": "reminder"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "MEM_Q02_REGISTRE",
+            "stage": "lea"
+          },
+          "next": "meet1"
+        }
+      ],
+      "next": "closed"
+    },
+    {
+      "id": "closed",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.closed",
+      "end": true
+    },
+    {
+      "id": "meet1",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.meet1",
+      "next": "meet2"
+    },
+    {
+      "id": "meet2",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.meet2",
+      "choices": [
+        {
+          "id": "remember",
+          "text": "memory.dlg.lea.meet2.remember",
+          "next": "meet3"
+        },
+        {
+          "id": "restore",
+          "text": "memory.dlg.lea.meet2.restore",
+          "next": "meet_refuse"
+        }
+      ]
+    },
+    {
+      "id": "meet3",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.meet3",
+      "expression": "sad",
+      "choices": [
+        {
+          "id": "restore",
+          "text": "memory.dlg.lea.meet3.restore",
+          "next": "meet_refuse"
+        },
+        {
+          "id": "why",
+          "text": "memory.dlg.lea.meet3.why",
+          "next": "meet_why"
+        }
+      ]
+    },
+    {
+      "id": "meet_why",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.meet_why",
+      "choices": [
+        {
+          "id": "restore",
+          "text": "memory.dlg.lea.meet_why.restore",
+          "next": "meet_refuse"
+        }
+      ]
+    },
+    {
+      "id": "meet_refuse",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.meet_refuse",
+      "expression": "angry",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.leaFirstRefusal",
+          "value": true
+        },
+        {
+          "type": "core.notify",
+          "text": "memory.notify.leaRefuses",
+          "kind": "denied"
+        }
+      ],
+      "next": "meet4"
+    },
+    {
+      "id": "meet4",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.meet4",
+      "next": "meet5"
+    },
+    {
+      "id": "meet5",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.meet5",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.metLea",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "reminder",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.reminder",
+      "end": true
+    },
+    {
+      "id": "consent1",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.consent1",
+      "next": "consent2"
+    },
+    {
+      "id": "consent2",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.consent2",
+      "choices": [
+        {
+          "id": "ask",
+          "text": "memory.dlg.lea.consent2.ask",
+          "next": "consent_ask"
+        },
+        {
+          "id": "impose",
+          "text": "memory.dlg.lea.consent2.impose",
+          "next": "consent_refuse"
+        },
+        {
+          "id": "later",
+          "text": "memory.dlg.lea.consent2.later",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "consent_ask",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.consent_ask",
+      "next": "consent_ask2"
+    },
+    {
+      "id": "consent_ask2",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.consent_ask2",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.leaConsent",
+          "value": "accepte"
+        }
+      ],
+      "next": "key_lea"
+    },
+    {
+      "id": "consent_refuse",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.consent_refuse",
+      "expression": "angry",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.leaConsent",
+          "value": "refuse"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.restorationRefusedBy",
+          "value": "lea"
+        },
+        {
+          "type": "core.notify",
+          "text": "memory.notify.leaRefuses",
+          "kind": "denied"
+        }
+      ],
+      "next": "key_lea_refused"
+    },
+    {
+      "id": "key_lea",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.key_lea",
+      "actions": [
+        {
+          "type": "core.lookAt",
+          "entity": "lea",
+          "target": "silas"
+        }
+      ],
+      "next": "key_silas"
+    },
+    {
+      "id": "key_silas",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.key_silas",
+      "actions": [
+        {
+          "type": "core.lookAt",
+          "entity": "silas",
+          "target": "lea"
+        }
+      ],
+      "next": "silas_q"
+    },
+    {
+      "id": "silas_q",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.silas_q",
+      "actions": [
+        {
+          "type": "core.lookAt",
+          "entity": "silas",
+          "target": "player"
+        }
+      ],
+      "choices": [
+        {
+          "id": "truth",
+          "text": "memory.dlg.lea.silas_q.truth",
+          "next": "decide",
+          "actions": [
+            {
+              "type": "core.addVar",
+              "var": "memory.silasTrust",
+              "amount": 1
+            },
+            {
+              "type": "core.setVar",
+              "var": "memory.finalHonest",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "herask",
+          "text": "memory.dlg.lea.silas_q.herask",
+          "next": "lea_answers",
+          "actions": [
+            {
+              "type": "core.addVar",
+              "var": "memory.silasTrust",
+              "amount": 1
+            },
+            {
+              "type": "core.setVar",
+              "var": "memory.finalHonest",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "soften",
+          "text": "memory.dlg.lea.silas_q.soften",
+          "next": "decide",
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "memory.finalHonest",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lea_answers",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.lea_answers",
+      "next": "decide"
+    },
+    {
+      "id": "decide",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "memory.finalHonest",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.var",
+                "var": "memory.silasTrust",
+                "op": ">=",
+                "value": 2
+              }
+            ]
+          },
+          "next": "accept"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.finalHonest",
+            "op": "==",
+            "value": true
+          },
+          "next": "refuse_gentle"
+        }
+      ],
+      "next": "refuse_lie"
+    },
+    {
+      "id": "accept",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.accept",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.silasConsent",
+          "value": "accepte"
+        },
+        {
+          "type": "memory.restore",
+          "shard": "vente",
+          "to": "silas",
+          "consent": "memory.silasConsent",
+          "refused": "memory.notify.silasRefuses"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.restorationOutcome",
+          "value": "acceptee"
+        }
+      ],
+      "next": "accept2"
+    },
+    {
+      "id": "accept2",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.accept2",
+      "expression": "sad",
+      "next": "accept3"
+    },
+    {
+      "id": "accept3",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.accept3",
+      "next": "accept4"
+    },
+    {
+      "id": "accept4",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.accept4",
+      "end": true
+    },
+    {
+      "id": "refuse_gentle",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.refuse_gentle",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.silasConsent",
+          "value": "refuse"
+        },
+        {
+          "type": "memory.restore",
+          "shard": "vente",
+          "to": "silas",
+          "consent": "memory.silasConsent",
+          "refused": "memory.notify.silasRefuses"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.restorationRefusedBy",
+          "value": "silas"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.restorationOutcome",
+          "value": "refusee"
+        }
+      ],
+      "next": "strangers"
+    },
+    {
+      "id": "refuse_lie",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.refuse_lie",
+      "expression": "angry",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.silasConsent",
+          "value": "refuse"
+        },
+        {
+          "type": "memory.restore",
+          "shard": "vente",
+          "to": "silas",
+          "consent": "memory.silasConsent",
+          "refused": "memory.notify.silasRefuses"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.restorationRefusedBy",
+          "value": "silas"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.restorationOutcome",
+          "value": "refusee"
+        }
+      ],
+      "next": "strangers"
+    },
+    {
+      "id": "key_lea_refused",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.key_lea_refused",
+      "actions": [
+        {
+          "type": "core.lookAt",
+          "entity": "lea",
+          "target": "silas"
+        }
+      ],
+      "next": "key_silas_refused"
+    },
+    {
+      "id": "key_silas_refused",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.key_silas_refused",
+      "actions": [
+        {
+          "type": "core.lookAt",
+          "entity": "silas",
+          "target": "lea"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.restorationOutcome",
+          "value": "refusee"
+        }
+      ],
+      "next": "strangers"
+    },
+    {
+      "id": "strangers",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.strangers",
+      "next": "strangers2"
+    },
+    {
+      "id": "strangers2",
+      "speaker": "silas",
+      "text": "memory.dlg.lea.strangers2",
+      "next": "strangers3"
+    },
+    {
+      "id": "strangers3",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.strangers3",
+      "end": true
+    },
+    {
+      "id": "after_ok",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.after_ok",
+      "end": true
+    },
+    {
+      "id": "after_no",
+      "speaker": "lea",
+      "text": "memory.dlg.lea.after_no",
+      "end": true
+    }
+  ]
+}

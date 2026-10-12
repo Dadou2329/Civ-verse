@@ -1,0 +1,611 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "oriane",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.metOriane",
+              "op": "==",
+              "value": true
+            }
+          },
+          "next": "intro1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "MEM_Q00_EVEIL",
+                "status": "active"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "memory.cheminGiven",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "atelier1"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "MEM_Q00_EVEIL",
+            "status": "active"
+          },
+          "next": "tuto_hint"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "MEM_Q01_MELODIE",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "memory.gardenSolved",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "next": "q01_examine"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "MEM_Q01_MELODIE",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "memory.steleRead",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "next": "q01_garden"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "MEM_Q01_MELODIE",
+            "status": "active"
+          },
+          "next": "q01_silas"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "MEM_Q02_REGISTRE",
+            "stage": "absences"
+          },
+          "next": "q02_absences"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "MEM_Q02_REGISTRE",
+            "stage": "oriane"
+          },
+          "next": "confess1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "MEM_Q02_REGISTRE",
+                "stage": "piste"
+              },
+              {
+                "type": "core.var",
+                "var": "memory.bastienAsked",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.hasItem",
+                  "item": "memory:registre_lots",
+                  "count": 1
+                }
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "memory.ficheAccess",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "q02_liasse"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "MEM_Q02_REGISTRE",
+            "stage": "piste"
+          },
+          "next": "q02_piste"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "MEM_Q02_REGISTRE",
+            "status": "active"
+          },
+          "next": "q02_lea"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStage",
+                "quest": "MEM_Q03_RECONSTRUCTION",
+                "stage": "indices"
+              },
+              {
+                "type": "core.var",
+                "var": "memory.songComplete",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "memory.shardState",
+                "shard": "vente",
+                "state": "aucun"
+              }
+            ]
+          },
+          "next": "reconstruct1"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "MEM_Q03_RECONSTRUCTION",
+            "stage": "indices"
+          },
+          "next": "need_song"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "MEM_Q03_RECONSTRUCTION",
+            "stage": "chambre"
+          },
+          "next": "lamp_hint"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "MEM_Q03_RECONSTRUCTION",
+            "status": "active"
+          },
+          "next": "consent_hint"
+        },
+        {
+          "condition": {
+            "type": "core.questStage",
+            "quest": "MEM_Q04_SUJET_ZERO",
+            "stage": "copies"
+          },
+          "next": "expose1"
+        },
+        {
+          "condition": {
+            "type": "core.questStatus",
+            "quest": "MEM_Q04_SUJET_ZERO",
+            "status": "active"
+          },
+          "next": "sujet_hint"
+        }
+      ],
+      "next": "idle"
+    },
+    {
+      "id": "intro1",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.intro1",
+      "expression": "surprised",
+      "next": "intro2"
+    },
+    {
+      "id": "intro2",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.intro2",
+      "next": "intro3"
+    },
+    {
+      "id": "intro3",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.intro3",
+      "choices": [
+        {
+          "id": "nothing",
+          "text": "memory.dlg.oriane.intro3.nothing",
+          "next": "intro4"
+        },
+        {
+          "id": "who",
+          "text": "memory.dlg.oriane.intro3.who",
+          "next": "intro_who"
+        }
+      ]
+    },
+    {
+      "id": "intro_who",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.intro_who",
+      "choices": [
+        {
+          "id": "nothing",
+          "text": "memory.dlg.oriane.intro_who.nothing",
+          "next": "intro4"
+        }
+      ]
+    },
+    {
+      "id": "intro4",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.intro4",
+      "next": "intro5"
+    },
+    {
+      "id": "intro5",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.intro5",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.metOriane",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "atelier1",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.atelier1",
+      "next": "atelier2"
+    },
+    {
+      "id": "atelier2",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.atelier2",
+      "animation": "interact",
+      "actions": [
+        {
+          "type": "memory.giveShard",
+          "shard": "chemin"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.cheminGiven",
+          "value": true
+        }
+      ],
+      "next": "atelier3"
+    },
+    {
+      "id": "atelier3",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.atelier3",
+      "choices": [
+        {
+          "id": "how",
+          "text": "memory.dlg.oriane.atelier3.how",
+          "next": "atelier4"
+        },
+        {
+          "id": "amber",
+          "text": "memory.dlg.oriane.atelier3.amber",
+          "next": "atelier_amber"
+        }
+      ]
+    },
+    {
+      "id": "atelier4",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.atelier4",
+      "next": "atelier5"
+    },
+    {
+      "id": "atelier_amber",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.atelier_amber",
+      "next": "atelier5"
+    },
+    {
+      "id": "atelier5",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.atelier5",
+      "actions": [
+        {
+          "type": "core.notify",
+          "text": "memory.tuto.anchor",
+          "kind": "info"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "tuto_hint",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.tuto_hint",
+      "end": true
+    },
+    {
+      "id": "q01_silas",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.q01_silas",
+      "end": true
+    },
+    {
+      "id": "q01_garden",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.q01_garden",
+      "end": true
+    },
+    {
+      "id": "q01_examine",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.q01_examine",
+      "end": true
+    },
+    {
+      "id": "q02_absences",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.q02_absences",
+      "end": true
+    },
+    {
+      "id": "confess1",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess1",
+      "next": "confess2"
+    },
+    {
+      "id": "confess2",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess2",
+      "expression": "sad",
+      "next": "confess3"
+    },
+    {
+      "id": "confess3",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess3",
+      "next": "confess4"
+    },
+    {
+      "id": "confess4",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess4",
+      "choices": [
+        {
+          "id": "why",
+          "text": "memory.dlg.oriane.confess4.why",
+          "next": "confess_why"
+        },
+        {
+          "id": "fix",
+          "text": "memory.dlg.oriane.confess4.fix",
+          "next": "confess_fix"
+        },
+        {
+          "id": "trust",
+          "text": "memory.dlg.oriane.confess4.trust",
+          "next": "confess_trust"
+        }
+      ]
+    },
+    {
+      "id": "confess_why",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess_why",
+      "next": "confess5"
+    },
+    {
+      "id": "confess_fix",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess_fix",
+      "next": "confess5"
+    },
+    {
+      "id": "confess_trust",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess_trust",
+      "next": "confess5"
+    },
+    {
+      "id": "confess5",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.confess5",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.orianeConfessed",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "q02_piste",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.q02_piste",
+      "end": true
+    },
+    {
+      "id": "q02_liasse",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.q02_liasse",
+      "end": true
+    },
+    {
+      "id": "q02_lea",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.q02_lea",
+      "end": true
+    },
+    {
+      "id": "need_song",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.need_song",
+      "end": true
+    },
+    {
+      "id": "reconstruct1",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.reconstruct1",
+      "animation": "interact",
+      "actions": [
+        {
+          "type": "memory.giveShard",
+          "shard": "vente"
+        }
+      ],
+      "next": "reconstruct2"
+    },
+    {
+      "id": "reconstruct2",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.reconstruct2",
+      "next": "reconstruct3"
+    },
+    {
+      "id": "reconstruct3",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.reconstruct3",
+      "end": true
+    },
+    {
+      "id": "lamp_hint",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.lamp_hint",
+      "end": true
+    },
+    {
+      "id": "consent_hint",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.consent_hint",
+      "end": true
+    },
+    {
+      "id": "expose1",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.expose1",
+      "choices": [
+        {
+          "id": "show",
+          "text": "memory.dlg.oriane.expose1.show",
+          "next": "expose2"
+        },
+        {
+          "id": "change",
+          "text": "memory.dlg.oriane.expose1.change",
+          "next": "expose_change"
+        }
+      ]
+    },
+    {
+      "id": "expose_change",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.expose_change",
+      "choices": [
+        {
+          "id": "show",
+          "text": "memory.dlg.oriane.expose_change.show",
+          "next": "expose2"
+        }
+      ]
+    },
+    {
+      "id": "expose2",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.expose2",
+      "animation": "interact",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.illegalCopiesExposed",
+          "value": true
+        },
+        {
+          "type": "core.playSound",
+          "sound": "core:page"
+        },
+        {
+          "type": "core.notify",
+          "text": "memory.notify.exposed",
+          "kind": "discovery"
+        }
+      ],
+      "next": "expose3"
+    },
+    {
+      "id": "expose3",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.expose3",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.backDoorMemory",
+            "op": "==",
+            "value": true
+          },
+          "next": "expose_back"
+        }
+      ]
+    },
+    {
+      "id": "expose_back",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.expose_back",
+      "end": true
+    },
+    {
+      "id": "sujet_hint",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.sujet_hint",
+      "end": true
+    },
+    {
+      "id": "idle",
+      "speaker": "oriane",
+      "text": "memory.dlg.oriane.idle",
+      "end": true
+    }
+  ]
+}

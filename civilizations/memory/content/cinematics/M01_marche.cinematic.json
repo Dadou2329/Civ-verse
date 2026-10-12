@@ -1,0 +1,238 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "M01_marche",
+  "title": "M01 — Le marché des souvenirs",
+  "duration": 19,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            43.3,
+            7.8,
+            29.1
+          ],
+          "target": [
+            47.3,
+            7.3,
+            28.1
+          ],
+          "fov": 52
+        },
+        {
+          "t": 6.5,
+          "position": [
+            44.3,
+            7.7,
+            28.7
+          ],
+          "target": [
+            47.6,
+            7.4,
+            27.9
+          ],
+          "ease": "inOutSine",
+          "fov": 44
+        },
+        {
+          "t": 7,
+          "position": [
+            52.1,
+            7.65,
+            32.9
+          ],
+          "target": [
+            50.5,
+            7.5,
+            30.5
+          ],
+          "fov": 50,
+          "cut": true
+        },
+        {
+          "t": 13.5,
+          "position": [
+            51.1,
+            7.6,
+            32.1
+          ],
+          "target": [
+            46.5,
+            7.5,
+            29.5
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 14,
+          "position": [
+            58.7,
+            6.85,
+            33
+          ],
+          "target": [
+            57.5,
+            6.6,
+            32.4
+          ],
+          "fov": 46,
+          "cut": true
+        },
+        {
+          "t": 18.5,
+          "position": [
+            57.5,
+            7.62,
+            34.5
+          ],
+          "target": [
+            54.7,
+            7.3,
+            31.7
+          ],
+          "ease": "inOutSine",
+          "fov": 70
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.6,
+          "duration": 3.6,
+          "speaker": "memory.npc.iris",
+          "text": "memory.cin.m01.1"
+        },
+        {
+          "t": 4.4,
+          "duration": 2.5,
+          "text": "memory.cin.m01.2"
+        },
+        {
+          "t": 7.4,
+          "duration": 2.8,
+          "speaker": "memory.npc.jules",
+          "text": "memory.cin.m01.3"
+        },
+        {
+          "t": 10.4,
+          "duration": 3.2,
+          "speaker": "memory.npc.iris",
+          "text": "memory.cin.m01.4"
+        },
+        {
+          "t": 14.2,
+          "duration": 4.4,
+          "text": "memory.cin.m01.5"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 2.5
+        },
+        {
+          "t": 4.4,
+          "fx": "flash",
+          "color": "#ffd8a0",
+          "seconds": 0.8
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 3.8,
+          "sound": "memory:machine",
+          "at": "metier"
+        },
+        {
+          "t": 4.4,
+          "sound": "memory:echo"
+        },
+        {
+          "t": 15,
+          "sound": "memory:shard_touch"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "iris",
+      "keys": [
+        {
+          "t": 0,
+          "animation": "interact"
+        },
+        {
+          "t": 4.6,
+          "animation": "idle",
+          "expression": "neutral"
+        },
+        {
+          "t": 10.4,
+          "lookAt": "jules",
+          "animation": "talk"
+        },
+        {
+          "t": 13.6,
+          "animation": "idle"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "jules",
+      "keys": [
+        {
+          "t": 7.2,
+          "lookAt": "iris",
+          "animation": "talk",
+          "expression": "worried"
+        },
+        {
+          "t": 10.2,
+          "animation": "idle"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 0,
+          "essential": true,
+          "actions": [
+            {
+              "type": "memory.giveShard",
+              "shard": "ambre",
+              "silent": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "MEM_Q00_EVEIL"
+    }
+  ]
+}

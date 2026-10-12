@@ -1,0 +1,121 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "MEM_Q03_RECONSTRUCTION",
+  "title": "memory.quest.MEM_Q03_RECONSTRUCTION.title",
+  "summary": "memory.quest.MEM_Q03_RECONSTRUCTION.summary",
+  "kind": "main",
+  "order": 3,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "indices",
+      "description": "memory.quest.MEM_Q03_RECONSTRUCTION.indices",
+      "objectives": [
+        {
+          "id": "chanson",
+          "text": "memory.quest.MEM_Q03_RECONSTRUCTION.indices.chanson",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.songComplete",
+            "op": "==",
+            "value": true
+          },
+          "target": "silas"
+        },
+        {
+          "id": "reconstruire",
+          "text": "memory.quest.MEM_Q03_RECONSTRUCTION.indices.reconstruire",
+          "completeOn": {
+            "event": "memory.shardAcquired",
+            "where": {
+              "shardId": "vente"
+            }
+          },
+          "target": "oriane"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "chambre",
+      "description": "memory.quest.MEM_Q03_RECONSTRUCTION.chambre",
+      "objectives": [
+        {
+          "id": "ancrer",
+          "text": "memory.quest.MEM_Q03_RECONSTRUCTION.chambre.ancrer",
+          "completeWhen": {
+            "type": "memory.anchored",
+            "shard": "vente"
+          }
+        },
+        {
+          "id": "lampe",
+          "text": "memory.quest.MEM_Q03_RECONSTRUCTION.chambre.lampe",
+          "completeOn": {
+            "event": "scene.entered",
+            "where": {
+              "sceneId": "chambre_blanche"
+            }
+          },
+          "target": "lampe_resonance"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "retour",
+      "description": "memory.quest.MEM_Q03_RECONSTRUCTION.retour",
+      "objectives": [
+        {
+          "id": "temoin",
+          "text": "memory.quest.MEM_Q03_RECONSTRUCTION.retour.temoin",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.whiteRoomSeen",
+            "op": "==",
+            "value": true
+          },
+          "targetScene": "chambre_blanche"
+        },
+        {
+          "id": "revenir",
+          "text": "memory.quest.MEM_Q03_RECONSTRUCTION.retour.revenir",
+          "completeOn": {
+            "event": "scene.entered",
+            "where": {
+              "sceneId": "reminence"
+            }
+          },
+          "target": "retour_atelier",
+          "targetScene": "chambre_blanche"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "consentement",
+      "description": "memory.quest.MEM_Q03_RECONSTRUCTION.consentement",
+      "objectives": [
+        {
+          "id": "proposer",
+          "text": "memory.quest.MEM_Q03_RECONSTRUCTION.consentement.proposer",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "exists",
+            "value": true
+          },
+          "target": "lea"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "MEM_Q04_SUJET_ZERO"
+    }
+  ]
+}

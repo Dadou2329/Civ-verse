@@ -1,0 +1,148 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "M04_sujet_zero",
+  "title": "M04 — Révélation « Sujet Zéro »",
+  "duration": 11,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "cut",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            62.1,
+            7.75,
+            5.1
+          ],
+          "target": [
+            64.2,
+            7.45,
+            4.5
+          ],
+          "fov": 55
+        },
+        {
+          "t": 5.5,
+          "position": [
+            63.45,
+            7.6,
+            4.55
+          ],
+          "target": [
+            64,
+            7.55,
+            4.5
+          ],
+          "ease": "inOutSine",
+          "fov": 36
+        },
+        {
+          "t": 11,
+          "position": [
+            63.65,
+            7.58,
+            4.5
+          ],
+          "target": [
+            64,
+            7.55,
+            4.5
+          ],
+          "ease": "inSine",
+          "fov": 30
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.4,
+          "duration": 3.6,
+          "text": "memory.cin.m04.1"
+        },
+        {
+          "t": 4.2,
+          "duration": 3,
+          "text": "memory.cin.m04.2"
+        },
+        {
+          "t": 7.4,
+          "duration": 3.4,
+          "text": "memory.cin.m04.3"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.2,
+          "sound": "core:page"
+        },
+        {
+          "t": 7.2,
+          "sound": "memory:shard_touch"
+        },
+        {
+          "t": 8,
+          "sound": "memory:echo"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 7.4,
+          "fx": "flash",
+          "color": "#ffffff",
+          "seconds": 0.4
+        },
+        {
+          "t": 8.6,
+          "fx": "flash",
+          "color": "#ffffff",
+          "seconds": 0.4
+        },
+        {
+          "t": 9.2,
+          "fx": "fade",
+          "from": 0,
+          "to": 1,
+          "seconds": 1.6,
+          "color": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 4.2,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "memory.sujetZero",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.changeScene",
+      "scene": "chambre_blanche",
+      "spawn": "spawn_vision"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "confrontation_vel",
+  "start": "c1",
+  "nodes": [
+    {
+      "id": "c1",
+      "speaker": "oriane",
+      "text": "memory.dlg.confrontation_vel.c1",
+      "next": "c2"
+    },
+    {
+      "id": "c2",
+      "speaker": "vel",
+      "text": "memory.dlg.confrontation_vel.c2",
+      "next": "c3"
+    },
+    {
+      "id": "c3",
+      "speaker": "oriane",
+      "text": "memory.dlg.confrontation_vel.c3",
+      "next": "c4"
+    },
+    {
+      "id": "c4",
+      "speaker": "vel",
+      "text": "memory.dlg.confrontation_vel.c4",
+      "choices": [
+        {
+          "id": "consent",
+          "text": "memory.dlg.confrontation_vel.c4.consent",
+          "next": "c_consent"
+        },
+        {
+          "id": "buyers",
+          "text": "memory.dlg.confrontation_vel.c4.buyers",
+          "next": "c_buyers"
+        }
+      ]
+    },
+    {
+      "id": "c_consent",
+      "speaker": "vel",
+      "text": "memory.dlg.confrontation_vel.c_consent",
+      "next": "c5"
+    },
+    {
+      "id": "c_buyers",
+      "speaker": "vel",
+      "text": "memory.dlg.confrontation_vel.c_buyers",
+      "next": "c5"
+    },
+    {
+      "id": "c5",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.tradeChoice",
+            "op": "==",
+            "value": "echange"
+          },
+          "next": "c_trade"
+        }
+      ],
+      "next": "c_help"
+    },
+    {
+      "id": "c_trade",
+      "speaker": "vel",
+      "text": "memory.dlg.confrontation_vel.c_trade",
+      "next": "c_trade_or"
+    },
+    {
+      "id": "c_trade_or",
+      "speaker": "oriane",
+      "text": "memory.dlg.confrontation_vel.c_trade_or",
+      "expression": "sad",
+      "next": "c6"
+    },
+    {
+      "id": "c_help",
+      "speaker": "vel",
+      "text": "memory.dlg.confrontation_vel.c_help",
+      "next": "c_help_or"
+    },
+    {
+      "id": "c_help_or",
+      "speaker": "oriane",
+      "text": "memory.dlg.confrontation_vel.c_help_or",
+      "animation": "nod",
+      "next": "c6"
+    },
+    {
+      "id": "c6",
+      "speaker": "oriane",
+      "text": "memory.dlg.confrontation_vel.c6",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.velConfronted",
+          "value": true
+        }
+      ],
+      "end": true
+    }
+  ]
+}

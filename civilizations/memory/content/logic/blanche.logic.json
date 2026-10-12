@@ -1,0 +1,115 @@
+{
+  "format": "civverse.logic",
+  "version": 1,
+  "id": "blanche",
+  "title": "Chambre Blanche",
+  "rules": [
+    {
+      "id": "reconstitution",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "scene.entered",
+        "where": {
+          "sceneId": "chambre_blanche"
+        }
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 0.3
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "M03_chambre_blanche",
+          "wait": false
+        }
+      ],
+      "name": "M03 — la scène reconstituée",
+      "scene": "chambre_blanche",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.whiteRoomSeen",
+              "op": "==",
+              "value": true
+            }
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.sujetZero",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "vision",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "scene.entered",
+        "where": {
+          "sceneId": "chambre_blanche"
+        }
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 0.3
+        },
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.civCompleted",
+            "civ": "door"
+          },
+          "then": [
+            {
+              "type": "core.playCinematic",
+              "cinematic": "M04b_vision_seuil",
+              "wait": false
+            }
+          ],
+          "else": [
+            {
+              "type": "core.playCinematic",
+              "cinematic": "M04b_vision",
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "name": "M04 — la vision (variante si Door est terminée)",
+      "scene": "chambre_blanche",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "memory.sujetZero",
+            "op": "==",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.visionSeen",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

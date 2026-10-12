@@ -1,0 +1,119 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "MEM_Q00_EVEIL",
+  "title": "memory.quest.MEM_Q00_EVEIL.title",
+  "summary": "memory.quest.MEM_Q00_EVEIL.summary",
+  "kind": "main",
+  "order": 0,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "eveil",
+      "description": "memory.quest.MEM_Q00_EVEIL.eveil",
+      "objectives": [
+        {
+          "id": "examiner",
+          "text": "memory.quest.MEM_Q00_EVEIL.eveil.examiner",
+          "completeOn": {
+            "event": "memory.examined",
+            "where": {
+              "shardId": "ambre"
+            }
+          }
+        },
+        {
+          "id": "enseigne",
+          "text": "memory.quest.MEM_Q00_EVEIL.eveil.enseigne",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.firstEcho",
+            "op": "==",
+            "value": true
+          },
+          "target": "echo_enseigne"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "oriane",
+      "description": "memory.quest.MEM_Q00_EVEIL.oriane",
+      "objectives": [
+        {
+          "id": "oriane",
+          "text": "memory.quest.MEM_Q00_EVEIL.oriane.oriane",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.metOriane",
+            "op": "==",
+            "value": true
+          },
+          "target": "oriane"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "atelier",
+      "description": "memory.quest.MEM_Q00_EVEIL.atelier",
+      "objectives": [
+        {
+          "id": "parler",
+          "text": "memory.quest.MEM_Q00_EVEIL.atelier.parler",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.cheminGiven",
+            "op": "==",
+            "value": true
+          },
+          "target": "oriane"
+        },
+        {
+          "id": "ancrer",
+          "text": "memory.quest.MEM_Q00_EVEIL.atelier.ancrer",
+          "completeWhen": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "memory.anchored",
+                "shard": "ambre"
+              },
+              {
+                "type": "memory.anchored",
+                "shard": "chemin"
+              }
+            ]
+          },
+          "target": "table_emplacements"
+        },
+        {
+          "id": "retirer",
+          "text": "memory.quest.MEM_Q00_EVEIL.atelier.retirer",
+          "completeOn": {
+            "event": "memory.removed"
+          },
+          "target": "table_emplacements"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.giveItem",
+      "item": "memory:diapason",
+      "count": 1
+    },
+    {
+      "type": "core.say",
+      "entity": "oriane",
+      "text": "memory.bark.oriane.diapason",
+      "seconds": 5
+    },
+    {
+      "type": "core.startQuest",
+      "quest": "MEM_Q01_MELODIE"
+    }
+  ]
+}

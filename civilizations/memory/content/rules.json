@@ -1,0 +1,307 @@
+{
+  "format": "civverse.rules",
+  "version": 1,
+  "settings": {
+    "memory.chamber": {
+      "shards": [
+        {
+          "id": "ambre",
+          "name": "memory.shard.ambre.name",
+          "origin": "memory.shard.ambre.origin",
+          "color": "#f0a040",
+          "model": "memory:shard_amber",
+          "sense": "memory.shard.ambre.sense",
+          "fact": "memory.shard.ambre.fact",
+          "touch": "memory.shard.ambre.touch",
+          "echo": "trois_objets",
+          "flags": [
+            "inconnu"
+          ],
+          "revealVar": "memory.sujetZero",
+          "revealedOrigin": "memory.shard.ambre.revealed"
+        },
+        {
+          "id": "chemin",
+          "name": "memory.shard.chemin.name",
+          "origin": "memory.shard.chemin.origin",
+          "color": "#7fd0c8",
+          "model": "memory:shard_teal",
+          "sense": "memory.shard.chemin.sense",
+          "fact": "memory.shard.chemin.fact",
+          "touch": "memory.shard.chemin.touch",
+          "echo": "marche_rembobine",
+          "flags": [
+            "autobiographique"
+          ],
+          "revealVar": "",
+          "revealedOrigin": ""
+        },
+        {
+          "id": "jardin",
+          "name": "memory.shard.jardin.name",
+          "origin": "memory.shard.jardin.origin",
+          "color": "#c8a0ff",
+          "model": "memory:shard_violet",
+          "sense": "memory.shard.jardin.sense",
+          "fact": "memory.shard.jardin.fact",
+          "touch": "memory.shard.jardin.touch",
+          "echo": "chanson_enfants",
+          "flags": [
+            "trace",
+            "lea"
+          ],
+          "revealVar": "",
+          "revealedOrigin": ""
+        },
+        {
+          "id": "vente",
+          "name": "memory.shard.vente.name",
+          "origin": "memory.shard.vente.origin",
+          "color": "#ffd8a0",
+          "model": "memory:shard_amber",
+          "sense": "memory.shard.vente.sense",
+          "fact": "memory.shard.vente.fact",
+          "touch": "memory.shard.vente.touch",
+          "echo": "",
+          "flags": [
+            "reconstitue"
+          ],
+          "revealVar": "",
+          "revealedOrigin": ""
+        }
+      ],
+      "instrument": "memory:diapason",
+      "chamberKey": "KeyM"
+    },
+    "memory.echoes": {
+      "echoes": [
+        {
+          "id": "marche_rembobine",
+          "title": "memory.echo.marche_rembobine.title",
+          "lines": [
+            "memory.echo.marche_rembobine.1",
+            "memory.echo.marche_rembobine.2",
+            "memory.echo.marche_rembobine.3"
+          ],
+          "tint": "#c8a8ff",
+          "duration": 9,
+          "ghosts": [
+            {
+              "from": [
+                56.5,
+                6,
+                33.5
+              ],
+              "to": [
+                44.5,
+                6,
+                28.5
+              ],
+              "color": "#e6d4ff",
+              "reverse": true,
+              "height": 1.78
+            }
+          ],
+          "objects": []
+        },
+        {
+          "id": "chanson_enfants",
+          "title": "memory.echo.chanson_enfants.title",
+          "lines": [
+            "memory.echo.chanson_enfants.1",
+            "memory.echo.chanson_enfants.2",
+            "memory.echo.chanson_enfants.3"
+          ],
+          "tint": "#d6b4ff",
+          "duration": 9,
+          "ghosts": [
+            {
+              "from": [
+                38.5,
+                6,
+                44.8
+              ],
+              "to": [
+                42.5,
+                6,
+                44.2
+              ],
+              "color": "#ffe0b8",
+              "reverse": false,
+              "height": 1.15
+            },
+            {
+              "from": [
+                37.8,
+                6,
+                43.6
+              ],
+              "to": [
+                41.8,
+                6,
+                43.0
+              ],
+              "color": "#e0c8ff",
+              "reverse": false,
+              "height": 1.0
+            }
+          ],
+          "objects": []
+        },
+        {
+          "id": "trois_objets",
+          "title": "memory.echo.trois_objets.title",
+          "lines": [
+            "memory.echo.trois_objets.1",
+            "memory.echo.trois_objets.2",
+            "memory.echo.trois_objets.3"
+          ],
+          "tint": "#c8a0ff",
+          "duration": 11,
+          "ghosts": [
+            {
+              "from": [
+                46,
+                6,
+                83
+              ],
+              "to": [
+                44.6,
+                6,
+                78.4
+              ],
+              "color": "#ffe0b8",
+              "reverse": false,
+              "height": 1.15
+            },
+            {
+              "from": [
+                50,
+                6,
+                83
+              ],
+              "to": [
+                51.4,
+                6,
+                78.4
+              ],
+              "color": "#e0c8ff",
+              "reverse": false,
+              "height": 1.0
+            }
+          ],
+          "objects": [
+            {
+              "model": "memory:kite",
+              "at": [
+                45.5,
+                7.6,
+                77.5
+              ],
+              "t": 1.2
+            },
+            {
+              "model": "memory:cup",
+              "at": [
+                48.5,
+                7.4,
+                76.5
+              ],
+              "t": 4.6
+            },
+            {
+              "model": "memory:bell",
+              "at": [
+                51.5,
+                7.5,
+                77.5
+              ],
+              "t": 8
+            }
+          ]
+        },
+        {
+          "id": "chambre_vente",
+          "title": "",
+          "lines": [],
+          "tint": "#f6e2c0",
+          "duration": 28,
+          "ghosts": [
+            {
+              "from": [
+                14.5,
+                2,
+                22.6
+              ],
+              "to": [
+                15.5,
+                2,
+                12.5
+              ],
+              "color": "#ffd8a0",
+              "reverse": false,
+              "height": 1.8
+            },
+            {
+              "from": [
+                19.5,
+                2,
+                18.5
+              ],
+              "to": [
+                19.4,
+                2,
+                18.0
+              ],
+              "color": "#d6b4ff",
+              "reverse": false,
+              "height": 1.65
+            }
+          ],
+          "objects": [
+            {
+              "model": "core:bed",
+              "at": [
+                15.5,
+                2,
+                23.5
+              ],
+              "t": 0.5
+            },
+            {
+              "model": "memory:violin",
+              "at": [
+                12.5,
+                2.9,
+                18.5
+              ],
+              "t": 12
+            },
+            {
+              "model": "memory:register",
+              "at": [
+                15.5,
+                3.1,
+                11.8
+              ],
+              "t": 16
+            }
+          ]
+        }
+      ]
+    },
+    "memory.offering": {
+      "pedestals": [
+        "socle_1",
+        "socle_2",
+        "socle_3"
+      ],
+      "solution": [
+        "memory:cerf_volant",
+        "memory:tasse",
+        "memory:clochette"
+      ],
+      "reward": "jardin"
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "M02_premier_echo",
+  "title": "M02 — Premier écho",
+  "duration": 12,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            45.7,
+            7.7,
+            32.1
+          ],
+          "target": [
+            57.5,
+            7.3,
+            32.6
+          ],
+          "fov": 60
+        },
+        {
+          "t": 5,
+          "position": [
+            46.1,
+            7.9,
+            31.7
+          ],
+          "target": [
+            52,
+            7.2,
+            30
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 9.5,
+          "position": [
+            45.5,
+            8.2,
+            31.1
+          ],
+          "target": [
+            46,
+            7.1,
+            26.5
+          ],
+          "ease": "inOutSine",
+          "fov": 54
+        },
+        {
+          "t": 12,
+          "position": [
+            44.7,
+            7.62,
+            31.7
+          ],
+          "target": [
+            46,
+            7.4,
+            26
+          ],
+          "ease": "inOutSine",
+          "fov": 70
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 0.4,
+          "duration": 3.6,
+          "text": "memory.cin.m02.1"
+        },
+        {
+          "t": 4.3,
+          "duration": 3.4,
+          "text": "memory.cin.m02.2"
+        },
+        {
+          "t": 8,
+          "duration": 3.6,
+          "text": "memory.cin.m02.3"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.setVar",
+      "var": "memory.firstEcho",
+      "value": true
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "bastien",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.ficheRead",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.ficheAccess",
+            "op": "==",
+            "value": true
+          },
+          "next": "done"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "memory.bastienAsked",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.hasItem",
+                "item": "memory:registre_lots",
+                "count": 1
+              }
+            ]
+          },
+          "next": "return1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "memory.orianeConfessed",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.var",
+                "var": "memory.bastienAsked",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "next": "ask_again"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.orianeConfessed",
+            "op": "==",
+            "value": true
+          },
+          "next": "ask1"
+        }
+      ],
+      "next": "idle"
+    },
+    {
+      "id": "idle",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.idle",
+      "end": true
+    },
+    {
+      "id": "ask1",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.ask1",
+      "next": "ask2"
+    },
+    {
+      "id": "ask2",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.ask2",
+      "choices": [
+        {
+          "id": "trade",
+          "text": "memory.dlg.bastien.ask2.trade",
+          "next": "trade1",
+          "condition": {
+            "type": "memory.shardState",
+            "shard": "chemin",
+            "state": "possede"
+          }
+        },
+        {
+          "id": "other",
+          "text": "memory.dlg.bastien.ask2.other",
+          "next": "help1"
+        },
+        {
+          "id": "bye",
+          "text": "memory.dlg.bastien.ask2.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "ask_again",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.ask_again",
+      "choices": [
+        {
+          "id": "trade",
+          "text": "memory.dlg.bastien.ask_again.trade",
+          "next": "trade1",
+          "condition": {
+            "type": "memory.shardState",
+            "shard": "chemin",
+            "state": "possede"
+          }
+        },
+        {
+          "id": "bye",
+          "text": "memory.dlg.bastien.ask_again.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "trade1",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.trade1",
+      "choices": [
+        {
+          "id": "yes",
+          "text": "memory.dlg.bastien.trade1.yes",
+          "next": "traded",
+          "actions": [
+            {
+              "type": "memory.trade",
+              "shard": "chemin",
+              "to": "memory.npc.bastien",
+              "then": [
+                {
+                  "type": "core.setVar",
+                  "var": "memory.ficheAccess",
+                  "value": true
+                },
+                {
+                  "type": "core.setVar",
+                  "var": "memory.tradeChoice",
+                  "value": "echange"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "no",
+          "text": "memory.dlg.bastien.trade1.no",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "traded",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.traded",
+      "end": true
+    },
+    {
+      "id": "help1",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.help1",
+      "next": "help2"
+    },
+    {
+      "id": "help2",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.help2",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.bastienAsked",
+          "value": true
+        },
+        {
+          "type": "core.notify",
+          "text": "memory.notify.bastienAsked",
+          "kind": "quest"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "return1",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.return1",
+      "animation": "nod",
+      "actions": [
+        {
+          "type": "core.takeItem",
+          "item": "memory:registre_lots",
+          "count": 1
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.ficheAccess",
+          "value": true
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.tradeChoice",
+          "value": "aide"
+        }
+      ],
+      "next": "return2"
+    },
+    {
+      "id": "return2",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.return2",
+      "end": true
+    },
+    {
+      "id": "done",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.done",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "bastien",
+      "text": "memory.dlg.bastien.after",
+      "end": true
+    }
+  ]
+}

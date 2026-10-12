@@ -1,0 +1,36 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "marchand",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.illegalCopiesExposed",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        }
+      ],
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "marchand",
+      "text": "memory.dlg.marchand.m1",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "marchand",
+      "text": "memory.dlg.marchand.after",
+      "end": true
+    }
+  ]
+}

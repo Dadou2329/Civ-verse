@@ -1,0 +1,93 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "margaux",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.illegalCopiesExposed",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.talkedMargaux",
+            "op": "==",
+            "value": true
+          },
+          "next": "again"
+        }
+      ],
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "margaux",
+      "text": "memory.dlg.margaux.m1",
+      "next": "m2"
+    },
+    {
+      "id": "m2",
+      "speaker": "margaux",
+      "text": "memory.dlg.margaux.m2",
+      "choices": [
+        {
+          "id": "know",
+          "text": "memory.dlg.margaux.m2.know",
+          "next": "m_know"
+        },
+        {
+          "id": "copy",
+          "text": "memory.dlg.margaux.m2.copy",
+          "next": "m_copy"
+        }
+      ]
+    },
+    {
+      "id": "m_know",
+      "speaker": "margaux",
+      "text": "memory.dlg.margaux.m_know",
+      "next": "m3"
+    },
+    {
+      "id": "m_copy",
+      "speaker": "margaux",
+      "text": "memory.dlg.margaux.m_copy",
+      "next": "m3"
+    },
+    {
+      "id": "m3",
+      "speaker": "margaux",
+      "text": "memory.dlg.margaux.m3",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.talkedMargaux",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "again",
+      "speaker": "margaux",
+      "text": "memory.dlg.margaux.again",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "margaux",
+      "text": "memory.dlg.margaux.after",
+      "end": true
+    }
+  ]
+}

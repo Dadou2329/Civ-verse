@@ -1,0 +1,578 @@
+{
+  "format": "civverse.logic",
+  "version": 1,
+  "id": "main",
+  "title": "Réminence — règles principales",
+  "rules": [
+    {
+      "id": "intro",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "civ.started"
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "memory.silasTrust",
+          "value": 0
+        },
+        {
+          "type": "core.playCinematic",
+          "cinematic": "M01_marche",
+          "wait": false
+        }
+      ],
+      "name": "Éveil : le marché des souvenirs (M01)"
+    },
+    {
+      "id": "tutoriel",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "cinematic.ended",
+        "where": {
+          "cinematicId": "M01_marche"
+        }
+      },
+      "then": [
+        {
+          "type": "core.notify",
+          "text": "memory.tuto.move",
+          "kind": "info"
+        },
+        {
+          "type": "core.wait",
+          "seconds": 5
+        },
+        {
+          "type": "core.notify",
+          "text": "memory.tuto.chamber",
+          "kind": "info"
+        }
+      ],
+      "name": "Tutoriel discret après le réveil"
+    },
+    {
+      "id": "oriane_remarque",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "cinematic.ended",
+        "where": {
+          "cinematicId": "M02_premier_echo"
+        }
+      },
+      "then": [
+        {
+          "type": "core.teleportEntity",
+          "entity": "oriane",
+          "target": "marque_oriane_marche",
+          "yaw": 60
+        },
+        {
+          "type": "core.lookAt",
+          "entity": "oriane",
+          "target": "player"
+        },
+        {
+          "type": "core.wait",
+          "seconds": 0.4
+        },
+        {
+          "type": "core.startDialogue",
+          "dialogue": "oriane",
+          "entity": "oriane",
+          "wait": false
+        }
+      ],
+      "name": "Oriane remarque l'éclat (après le premier écho)",
+      "if": {
+        "type": "core.not",
+        "condition": {
+          "type": "core.var",
+          "var": "memory.metOriane",
+          "op": "==",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "oriane_rentre",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "dialogue.ended",
+        "where": {
+          "dialogueId": "oriane"
+        }
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "memory.orianeHome",
+          "value": true
+        },
+        {
+          "type": "core.moveEntity",
+          "entity": "oriane",
+          "target": "marque_oriane_porte",
+          "wait": true
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "oriane",
+          "target": "marque_oriane_atelier",
+          "yaw": 90
+        }
+      ],
+      "name": "Oriane retourne à son atelier",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "memory.metOriane",
+            "op": "==",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.orianeHome",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "jules_maison",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "quest.started",
+        "where": {
+          "questId": "MEM_Q01_MELODIE"
+        }
+      },
+      "then": [
+        {
+          "type": "core.teleportEntity",
+          "entity": "jules",
+          "target": "marque_jules_maison",
+          "yaw": 270
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.julesAtHome",
+          "value": true
+        }
+      ],
+      "name": "Jules rentre à la Maison des Absences"
+    },
+    {
+      "id": "objet_cerf_volant",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "memory:cerf_volant"
+        }
+      },
+      "then": [
+        {
+          "type": "core.addVar",
+          "var": "memory.objectsFound",
+          "amount": 1
+        }
+      ],
+      "name": "Objet d'enfance trouvé (cerf_volant)"
+    },
+    {
+      "id": "objet_tasse",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "memory:tasse"
+        }
+      },
+      "then": [
+        {
+          "type": "core.addVar",
+          "var": "memory.objectsFound",
+          "amount": 1
+        }
+      ],
+      "name": "Objet d'enfance trouvé (tasse)"
+    },
+    {
+      "id": "objet_clochette",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "memory:clochette"
+        }
+      },
+      "then": [
+        {
+          "type": "core.addVar",
+          "var": "memory.objectsFound",
+          "amount": 1
+        }
+      ],
+      "name": "Objet d'enfance trouvé (clochette)"
+    },
+    {
+      "id": "confrontation",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "var.changed",
+        "where": {
+          "name": "memory.ficheRead"
+        }
+      },
+      "then": [
+        {
+          "type": "core.wait",
+          "seconds": 1.2
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "oriane",
+          "target": "marque_oriane_salle",
+          "yaw": 300
+        },
+        {
+          "type": "core.lookAt",
+          "entity": "oriane",
+          "target": "vel"
+        },
+        {
+          "type": "core.lookAt",
+          "entity": "vel",
+          "target": "oriane"
+        },
+        {
+          "type": "core.startDialogue",
+          "dialogue": "confrontation_vel",
+          "entity": "vel",
+          "wait": false
+        }
+      ],
+      "name": "Oriane confronte Madame Vel",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "memory.ficheRead",
+            "op": "==",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.velConfronted",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lea_silas_atelier",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "scene.entered",
+        "where": {
+          "sceneId": "reminence"
+        }
+      },
+      "then": [
+        {
+          "type": "core.teleportEntity",
+          "entity": "lea",
+          "target": "marque_lea_atelier",
+          "yaw": 60
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "silas",
+          "target": "marque_silas_atelier",
+          "yaw": 200
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "oriane",
+          "target": "marque_oriane_atelier",
+          "yaw": 90
+        },
+        {
+          "type": "core.lookAt",
+          "entity": "lea",
+          "target": "player"
+        }
+      ],
+      "name": "Léa et Silas attendent dans l'atelier",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "memory.whiteRoomSeen",
+            "op": "==",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.restorationOutcome",
+              "op": "exists",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "apres_restauration",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "dialogue.ended",
+        "where": {
+          "dialogueId": "lea"
+        }
+      },
+      "then": [
+        {
+          "type": "core.setVar",
+          "var": "memory.afterRestoration",
+          "value": true
+        },
+        {
+          "type": "core.wait",
+          "seconds": 1.5
+        },
+        {
+          "type": "core.fade",
+          "opacity": 1,
+          "seconds": 1
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "silas",
+          "target": "marque_silas_epilogue",
+          "yaw": 120
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "lea",
+          "target": "marque_lea_archives",
+          "yaw": 0
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "oriane",
+          "target": "marque_oriane_salle",
+          "yaw": 300
+        },
+        {
+          "type": "core.fade",
+          "opacity": 0,
+          "seconds": 1.2,
+          "wait": false
+        },
+        {
+          "type": "core.notify",
+          "text": "memory.notify.nextDay",
+          "kind": "quest"
+        }
+      ],
+      "name": "Le lendemain : chacun reprend sa place",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "exists",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.afterRestoration",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "copies_affichees",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "var.changed",
+        "where": {
+          "name": "memory.illegalCopiesExposed"
+        }
+      },
+      "then": [
+        {
+          "type": "core.teleportEntity",
+          "entity": "file_1",
+          "target": "marque_file_affiche_1",
+          "yaw": 180
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "file_3",
+          "target": "marque_file_affiche_2",
+          "yaw": 200
+        },
+        {
+          "type": "core.teleportEntity",
+          "entity": "iris",
+          "target": "marque_file_affiche_3",
+          "yaw": 160
+        }
+      ],
+      "name": "La file se défait devant le registre affiché",
+      "if": {
+        "type": "core.var",
+        "var": "memory.illegalCopiesExposed",
+        "op": "==",
+        "value": true
+      }
+    },
+    {
+      "id": "remanence",
+      "enabled": true,
+      "once": true,
+      "when": {
+        "event": "item.acquired",
+        "where": {
+          "itemId": "memory:remanence"
+        }
+      },
+      "then": [
+        {
+          "type": "core.grantFragment",
+          "fragment": "remanence"
+        },
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "==",
+            "value": "acceptee"
+          },
+          "then": [
+            {
+              "type": "core.setGlobalFlag",
+              "flag": "memory.restoration",
+              "value": "acceptee"
+            }
+          ],
+          "else": [
+            {
+              "type": "core.setGlobalFlag",
+              "flag": "memory.restoration",
+              "value": "refusee"
+            }
+          ]
+        },
+        {
+          "type": "core.wait",
+          "seconds": 2
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.epilogue",
+          "value": true
+        },
+        {
+          "type": "core.changeScene",
+          "scene": "reminence",
+          "spawn": "spawn_epilogue"
+        }
+      ],
+      "name": "Rémanence, puis retour à Réminence pour l'épilogue"
+    },
+    {
+      "id": "epilogue",
+      "enabled": true,
+      "once": false,
+      "when": {
+        "event": "scene.entered",
+        "where": {
+          "sceneId": "reminence"
+        }
+      },
+      "then": [
+        {
+          "type": "core.if",
+          "condition": {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "==",
+            "value": "acceptee"
+          },
+          "then": [
+            {
+              "type": "core.playCinematic",
+              "cinematic": "M05_epilogue_acceptee",
+              "wait": false
+            }
+          ],
+          "else": [
+            {
+              "type": "core.playCinematic",
+              "cinematic": "M05_epilogue_refusee",
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "name": "Épilogue au marché",
+      "if": {
+        "type": "core.all",
+        "of": [
+          {
+            "type": "core.var",
+            "var": "memory.epilogue",
+            "op": "==",
+            "value": true
+          },
+          {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.finished",
+              "op": "==",
+              "value": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

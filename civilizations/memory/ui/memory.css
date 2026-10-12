@@ -1,0 +1,241 @@
+/* Réminence — memory chamber, echoes, shard cards. Palette: petrol blue, mauve, amber. */
+
+.mem-hud {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(20, 34, 40, 0.88), rgba(38, 26, 48, 0.82));
+  border: 1px solid rgba(214, 180, 255, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  font-family: var(--civ-font);
+  color: var(--civ-text);
+  pointer-events: none;
+}
+.mem-hud__title {
+  font-family: var(--civ-title-font);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+.mem-hud__slots {
+  display: flex;
+  gap: 0.2rem;
+}
+.mem-hud__slot {
+  display: inline-flex;
+  transition: transform 0.25s ease;
+}
+.mem-hud__slot.is-filled {
+  transform: translateY(-1px) scale(1.05);
+}
+.mem-hud__key {
+  font-size: 0.7rem;
+  color: var(--civ-text-dim);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  padding: 0 0.3rem;
+}
+
+/* Echo superimposition */
+.mem-echo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none !important;
+}
+.mem-echo__veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 35%, color-mix(in srgb, var(--mem-tint) 32%, transparent) 100%);
+  animation: mem-veil 1.4s ease;
+}
+.mem-echo__caption {
+  position: absolute;
+  left: 50%;
+  top: 16%;
+  transform: translateX(-50%);
+  width: min(720px, 90vw);
+  text-align: center;
+  color: #f4ecff;
+  text-shadow: 0 2px 12px rgba(40, 0, 60, 0.85);
+}
+.mem-echo__title {
+  font-family: var(--civ-title-font);
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.mem-echo__line {
+  margin: 0.6rem 0 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.55rem;
+  animation: mem-line 0.9s ease;
+}
+@keyframes mem-veil {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mem-line {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.mem-touch {
+  margin-bottom: 4.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  background: rgba(30, 18, 40, 0.75);
+  color: #f6ddb0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.35rem;
+  text-align: center;
+  animation: mem-line 1.2s ease;
+  pointer-events: none !important;
+}
+
+/* Chamber panel */
+.mem-panel {
+  width: min(860px, 95vw);
+}
+.mem-panel__slots {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.7rem;
+  border-radius: 12px;
+  background: rgba(214, 180, 255, 0.06);
+  border: 1px solid rgba(214, 180, 255, 0.18);
+}
+.mem-panel__label {
+  font-family: var(--civ-title-font);
+  margin-right: 0.6rem;
+}
+.mem-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.3rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--civ-text-dim);
+  cursor: pointer;
+}
+.mem-slot.is-filled {
+  color: var(--civ-text);
+  border-color: rgba(214, 180, 255, 0.45);
+}
+.mem-panel__body {
+  display: grid;
+  grid-template-columns: minmax(200px, 0.9fr) 1.6fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+@media (max-width: 640px) {
+  .mem-panel__body {
+    grid-template-columns: 1fr;
+  }
+}
+.mem-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.mem-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.6rem;
+  align-items: center;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--civ-text);
+  cursor: pointer;
+}
+.mem-card svg {
+  grid-row: span 2;
+}
+.mem-card.is-selected {
+  border-color: var(--civ-accent);
+  background: rgba(240, 160, 64, 0.08);
+}
+.mem-card__state {
+  font-size: 0.78rem;
+  color: var(--civ-text-dim);
+}
+.mem-card.is-cede .mem-card__name,
+.mem-card.is-restaure .mem-card__name {
+  opacity: 0.6;
+}
+.mem-panel__detail h3 {
+  margin: 0;
+  font-family: var(--civ-title-font);
+  letter-spacing: 0.04em;
+}
+.mem-panel__origin {
+  color: var(--civ-text-dim);
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0.6rem;
+}
+.mem-panel__sense {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.45;
+}
+.mem-panel__fact {
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--civ-accent);
+  background: rgba(240, 160, 64, 0.06);
+}
+.mem-panel__trace {
+  font-style: italic;
+  color: #c8b0e0;
+}
+.mem-panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+.mem-panel__actions .cv-button {
+  min-width: 0;
+}
+.mem-panel__hint {
+  font-size: 0.85rem;
+  color: var(--civ-text-dim);
+}
+.mem-offering__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.mem-offering__items .cv-button {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 0.6rem;
+}

@@ -1,0 +1,316 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "M05_epilogue_acceptee",
+  "title": "Épilogue (restauration acceptée)",
+  "duration": 26,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            48,
+            15,
+            50
+          ],
+          "target": [
+            48,
+            7,
+            28
+          ],
+          "fov": 60
+        },
+        {
+          "t": 5.5,
+          "position": [
+            44.6,
+            8.4,
+            24.5
+          ],
+          "target": [
+            45.5,
+            7.6,
+            19.4
+          ],
+          "ease": "inOutSine",
+          "fov": 54
+        },
+        {
+          "t": 11,
+          "position": [
+            45.8,
+            8,
+            23.8
+          ],
+          "target": [
+            48,
+            7.6,
+            18.5
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 11.5,
+          "position": [
+            37.4,
+            7.9,
+            46.6
+          ],
+          "target": [
+            41,
+            7.3,
+            42
+          ],
+          "fov": 50,
+          "cut": true
+        },
+        {
+          "t": 20.5,
+          "position": [
+            38.6,
+            7.8,
+            45.2
+          ],
+          "target": [
+            41.4,
+            7.3,
+            41.8
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 26,
+          "position": [
+            48,
+            21,
+            44
+          ],
+          "target": [
+            48,
+            19,
+            80
+          ],
+          "ease": "inOutSine",
+          "fov": 62
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 1,
+          "duration": 4.2,
+          "text": "memory.cin.epi.1"
+        },
+        {
+          "t": 5.6,
+          "duration": 2.8,
+          "speaker": "memory.npc.vel",
+          "text": "memory.cin.epi.vel"
+        },
+        {
+          "t": 8.5,
+          "duration": 2.8,
+          "speaker": "memory.npc.oriane",
+          "text": "memory.cin.epi.oriane"
+        },
+        {
+          "t": 11.8,
+          "duration": 4,
+          "speaker": "memory.npc.silas",
+          "text": "memory.cin.epi.acceptee.1"
+        },
+        {
+          "t": 16,
+          "duration": 4,
+          "speaker": "memory.npc.lea",
+          "text": "memory.cin.epi.acceptee.2"
+        },
+        {
+          "t": 21,
+          "duration": 4.6,
+          "text": "memory.cin.epi.final"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 2.5
+        },
+        {
+          "t": 24.4,
+          "fx": "fade",
+          "from": 0,
+          "to": 1,
+          "seconds": 1.6
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0,
+          "music": "memory:music.fin"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 0,
+          "essential": true,
+          "actions": [
+            {
+              "type": "core.teleportEntity",
+              "entity": "oriane",
+              "target": "marque_oriane_epilogue",
+              "yaw": 180
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "vel",
+              "target": "marque_vel_epilogue",
+              "yaw": 0
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "silas",
+              "target": "marque_silas_epilogue",
+              "yaw": 120
+            },
+            {
+              "type": "core.teleportEntity",
+              "entity": "lea",
+              "target": "marque_lea_epilogue",
+              "yaw": 300
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "oriane",
+      "keys": [
+        {
+          "t": 5.5,
+          "animation": "interact"
+        },
+        {
+          "t": 8.4,
+          "lookAt": "vel",
+          "animation": "talk"
+        },
+        {
+          "t": 11,
+          "animation": "idle"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "vel",
+      "keys": [
+        {
+          "t": 5.5,
+          "lookAt": "oriane",
+          "animation": "talk",
+          "expression": "determined"
+        },
+        {
+          "t": 8.4,
+          "animation": "idle"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "silas",
+      "keys": [
+        {
+          "t": 11.6,
+          "lookAt": "lea",
+          "animation": "talk"
+        },
+        {
+          "t": 16,
+          "animation": "idle"
+        }
+      ]
+    },
+    {
+      "type": "actor",
+      "entity": "lea",
+      "keys": [
+        {
+          "t": 11.6,
+          "lookAt": "silas"
+        },
+        {
+          "t": 16,
+          "animation": "talk"
+        },
+        {
+          "t": 20,
+          "animation": "nod"
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.setVar",
+      "var": "memory.finished",
+      "value": true
+    },
+    {
+      "type": "core.if",
+      "condition": {
+        "type": "core.civCompleted",
+        "civ": "door"
+      },
+      "then": [
+        {
+          "type": "core.showEndScreen",
+          "title": "memory.end.title",
+          "subtitle": "memory.end.subtitle",
+          "lines": [
+            "memory.end.line1",
+            "memory.end.acceptee",
+            "memory.end.seuil"
+          ]
+        }
+      ],
+      "else": [
+        {
+          "type": "core.showEndScreen",
+          "title": "memory.end.title",
+          "subtitle": "memory.end.subtitle",
+          "lines": [
+            "memory.end.line1",
+            "memory.end.acceptee"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "core.finishCivilization"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "format": "civverse.items",
+  "version": 1,
+  "items": [
+    {
+      "id": "memory:diapason",
+      "name": "memory.item.diapason",
+      "description": "memory.item.diapason.desc",
+      "icon": {
+        "shape": "note",
+        "color": "#c88a4a",
+        "accent": "#ffd8a0"
+      },
+      "category": "tool",
+      "questItem": true
+    },
+    {
+      "id": "memory:cerf_volant",
+      "name": "memory.item.cerf_volant",
+      "description": "memory.item.cerf_volant.desc",
+      "icon": {
+        "shape": "kite",
+        "color": "#b48ad8",
+        "accent": "#f0a040"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "memory:tasse",
+      "name": "memory.item.tasse",
+      "description": "memory.item.tasse.desc",
+      "icon": {
+        "shape": "cup",
+        "color": "#e8e2d6",
+        "accent": "#6aa0c8"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "memory:clochette",
+      "name": "memory.item.clochette",
+      "description": "memory.item.clochette.desc",
+      "icon": {
+        "shape": "bell",
+        "color": "#d8b050",
+        "accent": "#b48ad8"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "memory:registre_lots",
+      "name": "memory.item.registre_lots",
+      "description": "memory.item.registre_lots.desc",
+      "icon": {
+        "shape": "book",
+        "color": "#5a3a5a",
+        "accent": "#e8d0a0"
+      },
+      "category": "quest",
+      "questItem": true
+    },
+    {
+      "id": "memory:remanence",
+      "name": "memory.item.remanence",
+      "description": "memory.item.remanence.desc",
+      "icon": {
+        "shape": "circle",
+        "color": "#d6b4ff",
+        "accent": "#ffffff",
+        "glow": true
+      },
+      "category": "collectible",
+      "questItem": true
+    }
+  ]
+}

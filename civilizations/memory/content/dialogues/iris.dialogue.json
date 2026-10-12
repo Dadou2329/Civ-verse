@@ -1,0 +1,36 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "iris",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.illegalCopiesExposed",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        }
+      ],
+      "next": "i1"
+    },
+    {
+      "id": "i1",
+      "speaker": "iris",
+      "text": "memory.dlg.iris.i1",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "iris",
+      "text": "memory.dlg.iris.after",
+      "end": true
+    }
+  ]
+}

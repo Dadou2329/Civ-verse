@@ -1,0 +1,183 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "jules",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "memory.julesAtHome",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.var",
+                "var": "memory.talkedJules",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "next": "home_again"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "memory.julesAtHome",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.var",
+                "var": "memory.julesChoice",
+                "op": "==",
+                "value": "garde"
+              }
+            ]
+          },
+          "next": "home_keep"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.julesAtHome",
+            "op": "==",
+            "value": true
+          },
+          "next": "home_sold"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.julesChoice",
+            "op": "exists",
+            "value": true
+          },
+          "next": "market_after"
+        }
+      ],
+      "next": "market1"
+    },
+    {
+      "id": "market1",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.market1",
+      "next": "market2"
+    },
+    {
+      "id": "market2",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.market2",
+      "choices": [
+        {
+          "id": "keep",
+          "text": "memory.dlg.jules.market2.keep",
+          "next": "keep1"
+        },
+        {
+          "id": "yours",
+          "text": "memory.dlg.jules.market2.yours",
+          "next": "sold1"
+        },
+        {
+          "id": "price",
+          "text": "memory.dlg.jules.market2.price",
+          "next": "price1"
+        }
+      ]
+    },
+    {
+      "id": "price1",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.price1",
+      "choices": [
+        {
+          "id": "keep",
+          "text": "memory.dlg.jules.price1.keep",
+          "next": "keep1"
+        },
+        {
+          "id": "yours",
+          "text": "memory.dlg.jules.price1.yours",
+          "next": "sold1"
+        }
+      ]
+    },
+    {
+      "id": "keep1",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.keep1",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.julesChoice",
+          "value": "garde"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "sold1",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.sold1",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.julesChoice",
+          "value": "vend"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "market_after",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.market_after",
+      "end": true
+    },
+    {
+      "id": "home_keep",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.home_keep",
+      "expression": "sad",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.talkedJules",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "home_sold",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.home_sold",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.talkedJules",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "home_again",
+      "speaker": "jules",
+      "text": "memory.dlg.jules.home_again",
+      "end": true
+    }
+  ]
+}

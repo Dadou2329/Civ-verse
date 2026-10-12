@@ -1,0 +1,345 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "silas",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "==",
+            "value": "acceptee"
+          },
+          "next": "after_ok"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.restorationOutcome",
+            "op": "==",
+            "value": "refusee"
+          },
+          "next": "after_no"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "MEM_Q03_RECONSTRUCTION",
+                "status": "active"
+              },
+              {
+                "type": "core.var",
+                "var": "memory.whiteRoomSeen",
+                "op": "==",
+                "value": true
+              }
+            ]
+          },
+          "next": "wait_lea"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.questStatus",
+                "quest": "MEM_Q03_RECONSTRUCTION",
+                "status": "active"
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "memory.songComplete",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "song1"
+        },
+        {
+          "condition": {
+            "type": "core.not",
+            "condition": {
+              "type": "core.var",
+              "var": "memory.metSilas",
+              "op": "==",
+              "value": true
+            }
+          },
+          "next": "intro1"
+        },
+        {
+          "condition": {
+            "type": "core.all",
+            "of": [
+              {
+                "type": "core.var",
+                "var": "memory.songEcho",
+                "op": "==",
+                "value": true
+              },
+              {
+                "type": "core.not",
+                "condition": {
+                  "type": "core.var",
+                  "var": "memory.silasEchoTold",
+                  "op": "==",
+                  "value": true
+                }
+              }
+            ]
+          },
+          "next": "echo_q"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.recognition.silas",
+            "op": "==",
+            "value": "sensation"
+          },
+          "next": "sensation"
+        }
+      ],
+      "next": "idle"
+    },
+    {
+      "id": "intro1",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.intro1",
+      "choices": [
+        {
+          "id": "song",
+          "text": "memory.dlg.silas.intro1.song",
+          "next": "intro2"
+        },
+        {
+          "id": "name",
+          "text": "memory.dlg.silas.intro1.name",
+          "next": "intro_name"
+        }
+      ]
+    },
+    {
+      "id": "intro_name",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.intro_name",
+      "choices": [
+        {
+          "id": "song",
+          "text": "memory.dlg.silas.intro_name.song",
+          "next": "intro2"
+        }
+      ]
+    },
+    {
+      "id": "intro2",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.intro2",
+      "expression": "sad",
+      "choices": [
+        {
+          "id": "who",
+          "text": "memory.dlg.silas.intro2.who",
+          "next": "intro3"
+        }
+      ]
+    },
+    {
+      "id": "intro3",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.intro3",
+      "next": "intro4"
+    },
+    {
+      "id": "intro4",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.intro4",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.metSilas",
+          "value": true
+        }
+      ],
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.songEcho",
+            "op": "==",
+            "value": true
+          },
+          "next": "echo_q"
+        }
+      ]
+    },
+    {
+      "id": "echo_q",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.echo_q",
+      "choices": [
+        {
+          "id": "truth",
+          "text": "memory.dlg.silas.echo_q.truth",
+          "next": "echo_truth",
+          "actions": [
+            {
+              "type": "core.addVar",
+              "var": "memory.silasTrust",
+              "amount": 1
+            },
+            {
+              "type": "core.setVar",
+              "var": "memory.silasEchoTold",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "lie",
+          "text": "memory.dlg.silas.echo_q.lie",
+          "next": "echo_lie",
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "memory.silasEchoTold",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "echo_truth",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.echo_truth",
+      "end": true
+    },
+    {
+      "id": "echo_lie",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.echo_lie",
+      "end": true
+    },
+    {
+      "id": "sensation",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.sensation",
+      "end": true
+    },
+    {
+      "id": "idle",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.idle",
+      "end": true
+    },
+    {
+      "id": "song1",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.song1",
+      "choices": [
+        {
+          "id": "play",
+          "text": "memory.dlg.silas.song1.play",
+          "next": "song2"
+        },
+        {
+          "id": "later",
+          "text": "memory.dlg.silas.song1.later",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "song2",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.song2",
+      "choices": [
+        {
+          "id": "truth",
+          "text": "memory.dlg.silas.song2.truth",
+          "next": "song_truth",
+          "actions": [
+            {
+              "type": "core.addVar",
+              "var": "memory.silasTrust",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "evade",
+          "text": "memory.dlg.silas.song2.evade",
+          "next": "song_evade"
+        }
+      ]
+    },
+    {
+      "id": "song_truth",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.song_truth",
+      "expression": "sad",
+      "next": "song_play"
+    },
+    {
+      "id": "song_evade",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.song_evade",
+      "next": "song_play"
+    },
+    {
+      "id": "song_play",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.song_play",
+      "animation": "talk",
+      "actions": [
+        {
+          "type": "core.playSound",
+          "sound": "memory:silas_song",
+          "at": "silas"
+        },
+        {
+          "type": "core.setVar",
+          "var": "memory.songComplete",
+          "value": true
+        },
+        {
+          "type": "core.notify",
+          "text": "memory.notify.songComplete",
+          "kind": "memory"
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "wait_lea",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.wait_lea",
+      "end": true
+    },
+    {
+      "id": "after_ok",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.after_ok",
+      "end": true
+    },
+    {
+      "id": "after_no",
+      "speaker": "silas",
+      "text": "memory.dlg.silas.after_no",
+      "end": true
+    }
+  ]
+}

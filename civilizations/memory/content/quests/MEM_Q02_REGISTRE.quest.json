@@ -1,0 +1,155 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "MEM_Q02_REGISTRE",
+  "title": "memory.quest.MEM_Q02_REGISTRE.title",
+  "summary": "memory.quest.MEM_Q02_REGISTRE.summary",
+  "kind": "main",
+  "order": 2,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "absences",
+      "description": "memory.quest.MEM_Q02_REGISTRE.absences",
+      "objectives": [
+        {
+          "id": "margaux",
+          "text": "memory.quest.MEM_Q02_REGISTRE.absences.margaux",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.talkedMargaux",
+            "op": "==",
+            "value": true
+          },
+          "target": "margaux"
+        },
+        {
+          "id": "aurele",
+          "text": "memory.quest.MEM_Q02_REGISTRE.absences.aurele",
+          "optional": true,
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.talkedAurele",
+            "op": "==",
+            "value": true
+          },
+          "target": "aurele"
+        },
+        {
+          "id": "jules",
+          "text": "memory.quest.MEM_Q02_REGISTRE.absences.jules",
+          "optional": true,
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.talkedJules",
+            "op": "==",
+            "value": true
+          },
+          "target": "jules"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "oriane",
+      "description": "memory.quest.MEM_Q02_REGISTRE.oriane",
+      "objectives": [
+        {
+          "id": "aveu",
+          "text": "memory.quest.MEM_Q02_REGISTRE.oriane.aveu",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.orianeConfessed",
+            "op": "==",
+            "value": true
+          },
+          "target": "oriane"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "piste",
+      "description": "memory.quest.MEM_Q02_REGISTRE.piste",
+      "objectives": [
+        {
+          "id": "acces",
+          "text": "memory.quest.MEM_Q02_REGISTRE.piste.acces",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.ficheAccess",
+            "op": "==",
+            "value": true
+          },
+          "target": "bastien"
+        },
+        {
+          "id": "liasse",
+          "text": "memory.quest.MEM_Q02_REGISTRE.piste.liasse",
+          "optional": true,
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.tradeChoice",
+            "op": "==",
+            "value": "aide"
+          },
+          "target": "liasse_bastien"
+        },
+        {
+          "id": "fiche",
+          "text": "memory.quest.MEM_Q02_REGISTRE.piste.fiche",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.ficheRead",
+            "op": "==",
+            "value": true
+          },
+          "target": "fiche_vente"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "vel",
+      "description": "memory.quest.MEM_Q02_REGISTRE.vel",
+      "objectives": [
+        {
+          "id": "vel",
+          "text": "memory.quest.MEM_Q02_REGISTRE.vel.vel",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.velConfronted",
+            "op": "==",
+            "value": true
+          },
+          "target": "vel"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "lea",
+      "description": "memory.quest.MEM_Q02_REGISTRE.lea",
+      "objectives": [
+        {
+          "id": "lea",
+          "text": "memory.quest.MEM_Q02_REGISTRE.lea.lea",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.metLea",
+            "op": "==",
+            "value": true
+          },
+          "target": "lea"
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.startQuest",
+      "quest": "MEM_Q03_RECONSTRUCTION"
+    }
+  ]
+}

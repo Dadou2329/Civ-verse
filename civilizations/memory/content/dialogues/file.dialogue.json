@@ -1,0 +1,41 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "file",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.illegalCopiesExposed",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        }
+      ],
+      "next": "f1"
+    },
+    {
+      "id": "f1",
+      "speaker": "vendeur",
+      "text": "memory.dlg.file.f1",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "vendeur",
+      "text": "memory.dlg.file.after",
+      "end": true
+    }
+  ],
+  "speakers": {
+    "vendeur": {
+      "name": "memory.speaker.vendeur"
+    }
+  }
+}

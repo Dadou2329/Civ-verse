@@ -1,0 +1,178 @@
+{
+  "format": "civverse.cinematic",
+  "version": 1,
+  "id": "M03_chambre_blanche",
+  "title": "M03 — Chambre Blanche",
+  "duration": 32,
+  "skippable": true,
+  "letterbox": true,
+  "lockPlayer": true,
+  "hideHud": true,
+  "returnCamera": "blend",
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "t": 0,
+          "position": [
+            15.5,
+            3.62,
+            8.5
+          ],
+          "target": [
+            15.5,
+            3.2,
+            16.5
+          ],
+          "fov": 62
+        },
+        {
+          "t": 8,
+          "position": [
+            11,
+            4.1,
+            14
+          ],
+          "target": [
+            15.5,
+            2.8,
+            23.5
+          ],
+          "ease": "inOutSine"
+        },
+        {
+          "t": 16,
+          "position": [
+            19,
+            3.9,
+            17.5
+          ],
+          "target": [
+            15.5,
+            3.3,
+            13.5
+          ],
+          "ease": "inOutSine",
+          "fov": 56
+        },
+        {
+          "t": 24,
+          "position": [
+            17,
+            3.7,
+            12
+          ],
+          "target": [
+            19.5,
+            3.4,
+            18.5
+          ],
+          "ease": "inOutSine",
+          "fov": 50
+        },
+        {
+          "t": 32,
+          "position": [
+            15.5,
+            3.62,
+            8.5
+          ],
+          "target": [
+            15.5,
+            3.4,
+            16.5
+          ],
+          "ease": "inOutSine",
+          "fov": 70
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "items": [
+        {
+          "t": 2,
+          "duration": 4.5,
+          "text": "memory.cin.m03.1"
+        },
+        {
+          "t": 8.5,
+          "duration": 4.5,
+          "text": "memory.cin.m03.2"
+        },
+        {
+          "t": 14.5,
+          "duration": 4.5,
+          "text": "memory.cin.m03.3"
+        },
+        {
+          "t": 20.5,
+          "duration": 4.5,
+          "text": "memory.cin.m03.4"
+        },
+        {
+          "t": 26.5,
+          "duration": 5,
+          "text": "memory.cin.m03.5"
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "t": 0,
+          "fx": "fade",
+          "from": 1,
+          "to": 0,
+          "seconds": 2.5,
+          "color": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "items": [
+        {
+          "t": 0.5,
+          "music": "memory:music.blanche"
+        },
+        {
+          "t": 1,
+          "sound": "memory:echo"
+        },
+        {
+          "t": 21,
+          "sound": "memory:silas_song"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "items": [
+        {
+          "t": 1,
+          "actions": [
+            {
+              "type": "memory.playEcho",
+              "echo": "chambre_vente"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.setVar",
+      "var": "memory.whiteRoomSeen",
+      "value": true
+    },
+    {
+      "type": "core.notify",
+      "text": "memory.notify.wake",
+      "kind": "memory"
+    }
+  ]
+}

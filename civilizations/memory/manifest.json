@@ -1,0 +1,32 @@
+{
+  "format": "civverse.pack",
+  "version": 1,
+  "id": "memory",
+  "kind": "civilization",
+  "name": "memory.name",
+  "description": "memory.description",
+  "tagline": "memory.tagline",
+  "packVersion": "0.1.0",
+  "engineApi": "^1.0.0",
+  "dependencies": ["core"],
+  "entry": { "scene": "reminence", "spawn": "spawn_banc" },
+  "scenes": ["reminence", "chambre_blanche"],
+  "stateVersion": 1,
+  "globalWrites": ["fragments.remanence", "flags.memory.*"],
+  "fragments": [{ "id": "remanence", "name": "memory.fragment.remanence", "hint": "memory.fragment.remanence.hint", "icon": "circle" }],
+  "theme": {
+    "accent": "#f0a040",
+    "accentSoft": "#c8a8f0",
+    "panel": "rgba(18, 26, 34, 0.88)",
+    "panelBorder": "rgba(200, 168, 240, 0.38)",
+    "text": "#ece6f4",
+    "textDim": "#a49cb4",
+    "font": "\"Alegreya Sans\", system-ui, sans-serif",
+    "titleFont": "\"Cormorant Garamond\", Georgia, serif"
+  },
+  "cover": { "colors": ["#14242c", "#3e2a50", "#f0a040"], "motif": "memory" },
+  "hud": { "hide": [] },
+  "order": 20,
+  "credits": ["Scénario : dossier narratif 002 — « Le Nom qu'on t'a volé ».", "Monde, mécaniques, musiques et sons originaux, générés de manière procédurale."],
+  "tags": ["mémoire", "consentement", "mélancolie"]
+}

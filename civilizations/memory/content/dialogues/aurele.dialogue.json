@@ -1,0 +1,165 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "aurele",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.aureleTold",
+            "op": "==",
+            "value": true
+          },
+          "next": "after_told"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.aureleAsked",
+            "op": "==",
+            "value": true
+          },
+          "next": "after_kept"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.whiteRoomSeen",
+            "op": "==",
+            "value": true
+          },
+          "next": "truth1"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.recognition.aurele",
+            "op": "==",
+            "value": "sensation"
+          },
+          "next": "song"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.talkedAurele",
+            "op": "==",
+            "value": true
+          },
+          "next": "again"
+        }
+      ],
+      "next": "a1"
+    },
+    {
+      "id": "a1",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.a1",
+      "next": "a2"
+    },
+    {
+      "id": "a2",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.a2",
+      "next": "a3"
+    },
+    {
+      "id": "a3",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.a3",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.talkedAurele",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "song",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.song",
+      "actions": [
+        {
+          "type": "core.setVar",
+          "var": "memory.talkedAurele",
+          "value": true
+        }
+      ],
+      "end": true
+    },
+    {
+      "id": "again",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.again",
+      "end": true
+    },
+    {
+      "id": "truth1",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.truth1",
+      "choices": [
+        {
+          "id": "tell",
+          "text": "memory.dlg.aurele.truth1.tell",
+          "next": "truth_tell",
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "memory.aureleTold",
+              "value": true
+            },
+            {
+              "type": "core.setVar",
+              "var": "memory.aureleAsked",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "keep",
+          "text": "memory.dlg.aurele.truth1.keep",
+          "next": "truth_keep",
+          "actions": [
+            {
+              "type": "core.setVar",
+              "var": "memory.aureleAsked",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "truth_tell",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.truth_tell",
+      "expression": "sad",
+      "end": true
+    },
+    {
+      "id": "truth_keep",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.truth_keep",
+      "end": true
+    },
+    {
+      "id": "after_told",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.after_told",
+      "end": true
+    },
+    {
+      "id": "after_kept",
+      "speaker": "aurele",
+      "text": "memory.dlg.aurele.after_kept",
+      "end": true
+    }
+  ]
+}

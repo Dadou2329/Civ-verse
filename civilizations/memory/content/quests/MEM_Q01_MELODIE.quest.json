@@ -1,0 +1,112 @@
+{
+  "format": "civverse.quest",
+  "version": 1,
+  "id": "MEM_Q01_MELODIE",
+  "title": "memory.quest.MEM_Q01_MELODIE.title",
+  "summary": "memory.quest.MEM_Q01_MELODIE.summary",
+  "kind": "main",
+  "order": 1,
+  "autoStart": false,
+  "stages": [
+    {
+      "id": "chanson",
+      "description": "memory.quest.MEM_Q01_MELODIE.chanson",
+      "objectives": [
+        {
+          "id": "silas",
+          "text": "memory.quest.MEM_Q01_MELODIE.chanson.silas",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.metSilas",
+            "op": "==",
+            "value": true
+          },
+          "target": "silas"
+        },
+        {
+          "id": "echo",
+          "text": "memory.quest.MEM_Q01_MELODIE.chanson.echo",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.songEcho",
+            "op": "==",
+            "value": true
+          },
+          "target": "silas"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "jardin",
+      "description": "memory.quest.MEM_Q01_MELODIE.jardin",
+      "objectives": [
+        {
+          "id": "stele",
+          "text": "memory.quest.MEM_Q01_MELODIE.jardin.stele",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.steleRead",
+            "op": "==",
+            "value": true
+          },
+          "target": "stele_lea"
+        },
+        {
+          "id": "objets",
+          "text": "memory.quest.MEM_Q01_MELODIE.jardin.objets",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.objectsFound",
+            "op": ">=",
+            "value": 3
+          },
+          "progress": {
+            "var": "memory.objectsFound",
+            "count": 3
+          }
+        },
+        {
+          "id": "enigme",
+          "text": "memory.quest.MEM_Q01_MELODIE.jardin.enigme",
+          "completeWhen": {
+            "type": "core.var",
+            "var": "memory.gardenSolved",
+            "op": "==",
+            "value": true
+          },
+          "target": "socle_2"
+        }
+      ],
+      "completion": "all"
+    },
+    {
+      "id": "eclat",
+      "description": "memory.quest.MEM_Q01_MELODIE.eclat",
+      "objectives": [
+        {
+          "id": "examiner",
+          "text": "memory.quest.MEM_Q01_MELODIE.eclat.examiner",
+          "completeOn": {
+            "event": "memory.examined",
+            "where": {
+              "shardId": "jardin"
+            }
+          }
+        }
+      ],
+      "completion": "all"
+    }
+  ],
+  "onComplete": [
+    {
+      "type": "core.notify",
+      "text": "memory.notify.leaName",
+      "kind": "discovery"
+    },
+    {
+      "type": "core.startQuest",
+      "quest": "MEM_Q02_REGISTRE"
+    }
+  ]
+}

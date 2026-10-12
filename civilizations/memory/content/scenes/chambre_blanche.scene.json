@@ -1,0 +1,581 @@
+{
+  "format": "civverse.scene",
+  "version": 1,
+  "id": "chambre_blanche",
+  "name": "memory.scene.blanche",
+  "environment": {
+    "sky": {
+      "top": "#f3f1f8",
+      "horizon": "#ffffff",
+      "bottom": "#e6e2ee",
+      "stars": 0,
+      "sunDisc": false
+    },
+    "sun": {
+      "direction": [
+        0.3,
+        -1,
+        0.25
+      ],
+      "color": "#ffffff",
+      "intensity": 0.55
+    },
+    "ambient": {
+      "color": "#f2f0fa",
+      "intensity": 0.95
+    },
+    "hemi": {
+      "sky": "#ffffff",
+      "ground": "#d6cfe4",
+      "intensity": 0.7
+    },
+    "fog": {
+      "color": "#f5f3fa",
+      "density": 0.05
+    },
+    "blockLight": 1,
+    "particles": {
+      "preset": "memory",
+      "density": 0.2
+    },
+    "music": "memory:music.blanche",
+    "ambience": "memory:amb_white",
+    "post": {
+      "exposure": 1.04,
+      "contrast": 0.94,
+      "saturation": 0.8,
+      "bloom": 0.45,
+      "vignette": 0.22
+    }
+  },
+  "voxels": {
+    "size": [
+      32,
+      24,
+      32
+    ],
+    "palette": [
+      "core:air",
+      "memory:white",
+      "memory:white_glow"
+    ],
+    "encoding": "rle16-b64",
+    "data": "zQoBBQIZAQICBQECAhYBAgIHAQICFQEBAgkBAQIUAQECCwEBAhMBAQILAQECEwEBAgsBAQITAQECCwEBAhMBAQILAQECFAEBAgkBAQIVAQICBwECAhYBAgIFAQICGQEFAs8CAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgBCAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgACAR4AAgEeAAIBHgAhAQ=="
+  },
+  "entities": [
+    {
+      "id": "spawn_blanche",
+      "position": [
+        15.5,
+        2,
+        8.5
+      ],
+      "components": {
+        "core.spawn": {
+          "isDefault": true
+        }
+      }
+    },
+    {
+      "id": "spawn_vision",
+      "position": [
+        15.5,
+        2,
+        11.5
+      ],
+      "components": {
+        "core.spawn": {}
+      }
+    },
+    {
+      "id": "lumiere_centre",
+      "position": [
+        15.5,
+        5,
+        16.5
+      ],
+      "components": {
+        "core.light": {
+          "color": "#fff6ea",
+          "level": 12,
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "retour_atelier",
+      "position": [
+        15.5,
+        2,
+        4.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:resonance_lamp"
+        },
+        "core.portal": {
+          "scene": "reminence",
+          "spawn": "spawn_atelier",
+          "mode": "interact",
+          "prompt": "memory.prompt.wake",
+          "condition": {
+            "type": "core.var",
+            "var": "memory.whiteRoomSeen",
+            "op": "==",
+            "value": true
+          },
+          "unavailable": "memory.prompt.wake.wait",
+          "size": [
+            1,
+            2.2,
+            1
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "memory.sujetZero",
+                "op": "!=",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "folder": "Acte III — reconstitution"
+    },
+    {
+      "id": "porte_fantome_1",
+      "position": [
+        6.5,
+        2,
+        10.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:door_ghost"
+        },
+        "core.interactable": {
+          "prompt": "memory.prompt.observeDoor",
+          "actions": [
+            {
+              "type": "core.notify",
+              "text": "memory.vision.door.1",
+              "kind": "memory"
+            }
+          ],
+          "size": [
+            1.2,
+            2.2,
+            0.6
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "memory.sujetZero",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "rotation": [
+        0,
+        60,
+        0
+      ],
+      "folder": "Dénouement — vision"
+    },
+    {
+      "id": "porte_fantome_2",
+      "position": [
+        6.5,
+        2,
+        22.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:door_ghost"
+        },
+        "core.interactable": {
+          "prompt": "memory.prompt.observeDoor",
+          "actions": [
+            {
+              "type": "core.notify",
+              "text": "memory.vision.door.2",
+              "kind": "memory"
+            }
+          ],
+          "size": [
+            1.2,
+            2.2,
+            0.6
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "memory.sujetZero",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "rotation": [
+        0,
+        120,
+        0
+      ],
+      "folder": "Dénouement — vision"
+    },
+    {
+      "id": "porte_fantome_3",
+      "position": [
+        16,
+        2,
+        27.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:door_ghost"
+        },
+        "core.interactable": {
+          "prompt": "memory.prompt.observeDoor",
+          "actions": [
+            {
+              "type": "core.notify",
+              "text": "memory.vision.door.3",
+              "kind": "memory"
+            }
+          ],
+          "size": [
+            1.2,
+            2.2,
+            0.6
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "memory.sujetZero",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "folder": "Dénouement — vision"
+    },
+    {
+      "id": "porte_fantome_4",
+      "position": [
+        25.5,
+        2,
+        22.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:door_ghost"
+        },
+        "core.interactable": {
+          "prompt": "memory.prompt.observeDoor",
+          "actions": [
+            {
+              "type": "core.notify",
+              "text": "memory.vision.door.4",
+              "kind": "memory"
+            }
+          ],
+          "size": [
+            1.2,
+            2.2,
+            0.6
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "memory.sujetZero",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "rotation": [
+        0,
+        240,
+        0
+      ],
+      "folder": "Dénouement — vision"
+    },
+    {
+      "id": "porte_fantome_5",
+      "position": [
+        25.5,
+        2,
+        10.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:door_ghost"
+        },
+        "core.interactable": {
+          "prompt": "memory.prompt.observeDoor",
+          "actions": [
+            {
+              "type": "core.notify",
+              "text": "memory.vision.door.5",
+              "kind": "memory"
+            }
+          ],
+          "size": [
+            1.2,
+            2.2,
+            0.6
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "memory.sujetZero",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "rotation": [
+        0,
+        300,
+        0
+      ],
+      "folder": "Dénouement — vision"
+    },
+    {
+      "id": "porte_seuil",
+      "position": [
+        15.5,
+        2,
+        28.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:door_ghost_seuil"
+        },
+        "core.interactable": {
+          "prompt": "memory.prompt.observeDoor",
+          "actions": [
+            {
+              "type": "core.playSound",
+              "sound": "memory:threshold"
+            },
+            {
+              "type": "core.notify",
+              "text": "memory.vision.threshold",
+              "kind": "memory"
+            }
+          ],
+          "size": [
+            1.2,
+            2.2,
+            0.6
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.all",
+                "of": [
+                  {
+                    "type": "core.var",
+                    "var": "memory.sujetZero",
+                    "op": "==",
+                    "value": true
+                  },
+                  {
+                    "type": "core.civCompleted",
+                    "civ": "door"
+                  }
+                ]
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "folder": "Dénouement — vision"
+    },
+    {
+      "id": "remanence",
+      "position": [
+        15.5,
+        3.4,
+        20.5
+      ],
+      "components": {
+        "core.model": {
+          "model": "memory:remanence"
+        },
+        "core.pickup": {
+          "item": "memory:remanence",
+          "prompt": "memory.prompt.remanence",
+          "size": [
+            1.2,
+            1.2,
+            0.6
+          ],
+          "offset": [
+            0,
+            -0.6,
+            0
+          ]
+        },
+        "core.particles": {
+          "preset": "memory",
+          "color": "#e8d8ff",
+          "rate": 3,
+          "size": [
+            3,
+            3,
+            3
+          ]
+        },
+        "core.conditional": {
+          "states": [
+            {
+              "when": {
+                "type": "core.var",
+                "var": "memory.sujetZero",
+                "op": "==",
+                "value": true
+              },
+              "visible": "show"
+            }
+          ],
+          "otherwise": "hide"
+        }
+      },
+      "folder": "Dénouement — vision"
+    },
+    {
+      "id": "zone_blanche",
+      "position": [
+        15.5,
+        2,
+        16.5
+      ],
+      "components": {
+        "core.zone": {
+          "name": "memory.zone.blanche",
+          "subtitle": "memory.zone.blanche.subtitle",
+          "size": [
+            28,
+            10,
+            28
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "showTitle": true,
+          "music": "",
+          "ambience": ""
+        }
+      }
+    }
+  ],
+  "editor": {
+    "camera": {
+      "position": [
+        15.5,
+        12,
+        2
+      ],
+      "target": [
+        15.5,
+        2,
+        16
+      ]
+    },
+    "notes": "Généré par civilizations/memory/seed/blanche.ts puis édité dans le Studio."
+  }
+}

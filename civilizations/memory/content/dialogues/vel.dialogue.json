@@ -1,0 +1,75 @@
+{
+  "format": "civverse.dialogue",
+  "version": 1,
+  "id": "vel",
+  "start": "route",
+  "nodes": [
+    {
+      "id": "route",
+      "text": "",
+      "branches": [
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.illegalCopiesExposed",
+            "op": "==",
+            "value": true
+          },
+          "next": "after"
+        },
+        {
+          "condition": {
+            "type": "core.var",
+            "var": "memory.velConfronted",
+            "op": "==",
+            "value": true
+          },
+          "next": "post"
+        }
+      ],
+      "next": "intro"
+    },
+    {
+      "id": "intro",
+      "speaker": "vel",
+      "text": "memory.dlg.vel.intro",
+      "choices": [
+        {
+          "id": "poor",
+          "text": "memory.dlg.vel.intro.poor",
+          "next": "poor"
+        },
+        {
+          "id": "bye",
+          "text": "memory.dlg.vel.intro.bye",
+          "next": null
+        }
+      ]
+    },
+    {
+      "id": "poor",
+      "speaker": "vel",
+      "text": "memory.dlg.vel.poor",
+      "end": true
+    },
+    {
+      "id": "post",
+      "speaker": "vel",
+      "text": "memory.dlg.vel.post",
+      "end": true
+    },
+    {
+      "id": "after",
+      "speaker": "vel",
+      "text": "memory.dlg.vel.after",
+      "expression": "determined",
+      "next": "after2"
+    },
+    {
+      "id": "after2",
+      "speaker": "vel",
+      "text": "memory.dlg.vel.after2",
+      "end": true
+    }
+  ]
+}
