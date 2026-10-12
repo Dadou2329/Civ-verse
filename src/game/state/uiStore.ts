@@ -159,7 +159,10 @@ export function handlePresentationForUi(req: PresentationRequest): void {
   if (req.type === 'fx') {
     const p = req.params;
     if (req.fx === 'fade') {
-      const color = String(p.color ?? '#000000');
+      // Without an explicit color, a fade continues the current one (a white fade stays white
+      // through a scene change) and starts black from a clear screen.
+      const current = useUi.getState().fade;
+      const color = String(p.color ?? (current.opacity > 0.01 ? current.color : '#000000'));
       const to = { opacity: Number(p.to ?? 1), seconds: Number(p.seconds ?? 1), color };
       if (p.from !== undefined) {
         // Snap to the starting opacity first, then transition on the next frame.

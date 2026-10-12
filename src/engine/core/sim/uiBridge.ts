@@ -33,7 +33,7 @@ export class HeadlessUi implements UiBridge {
   readonly notifications: UiNotification[] = [];
   readonly locations: string[] = [];
   readonly documents: DocumentSpec[] = [];
-  readonly endScreens: { title: string; subtitle?: string }[] = [];
+  readonly endScreens: { title: string; subtitle?: string; lines?: string[] }[] = [];
   readonly openPanels = new Map<string, Record<string, unknown>>();
   readonly huds = new Map<string, HudDefinition>();
   readonly hudVisibility = new Map<HudElement, boolean>();
@@ -63,7 +63,7 @@ export class HeadlessUi implements UiBridge {
     this.huds.set(def.id, def);
     return toDisposable(() => this.huds.delete(def.id));
   }
-  showEndScreen(spec: { title: string; subtitle?: string }): Promise<void> {
+  showEndScreen(spec: { title: string; subtitle?: string; lines?: string[] }): Promise<void> {
     this.endScreens.push(spec);
     return Promise.resolve();
   }

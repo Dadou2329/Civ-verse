@@ -305,6 +305,8 @@ export class GameSession {
     const npc = e?.components.get('core.npc');
     const nameKey = npc?.props.name;
     if (typeof nameKey === 'string' && nameKey) return this.t(nameKey);
+    // A speaker can also be a localization key (« Une voix », a character absent from the scene).
+    if (this.i18n.has(id)) return this.t(id);
     return id;
   }
 
